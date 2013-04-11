@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<fx:root type="javafx.scene.layout.VBox" alignment="TOP_CENTER" maxWidth="68.0" minHeight="64.0" minWidth="64.0" onDragDetected="#begin_drag" prefHeight="-1.0" prefWidth="64.0" spacing="3.0" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.VBox" alignment="TOP_CENTER" maxWidth="68.0" minHeight="64.0" minWidth="64.0" prefHeight="-1.0" prefWidth="64.0" spacing="3.0" xmlns:fx="http://javafx.com/fxml">
   <children>
     <ImageView fx:id="img" fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="@noicon.png" />
+        <Image url="@./noicon.png" />
       </image>
     </ImageView>
     <Label fx:id="label" text="Control X" />

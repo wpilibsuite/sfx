@@ -64,6 +64,10 @@ class SD::Designer
         q = q.parent
       end
     end
+    #  onDragOver="#drag_over" onDragDrop="#drag_drop
+    # TODO: HACK
+    #      @canvas.set_on_drag_over {|e| drag_over(e)}
+    #      @canvas.set_on_drag_drop {|e| drag_drop(e)}
 
     parts = find_toolbox_parts
     parts.each do |key, data|
@@ -83,5 +87,30 @@ class SD::Designer
   def add_designable_control(control, location=[nil, nil])
     designer = SD::DesignerSupport::Overlay.new(control)
     @canvas.children.add designer
+  end
+
+  def drag_over(event)
+    if event.gesture_source != self && event.dragboard.hasString
+      event.acceptTransferModes(TransferMode::COPY)
+    end
+    event.consume();
+  end
+
+  def drag_drop(event)
+    db = event.dragboard
+    event.setDropCompleted(
+      if db.hasString
+        add_designable_control(button db.string)
+        with(@toolbox) do |tbx|
+          timeline do
+            animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
+          end.play
+        end
+        true
+      else
+        false
+      end)
+
+    event.consume()
   end
 end

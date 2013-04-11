@@ -16,5 +16,18 @@ module SD::DesignerSupport
     def label=(v)
       @textBox.text = v
     end
+
+    def begin_drag(event)
+        db = startDragAndDrop(TransferMode::COPY);
+
+        content = ClipboardContent.new
+        content.putString(@label.text);
+        db.setContent(content);
+
+        event.consume();
+    end
+    def onClick
+      # noop
+    end
   end
 end

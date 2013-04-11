@@ -41,7 +41,7 @@ module SD::DesignerSupport
 			@childContainer.setPrefSize(hist[:last_size_x] + diff_x * hist[:sizeX], hist[:last_size_y] + diff_y * hist[:sizeY])
     end
 
-    on_mouse :dragUpdate do |e|
+    def dragUpdate(e)
       if @drag_action
         update_drag_action(@drag_action, e)
       else
