@@ -53,9 +53,9 @@ module SD::DesignerSupport
       @drag_action = nil
     end
 #
-#    def onClick(e)
-#      # ctx menu goes here
-#    end
+    def onClick(e)
+      # ctx menu goes here
+    end
 #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
   end
 end

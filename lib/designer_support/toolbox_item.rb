@@ -26,8 +26,5 @@ module SD::DesignerSupport
 
         event.consume();
     end
-    def onClick
-      # noop
-    end
   end
 end
