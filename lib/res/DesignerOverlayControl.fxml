@@ -15,7 +15,7 @@
         <Insets />
       </GridPane.margin>
     </BorderPane>
-    <GridPane GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+    <GridPane fx:id="selected_ui" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
       <children>
         <Pane fx:id="overlay" mouseTransparent="true" style="-fx-background-color:#00000012;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
           <GridPane.margin>

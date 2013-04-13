@@ -86,7 +86,7 @@
       </HBox>
     </bottom>
     <center>
-      <AnchorPane fx:id="canvas" prefHeight="200.0" prefWidth="200.0" style="&#10;" onDragOver="#drag_over" onDragDropped="#drag_drop">
+      <AnchorPane fx:id="canvas" prefHeight="200.0" prefWidth="200.0" style="&#10;" onDragOver="#drag_over" onDragDropped="#drag_drop" onMouseReleased="#canvas_click">
         <children>
           <LineChart fx:id="LineChart" layoutX="242.0" layoutY="106.0" legendVisible="false" prefHeight="168.0" prefWidth="220.0">
             <xAxis>

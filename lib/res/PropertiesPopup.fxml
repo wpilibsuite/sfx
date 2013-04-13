@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml" prefHeight="278.0" prefWidth="355.0000999999975" style="-fx-background-color: linear-gradient(to top, #5568 85%, #6573 )">
+  <center>
+    <VBox prefHeight="-1.0" prefWidth="-1.0">
+      <children>
+        <HBox minHeight="32.0" prefHeight="-1.0" prefWidth="-1.0" />
+      </children>
+    </VBox>
+  </center>
+  <top>
+    <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="" BorderPane.margin="$x1">
+      <children>
+        <Button mnemonicParsing="false" text="-" />
+        <Label alignment="TOP_LEFT" text="Awesome Control 9000">
+          <HBox.margin>
+            <Insets fx:id="x1" />
+          </HBox.margin>
+        </Label>
+      </children>
+      <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+      </padding>
+    </HBox>
+  </top>
+</fx:root>

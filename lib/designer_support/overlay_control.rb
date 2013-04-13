@@ -3,6 +3,7 @@ module SD::DesignerSupport
   class Overlay < Java::javafx::scene::layout::GridPane
     include JRubyFX::Controller
     fxml_root "../res/DesignerOverlayControl.fxml"
+    attr_reader :child
 
     DIRECTIONS = {:moveRegion =>[0.0, 0.0, 1.0, 1.0],
       :nwResizeRegion =>[-1.0, -1.0, 1.0, 1.0],
@@ -18,6 +19,8 @@ module SD::DesignerSupport
       @child = child;
       @childContainer.setCenter(child);
       @drag_action = nil
+      @selected = false #SimpleBooleanProperty.new(false)
+      #@selected_ui.visibleProperty.bind(@selected)
     end
 
     def begin_drag_pos(sizeX, sizeY, posX, posY, e)
@@ -47,6 +50,15 @@ module SD::DesignerSupport
       else
         @drag_action = begin_drag_pos(*[DIRECTIONS[e.target.id.to_sym], e].flatten)
       end
+    end
+
+    def selected
+      @selected
+    end
+
+    def selected=(value)
+      @selected =  value
+      @selected_ui.opacity = value ? 1 : 0
     end
 
     on_mouse :dragDone do

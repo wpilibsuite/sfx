@@ -10,6 +10,7 @@ class SD::Designer
   def initialize
     # best to catch missing stuff now
     @toolbox= @TooboxTabs
+    @selected_items = []
     puts "Going to find addtab...."
     p @testBorderPane
     p @accord
@@ -77,7 +78,7 @@ class SD::Designer
 
     #DEMO
 
-    add_designable_control(button("Hey-yo!"))
+    add_designable_control(Java::dashfx.controls.BadSliderControl.new())
   end
 
   def find_toolbox_parts
@@ -112,5 +113,23 @@ class SD::Designer
       end)
 
     event.consume()
+  end
+
+  def canvas_click(e)
+    q = e.target
+    new_selections = e.control_down? ? @selected_items : []
+    begin
+      if q.is_a? SD::DesignerSupport::Overlay
+        if e.control_down? and new_selections.include? q
+          new_selections -= [q]
+        else
+          new_selections << q
+        end
+      end
+    end while (q = q.parent) && q != @canvas
+    (@selected_items + new_selections).each do |si|
+      si.selected = new_selections.include? si
+    end
+    @selected_items = new_selections
   end
 end

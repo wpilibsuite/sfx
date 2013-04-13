@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'jrubyfx'
+require 'SDLib.jar'
 
 module SD
   class App < JRubyFX::Application
