@@ -62,7 +62,7 @@
               <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/edit-undo.png" />
             </image>
           </ImageView>
-          <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+<!--          <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
             <children>
               <HBox alignment="CENTER" maxHeight="28.0" minWidth="200.0" prefHeight="28.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(limegreen, #55ff55);&#10;-fx-border-color: green;&#10;-fx-border-width: 1 1 0 1;&#10;-fx-border-radius:10 10 0 0;&#10;-fx-background-radius:10 10 0 0;">
                 <children>
@@ -76,7 +76,7 @@
                 </HBox.margin>
               </HBox>
             </children>
-          </HBox>
+          </HBox>-->
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-properties.png" />
@@ -87,20 +87,6 @@
     </bottom>
     <center>
       <AnchorPane fx:id="canvas" prefHeight="200.0" prefWidth="200.0" style="&#10;" onDragOver="#drag_over" onDragDropped="#drag_drop" onMouseReleased="#canvas_click">
-        <children>
-          <LineChart fx:id="LineChart" layoutX="242.0" layoutY="106.0" legendVisible="false" prefHeight="168.0" prefWidth="220.0">
-            <xAxis>
-              <CategoryAxis side="BOTTOM">
-<!--                <categories>
-                  <FXCollections fx:factory="observableArrayList" />
-                </categories>-->
-              </CategoryAxis>
-            </xAxis>
-            <yAxis>
-              <NumberAxis side="LEFT" />
-            </yAxis>
-          </LineChart>
-        </children>
       </AnchorPane>
     </center>
     <left>

@@ -78,16 +78,23 @@ class SD::Designer
     end
 
     #DEMO
-
-    add_designable_control(Java::dashfx.controls.BadSliderControl.new())
+    bsc = Java::dashfx.controls.BadSliderControl.new()
+    # TODO: clean up
+    @data_core = Java::dashfx.data.DataCore.new()
+    #puts @data_core.methods.sort
+    @data_core.addControl(bsc)
+    @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
+    add_designable_control(bsc)
   end
 
   def find_toolbox_parts
     {:standard => %W[Graph PieChart Speedometer Label Solenoid DigitalSwitch Image Camera Motor Gyro]}
   end
 
-  def add_designable_control(control, location=[nil, nil])
-    designer = SD::DesignerSupport::Overlay.new(control)
+  def add_designable_control(control, x=0, y=0)
+    designer = SD::DesignerSupport::Overlay.new(control, self)
+    designer.layout_x = x
+    designer.layout_y = y
     @canvas.children.add designer
   end
 
@@ -102,7 +109,10 @@ class SD::Designer
     db = event.dragboard
     event.setDropCompleted(
       if db.hasString
-        add_designable_control(button db.string)
+        add_designable_control button(db.string,
+          max_width: java.lang.Double::MAX_VALUE,
+          max_height: java.lang.Double::MAX_VALUE), event.scene_x, event.scene_y
+        @toolbox.selection_model.select_first
         with(@toolbox) do |tbx|
           timeline do
             animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
@@ -116,6 +126,18 @@ class SD::Designer
     event.consume()
   end
 
+  def multiple_selected?
+    @selected_items.length > 1
+  end
+
+  def multi_drag(original, e)
+    @just_dragged = true
+    (@selected_items - [original]).map do |itm|
+      itm.dragUpdate(e, false)
+      itm
+    end
+  end
+
   def hide_properties
     if @properties
       @properties.hide
@@ -126,13 +148,19 @@ class SD::Designer
     if @selected_items.length != 1
       hide_properties
     else
-      @properties = SD::DesignerSupport::PropertiesPopup.new
+      unless @properties
+        @properties = SD::DesignerSupport::PropertiesPopup.new
+      end
       @properties.properties = @selected_items[0].properties
       @properties.show(stage)
     end
   end
 
   def canvas_click(e)
+    if @just_dragged
+      @just_dragged  = false
+      return
+    end
     q = e.target
     new_selections = e.control_down? ? @selected_items : []
     begin

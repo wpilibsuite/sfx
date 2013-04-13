@@ -3,7 +3,7 @@ module SD::DesignerSupport
   class Overlay < Java::javafx::scene::layout::GridPane
     include JRubyFX::Controller
     fxml_root "../res/DesignerOverlayControl.fxml"
-    attr_reader :child
+    attr_reader :child, :parent_designer
 
     DIRECTIONS = {:moveRegion =>[0.0, 0.0, 1.0, 1.0],
       :nwResizeRegion =>[-1.0, -1.0, 1.0, 1.0],
@@ -15,11 +15,15 @@ module SD::DesignerSupport
       :swResizeRegion =>[-1.0, 1.0, 1.0, 0.0],
       :wResizeRegion =>[-1.0, 0.0, 1.0, 0.0]}
 
-    def initialize(child)
+    def initialize(child, parent)
       @child = child;
       @childContainer.setCenter(child);
+      @parent_designer = parent
       @drag_action = nil
-      @selected = false #SimpleBooleanProperty.new(false)
+      @selected = false
+      #
+      @selected_ui.opacity = 0
+      ##SimpleBooleanProperty.new(false)
       #@selected_ui.visibleProperty.bind(@selected)
     end
 
@@ -44,11 +48,17 @@ module SD::DesignerSupport
 			@childContainer.setPrefSize(hist[:last_size_x] + diff_x * hist[:sizeX], hist[:last_size_y] + diff_y * hist[:sizeY])
     end
 
-    def dragUpdate(e)
+    def dragUpdate(e, original = true)
       if @drag_action
-        update_drag_action(@drag_action, e)
+        update_drag_action(@drag_action[0], e)
+        @drag_action[1..-1].each do |elts|
+          elts.dragUpdate(e)
+        end
       else
-        @drag_action = begin_drag_pos(*[DIRECTIONS[e.target.id.to_sym], e].flatten)
+        @drag_action = [begin_drag_pos(*[DIRECTIONS[e.target.id.to_sym], e].flatten)]
+        if original && (e.control_down? || @parent_designer.multiple_selected?)
+          @drag_action = @drag_action + @parent_designer.multi_drag(self, e)
+        end
       end
     end
 
@@ -80,13 +90,18 @@ module SD::DesignerSupport
     end
 
     on_mouse :dragDone do
+      if @drag_action
+        @drag_action[1..-1].each do |elts|
+          elts.dragDone
+        end
+      end
       @drag_action = nil
     end
-#
+    #
     def onClick(e)
       # ctx menu goes here
     end
-#    add_method_signature :onClick, [Void::TYPE, MouseEvent]
+    #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
   end
 end
 

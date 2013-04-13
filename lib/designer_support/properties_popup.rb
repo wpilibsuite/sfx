@@ -22,6 +22,7 @@ module SD::DesignerSupport
 
 
     def properties=(props)
+      @prop_list.children.clear
       props.each do |prop|
         with(@prop_list) do
           hbox do
