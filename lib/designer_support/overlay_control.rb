@@ -52,6 +52,24 @@ module SD::DesignerSupport
       end
     end
 
+    def properties
+      # ahh! must get stuff....
+      props = []
+      jc = child.java_class
+      [jc, *jc.declared_instance_methods].each do |src|
+        src.annotations.each do |annote|
+          if annote.is_a? Java::dashfx.controls.Designable and src != jc
+            props << [src, annote] # TODO: real class
+          elsif annote.is_a? Java::dashfx.controls.DesignableProperty
+            annote.value.length.times do |i|
+              props << [src, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
+            end
+          end
+        end
+      end
+      return props
+    end
+
     def selected
       @selected
     end
@@ -71,5 +89,7 @@ module SD::DesignerSupport
 #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
   end
 end
+
+RDesignableProperty = Struct.new("RDesignableProperty", :value, :description)
 
 SD::DesignerSupport::Overlay.become_java!

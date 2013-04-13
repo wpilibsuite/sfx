@@ -1,6 +1,7 @@
 require 'jrubyfx'
 require 'designer_support/toolbox_item'
 require 'designer_support/overlay_control'
+require 'designer_support/properties_popup'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -115,6 +116,22 @@ class SD::Designer
     event.consume()
   end
 
+  def hide_properties
+    if @properties
+      @properties.hide
+    end
+  end
+
+  def update_properties
+    if @selected_items.length != 1
+      hide_properties
+    else
+      @properties = SD::DesignerSupport::PropertiesPopup.new
+      @properties.properties = @selected_items[0].properties
+      @properties.show(stage)
+    end
+  end
+
   def canvas_click(e)
     q = e.target
     new_selections = e.control_down? ? @selected_items : []
@@ -131,5 +148,6 @@ class SD::Designer
       si.selected = new_selections.include? si
     end
     @selected_items = new_selections
+    update_properties
   end
 end

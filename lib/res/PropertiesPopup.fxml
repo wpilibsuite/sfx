@@ -6,23 +6,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
-<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml" prefHeight="278.0" prefWidth="355.0000999999975" style="-fx-background-color: linear-gradient(to top, #5568 85%, #6573 )">
+<fx:root type="javafx.scene.layout.BorderPane" prefHeight="235.0" prefWidth="482.0000999999975" style="-fx-background-color: linear-gradient(to top, #889b 85%, #99a5 )" xmlns:fx="http://javafx.com/fxml">
   <center>
-    <VBox prefHeight="-1.0" prefWidth="-1.0">
-      <children>
-        <HBox minHeight="32.0" prefHeight="-1.0" prefWidth="-1.0" />
-      </children>
-    </VBox>
+    <VBox fx:id="prop_list" prefHeight="-1.0" prefWidth="-1.0" />
   </center>
   <top>
-    <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="" BorderPane.margin="$x1">
+    <HBox fx:id="titlebar" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" onMouseDragged="#move" onMousePressed="#begin_move" onMouseReleased="#finish_move" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="-fx-background-color: #00000001">
       <children>
-        <Button mnemonicParsing="false" text="-" />
+        <Button mnemonicParsing="false" onAction="#close" style="-fx-background-color: transparent;" text="-">
+          <font>
+            <Font name="System Bold" size="15.0" />
+          </font>
+        </Button>
         <Label alignment="TOP_LEFT" text="Awesome Control 9000">
-          <HBox.margin>
-            <Insets fx:id="x1" />
-          </HBox.margin>
+          <font>
+            <Font name="System Bold" size="13.0" />
+          </font>
         </Label>
       </children>
       <padding>
