@@ -69,10 +69,10 @@ module SD::DesignerSupport
       [jc, *jc.declared_instance_methods].each do |src|
         src.annotations.each do |annote|
           if annote.is_a? Java::dashfx.controls.Designable and src != jc
-            props << [src, annote] # TODO: real class
+            props << [src.invoke(child), annote] # TODO: real class
           elsif annote.is_a? Java::dashfx.controls.DesignableProperty
             annote.value.length.times do |i|
-              props << [src, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
+              props << [child.method(annote.value[i] + "Property").call, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
             end
           end
         end

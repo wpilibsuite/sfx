@@ -25,9 +25,10 @@ module SD::DesignerSupport
       @prop_list.children.clear
       props.each do |prop|
         with(@prop_list) do
-          hbox do
+          hbox do |hb|
             label(prop[1].value, tooltip: tooltip!(prop[1].description))
-            text_field
+            p prop
+            hb.add Java::dashfx.designers.Designers.getDesignerFor(prop[0]).getUiBits
           end
         end
       end
