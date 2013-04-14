@@ -150,12 +150,10 @@ class SD::Designer
     end
     hide_controls
     @data_core.resume
-    @stop_button.visible = true
   end
 
   def design
     @mode = :design
-    @stop_button.visible = false
     @data_core.pause
     @canvas.children.each do |c|
       c.running = false
@@ -164,10 +162,17 @@ class SD::Designer
   end
 
   def hide_controls
+    animate_controls(true)
+  end
+
+  def animate_controls(hide)
+    mul = hide ? -1 : 1
+    nul = hide ? 0 : 1
     # TODO: this should be in the fxml file
     lg = @left_gutter
     bg = @bottom_gutter
     tb = @toolbox
+    sb = @stop_button
     stg = stage
     oy = stg.y
     # The properties are read only because of OS issues, so we just create a proxy
@@ -178,38 +183,19 @@ class SD::Designer
     stg_xap = SimpleDoubleProperty.new(stg.x)
     stg_xap.add_change_listener {|ov, old, new| stg.x = new }
     timeline do
-      animate lg.prefWidthProperty, 0.ms => 500.ms, 32 => 0
-      animate bg.translateYProperty, 0.ms => 500.ms, 0 => 32
-      animate tb.translateXProperty, 0.ms => 500.ms, 36.0 => 0
-      animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width - 32)
-      animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height - 32)
-      animate stg_xap, 0.ms => 500.ms, stg.x => (stg.x + 32)
+      animate lg.prefWidthProperty, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
+      animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
+      animate tb.translateXProperty, 0.ms => 500.ms, (36 - 36 * nul) => (36 * nul)
+      animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
+      animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width + 32 * mul)
+      animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32 * mul)
+      animate stg_xap, 0.ms => 500.ms, stg.x => (stg.x - 32 * mul)
     end.play
   end
 
 
   def show_controls
-    # TODO: this should be in the fxml file
-    lg = @left_gutter
-    bg = @bottom_gutter
-    tb = @toolbox
-    stg = stage
-    oy = stg.y
-    # The properties are read only because of OS issues, so we just create a proxy
-    stg_wap = SimpleDoubleProperty.new(stg.width)
-    stg_wap.add_change_listener {|ov, old, new| stg.setWidth(new) }
-    stg_hap = SimpleDoubleProperty.new(stg.height)
-    stg_hap.add_change_listener {|ov, old, new| stg.setHeight(new); stg.y = oy }
-    stg_xap = SimpleDoubleProperty.new(stg.x)
-    stg_xap.add_change_listener {|ov, old, new| stg.x = new }
-    timeline do
-      animate lg.prefWidthProperty, 0.ms => 500.ms, 0 => 32
-      animate bg.translateYProperty, 0.ms => 500.ms, 32 => 0
-      animate tb.translateXProperty, 0.ms => 500.ms, 0.0 => 36.0
-      animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width + 32)
-      animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32)
-      animate stg_xap, 0.ms => 500.ms, stg.x => (stg.x - 32)
-    end.play
+    animate_controls(false)
   end
 
   def message=(msg)

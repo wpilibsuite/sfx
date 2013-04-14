@@ -3,3 +3,6 @@
 \.chg\..*$
 \.rej$
 \.conflict\~$
+syntax: glob
+*.bak
+nbproject/private/*
