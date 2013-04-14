@@ -76,6 +76,11 @@ class SD::Designer
       data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i)}
 
     end
+    @mode = :design
+    stage.set_on_shown do
+      puts "setting message"
+      self.message = "Ready"
+    end
 
     #DEMO
     bsc = Java::dashfx.controls.BadSliderControl.new()
@@ -85,7 +90,6 @@ class SD::Designer
     @data_core.addControl(bsc)
     @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
     add_designable_control(bsc)
-    @data_core.resume
   end
 
   def find_toolbox_parts
@@ -136,6 +140,84 @@ class SD::Designer
     (@selected_items - [original]).map do |itm|
       itm.dragUpdate(e, false)
       itm
+    end
+  end
+
+  def run
+    @mode = :run
+    @canvas.children.each do |c|
+      c.running = true
+    end
+    hide_controls
+    @data_core.resume
+    @stop_button.visible = true
+  end
+
+  def design
+    @mode = :design
+    @stop_button.visible = false
+    @data_core.pause
+    @canvas.children.each do |c|
+      c.running = false
+    end
+    show_controls
+  end
+
+  def hide_controls
+    # TODO: this should be in the fxml file
+    lg = @left_gutter
+    bg = @bottom_gutter
+    tb = @toolbox
+    stg = stage
+    oy = stg.y
+    # The properties are read only because of OS issues, so we just create a proxy
+    stg_wap = SimpleDoubleProperty.new(stg.width)
+    stg_wap.add_change_listener {|ov, old, new| stg.setWidth(new) }
+    stg_hap = SimpleDoubleProperty.new(stg.height)
+    stg_hap.add_change_listener {|ov, old, new| stg.setHeight(new); stg.y = oy }
+    stg_xap = SimpleDoubleProperty.new(stg.x)
+    stg_xap.add_change_listener {|ov, old, new| stg.x = new }
+    timeline do
+      animate lg.prefWidthProperty, 0.ms => 500.ms, 32 => 0
+      animate bg.translateYProperty, 0.ms => 500.ms, 0 => 32
+      animate tb.translateXProperty, 0.ms => 500.ms, 36.0 => 0
+      animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width - 32)
+      animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height - 32)
+      animate stg_xap, 0.ms => 500.ms, stg.x => (stg.x + 32)
+    end.play
+  end
+
+
+  def show_controls
+    # TODO: this should be in the fxml file
+    lg = @left_gutter
+    bg = @bottom_gutter
+    tb = @toolbox
+    stg = stage
+    oy = stg.y
+    # The properties are read only because of OS issues, so we just create a proxy
+    stg_wap = SimpleDoubleProperty.new(stg.width)
+    stg_wap.add_change_listener {|ov, old, new| stg.setWidth(new) }
+    stg_hap = SimpleDoubleProperty.new(stg.height)
+    stg_hap.add_change_listener {|ov, old, new| stg.setHeight(new); stg.y = oy }
+    stg_xap = SimpleDoubleProperty.new(stg.x)
+    stg_xap.add_change_listener {|ov, old, new| stg.x = new }
+    timeline do
+      animate lg.prefWidthProperty, 0.ms => 500.ms, 0 => 32
+      animate bg.translateYProperty, 0.ms => 500.ms, 32 => 0
+      animate tb.translateXProperty, 0.ms => 500.ms, 0.0 => 36.0
+      animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width + 32)
+      animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32)
+      animate stg_xap, 0.ms => 500.ms, stg.x => (stg.x - 32)
+    end.play
+  end
+
+  def message=(msg)
+    @alert_msg.text = msg
+    with(@msg_carrier) do |mc|
+      timeline do
+        animate mc.translateYProperty, 0.sec => [200.ms, 5.sec, 5200.ms], 30.0 => [0.0, 0.0, 30.0]
+      end.play
     end
   end
 

@@ -23,8 +23,8 @@ module SD::DesignerSupport
       @selected = false
       #
       @selected_ui.opacity = 0
-      ##SimpleBooleanProperty.new(false)
-      #@selected_ui.visibleProperty.bind(@selected)
+      @running = SimpleBooleanProperty.new(false)
+      @selected_ui.visibleProperty.bind(@running.not)
     end
 
     def begin_drag_pos(sizeX, sizeY, posX, posY, e)
@@ -87,6 +87,14 @@ module SD::DesignerSupport
     def selected=(value)
       @selected =  value
       @selected_ui.opacity = value ? 1 : 0
+    end
+
+    def running
+      @running.value
+    end
+
+    def running=(run)
+      @running.value = run
     end
 
     on_mouse :dragDone do

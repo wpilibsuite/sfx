@@ -13,19 +13,12 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
-<GridPane id="GridPane" xmlns:fx="http://javafx.com/fxml">
-  <columnConstraints>
-    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="0.0" minWidth="0.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-  </rowConstraints>
-  <BorderPane id="BorderPane" prefHeight="400.0" prefWidth="600.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+<GridPane fx:id="GridPane" xmlns:fx="http://javafx.com/fxml">
+  <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
-      <HBox maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)">
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)" translateY="0.0">
         <children>
-          <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #757575 0%, #cccccc 15%, #eeeeee 100%)" />
+          <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #757575 0%, #cccccc 15%, #fff 100%)" />
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-new.png" />
@@ -64,19 +57,28 @@
           </ImageView>
           <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
             <children>
-              <HBox alignment="CENTER" maxHeight="28.0" minWidth="200.0" prefHeight="28.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(limegreen, #55ff55);&#10;-fx-border-color: green;&#10;-fx-border-width: 1 1 0 1;&#10;-fx-border-radius:10 10 0 0;&#10;-fx-background-radius:10 10 0 0;">
+              <HBox fx:id="msg_carrier" alignment="CENTER" maxHeight="28.0" minWidth="200.0" prefHeight="28.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(limegreen, #55ff55);&#10;-fx-border-color: green;&#10;-fx-border-width: 1 1 0 1;&#10;-fx-border-radius:10 10 0 0;&#10;-fx-background-radius:10 10 0 0;" translateY="30.0">
                 <children>
-                  <Label alignment="CENTER" text="Layout saved to ~/layout.smdb" />
+                  <Label fx:id="alert_msg" alignment="CENTER" text="Layout saved to ~/layout.smdb" />
                 </children>
                 <padding>
                   <Insets left="10.0" right="10.0" />
                 </padding>
-                <HBox.margin>
-                  <Insets fx:id="x1" />
-                </HBox.margin>
               </HBox>
             </children>
           </HBox>
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#run" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Run" HBox.hgrow="NEVER">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@media-playback-start.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <HBox.margin>
+              <Insets fx:id="x1" />
+            </HBox.margin>
+          </Button>
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-properties.png" />
@@ -86,62 +88,36 @@
       </HBox>
     </bottom>
     <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="&#10;">
+      <AnchorPane fx:id="canvas" onDragDropped="#drag_drop" onDragOver="#drag_over" onMouseReleased="#canvas_click" prefHeight="200.0" prefWidth="200.0" style="&#10;">
         <children>
-          <LineChart id="LineChart" layoutX="242.0" layoutY="106.0" legendVisible="false" prefHeight="168.0" prefWidth="220.0">
-            <xAxis>
-              <CategoryAxis side="BOTTOM">
-                <categories>
-                  <FXCollections fx:factory="observableArrayList" />
-                </categories>
-              </CategoryAxis>
-            </xAxis>
-            <yAxis>
-              <NumberAxis side="LEFT" />
-            </yAxis>
-          </LineChart>
+          <Button fx:id="stop_button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#design" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Stop" visible="true" AnchorPane.bottomAnchor="338.0" AnchorPane.rightAnchor="437.0">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@media-playback-stop.png" />
+                </image>
+              </ImageView>
+            </graphic>
+          </Button>
         </children>
       </AnchorPane>
     </center>
     <left>
-      <VBox fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="-fx-background-color: linear-gradient(to left, #757575 0%, #cccccc 15%, #eeeeee 100%);">
+      <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="-fx-background-color: linear-gradient(to left, #757575 0%, #ccc 15%, #fff 100%);" translateX="0.0">
         <children>
-          <StackPane prefHeight="-1.0" prefWidth="-1.0">
-            <children>
-              <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-                <image>
-                  <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/list-add.png" />
-                </image>
-              </ImageView>
-              <Button mnemonicParsing="false" opacity="0.0" prefHeight="32.0" prefWidth="32.0" text="" visible="true">
-                <contextMenu>
-                  <ContextMenu>
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Clear" />
-                      <MenuItem mnemonicParsing="false" text="Selective Add" />
-                      <SeparatorMenuItem mnemonicParsing="false" />
-                      <MenuItem mnemonicParsing="false" text="Analog meter" />
-                      <MenuItem mnemonicParsing="false" text="Gyro" />
-                      <MenuItem mnemonicParsing="false" text="Graph" />
-                      <MenuItem mnemonicParsing="false" text="Toggle switch" />
-                    </items>
-                  </ContextMenu>
-                </contextMenu>
-              </Button>
-            </children>
-          </StackPane>
+          <StackPane prefHeight="-1.0" prefWidth="-1.0" />
         </children>
       </VBox>
     </left>
   </BorderPane>
-  <TabPane id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" style="" tabClosingPolicy="UNAVAILABLE" translateX="36.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+  <TabPane fx:id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" style="" tabClosingPolicy="UNAVAILABLE" translateX="36.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
     <stylesheets>
       <URL value="@SFX.css" />
     </stylesheets>
     <tabs>
-      <Tab id="AddTab" text="">
+      <Tab fx:id="AddTab" text="">
         <content>
-          <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="NoContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
         <graphic>
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
@@ -182,7 +158,7 @@
       </Tab>
       <Tab text="AutoAdd">
         <content>
-          <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="AAContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
         </content>
       </Tab>
     </tabs>
@@ -190,4 +166,11 @@
       <Insets fx:id="x1" />
     </GridPane.margin>
   </TabPane>
+  <columnConstraints>
+    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="0.0" minWidth="0.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+  </rowConstraints>
 </GridPane>
