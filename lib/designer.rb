@@ -85,6 +85,7 @@ class SD::Designer
     @data_core.addControl(bsc)
     @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
     add_designable_control(bsc)
+    @data_core.resume
   end
 
   def find_toolbox_parts
