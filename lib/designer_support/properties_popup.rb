@@ -26,8 +26,7 @@ module SD::DesignerSupport
       props.each do |prop|
         with(@prop_list) do
           hbox do |hb|
-            label(prop[1].value, tooltip: tooltip!(prop[1].description))
-            p prop
+            label(prop[1].value + ": ", tooltip: tooltip!(prop[1].description))
             hb.add Java::dashfx.designers.Designers.getDesignerFor(prop[0]).getUiBits
           end
         end

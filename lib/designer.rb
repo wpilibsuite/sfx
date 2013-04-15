@@ -2,6 +2,7 @@ require 'jrubyfx'
 require 'designer_support/toolbox_item'
 require 'designer_support/overlay_control'
 require 'designer_support/properties_popup'
+require 'playback'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -90,6 +91,9 @@ class SD::Designer
     @data_core.addControl(bsc)
     @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
     add_designable_control(bsc)
+
+    #PLUGINS
+    @playback = SD::Playback.new(@data_core, stage)
   end
 
   def find_toolbox_parts
@@ -246,5 +250,10 @@ class SD::Designer
     end
     @selected_items = new_selections
     update_properties
+  end
+
+  def do_playback_mode
+    puts "Playback!"
+    @playback.launch
   end
 end
