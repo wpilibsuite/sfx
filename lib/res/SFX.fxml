@@ -13,7 +13,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
-<GridPane fx:id="GridPane" xmlns:fx="http://javafx.com/fxml">
+<GridPane fx:id="GridPane"  onKeyReleased="#canvas_keyup"  xmlns:fx="http://javafx.com/fxml">
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
       <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)" translateY="0.0">
@@ -154,14 +154,6 @@
       <Insets fx:id="x1" />
     </GridPane.margin>
   </TabPane>
-  <columnConstraints>
-    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="0.0" minWidth="0.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-    <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-  </rowConstraints>
   <AnchorPane mouseTransparent="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
     <children>
       <Button fx:id="stop_button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#design" onContextMenuRequested="#do_playback_mode" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Stop" translateX="-32.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -175,4 +167,12 @@
       </Button>
     </children>
   </AnchorPane>
+  <columnConstraints>
+    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="0.0" minWidth="0.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+  </rowConstraints>
 </GridPane>

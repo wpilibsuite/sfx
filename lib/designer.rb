@@ -255,4 +255,13 @@ class SD::Designer
     puts "Playback!"
     @playback.launch
   end
+
+  def canvas_keyup(e)
+    if e.code == KeyCode::DELETE
+      @selected_items.each do |si|
+        @canvas.children.remove(si)
+      end
+      @selected_items = []
+    end
+  end
 end
