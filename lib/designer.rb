@@ -85,12 +85,15 @@ class SD::Designer
 
     #DEMO
     bsc = Java::dashfx.controls.BadSliderControl.new()
+    grph = Java::dashfx.controls.GraphA.new()
     # TODO: clean up
     @data_core = Java::dashfx.data.DataCore.new()
     #puts @data_core.methods.sort
     @data_core.addControl(bsc)
+    @data_core.addControl(grph)
     @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
     add_designable_control(bsc)
+    add_designable_control(grph)
 
     #PLUGINS
     @playback = SD::Playback.new(@data_core, stage)
