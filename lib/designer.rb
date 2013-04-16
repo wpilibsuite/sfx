@@ -13,6 +13,7 @@ class SD::Designer
     # best to catch missing stuff now
     @toolbox= @TooboxTabs
     @selected_items = []
+    @dnd_ids = []
     puts "Going to find addtab...."
     p @testBorderPane
     p @accord
@@ -67,14 +68,10 @@ class SD::Designer
         q = q.parent
       end
     end
-    #  onDragOver="#drag_over" onDragDrop="#drag_drop
-    # TODO: HACK
-    #      @canvas.set_on_drag_over {|e| drag_over(e)}
-    #      @canvas.set_on_drag_drop {|e| drag_drop(e)}
 
     parts = find_toolbox_parts
     parts.each do |key, data|
-      data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i)}
+      data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
 
     end
     @mode = :design
@@ -84,23 +81,21 @@ class SD::Designer
     end
 
     #DEMO
-    bsc = Java::dashfx.controls.BadSliderControl.new()
-    grph = Java::dashfx.controls.GraphA.new()
     # TODO: clean up
     @data_core = Java::dashfx.data.DataCore.new()
     #puts @data_core.methods.sort
-    @data_core.addControl(bsc)
-    @data_core.addControl(grph)
     @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
-    add_designable_control(bsc)
-    add_designable_control(grph)
-
     #PLUGINS
     @playback = SD::Playback.new(@data_core, stage)
   end
 
+  def associate_dnd_id(val)
+    @dnd_ids << val unless @dnd_ids.include?(val)
+    @dnd_ids.index(val)
+  end
+
   def find_toolbox_parts
-    {:standard => %W[Graph PieChart Speedometer Label Solenoid DigitalSwitch Image Camera Motor Gyro]}
+    {:standard => %W[Graph PieChart Speedometer Label Solenoid DigitalSwitch Image Camera Motor Gyro] + [Java::dashfx.controls.BadSliderControl, Java::dashfx.controls.GraphA]}
   end
 
   def add_designable_control(control, x=0, y=0)
@@ -108,6 +103,8 @@ class SD::Designer
     designer.layout_x = x
     designer.layout_y = y
     @canvas.children.add designer
+    #TODO: hack! use designable panes
+    @data_core.addControl(control)
   end
 
   def drag_over(event)
@@ -121,9 +118,8 @@ class SD::Designer
     db = event.dragboard
     event.setDropCompleted(
       if db.hasString
-        add_designable_control button(db.string,
-          max_width: java.lang.Double::MAX_VALUE,
-          max_height: java.lang.Double::MAX_VALUE), event.scene_x, event.scene_y
+        obj = @dnd_ids[db.string.to_i].new
+        add_designable_control obj, event.scene_x - 32, event.scene_y
         @toolbox.selection_model.select_first
         with(@toolbox) do |tbx|
           timeline do

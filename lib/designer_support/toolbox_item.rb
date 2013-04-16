@@ -4,9 +4,15 @@ module SD::DesignerSupport
     include JRubyFX::Controller
     fxml_root "../res/DesignerToolboxItem.fxml"
 
-    def initialize(label="Unknown")
-      @label.text = label
-      @label.setTooltip tooltip(label)
+    def initialize(obj, dnd_get_id)
+      @label.text = obj.to_s
+      @obj = obj
+      @dnd_get_id = dnd_get_id
+      @label.setTooltip tooltip(obj.to_s)
+    end
+
+    def dnd_get_id
+      @dnd_get_id.call @obj
     end
 
     def label
@@ -21,7 +27,7 @@ module SD::DesignerSupport
         db = startDragAndDrop(TransferMode::COPY);
 
         content = ClipboardContent.new
-        content.putString(@label.text);
+        content.putString(dnd_get_id.to_s);
         db.setContent(content);
 
         event.consume();
