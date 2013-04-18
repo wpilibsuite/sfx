@@ -10,6 +10,10 @@ module SD::DesignerSupport
       @obj = obj
       @dnd_get_id = dnd_get_id
       @label.setTooltip tooltip(@annote.description)
+      im_is = Java::dashfx.registers.ControlRegister::getDesignableImage(obj.java_class)
+      if im_is
+        @img.image = Image.new(im_is)
+      end
     end
 
     def dnd_get_id
