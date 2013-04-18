@@ -95,7 +95,7 @@ class SD::Designer
   end
 
   def find_toolbox_parts
-    {:standard => %W[Graph PieChart Speedometer Label Solenoid DigitalSwitch Image Camera Motor Gyro] + [Java::dashfx.controls.BadSliderControl, Java::dashfx.controls.GraphA]}
+    {:standard => Java::dashfx.registers.ControlRegister.all.map(&:ruby_class)}
   end
 
   def add_designable_control(control, x=0, y=0)

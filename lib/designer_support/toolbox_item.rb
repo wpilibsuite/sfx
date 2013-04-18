@@ -5,10 +5,11 @@ module SD::DesignerSupport
     fxml_root "../res/DesignerToolboxItem.fxml"
 
     def initialize(obj, dnd_get_id)
-      @label.text = obj.to_s
+      @annote = obj.java_class.annotation(Java::dashfx.controls.Designable.java_class)
+      @label.text = @annote.value
       @obj = obj
       @dnd_get_id = dnd_get_id
-      @label.setTooltip tooltip(obj.to_s)
+      @label.setTooltip tooltip(@annote.description)
     end
 
     def dnd_get_id
