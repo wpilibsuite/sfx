@@ -32,6 +32,9 @@ class SD::Designer
     @canvas = @canvas
     @savedSelection = 1
     @selSem = false
+
+    @data_core = Java::dashfx.data.DataCore.new()
+    @canvas.registered(@data_core)
     (@toolbox.tabs.length - 1).times { |i|
       tb = @toolbox.tabs[i+1] # don't want 1st tab
       tb.set_on_selection_changed do |e|
@@ -81,10 +84,7 @@ class SD::Designer
     end
 
     #DEMO
-    # TODO: clean up
-    @data_core = Java::dashfx.data.DataCore.new()
-    #puts @data_core.methods.sort
-    @data_core.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
+    @canvas.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
     #PLUGINS
     @playback = SD::Playback.new(@data_core, stage)
   end
@@ -103,8 +103,6 @@ class SD::Designer
     designer.layout_x = x
     designer.layout_y = y
     @canvas.children.add designer
-    #TODO: hack! use designable panes
-    @data_core.addControl(control)
   end
 
   def drag_over(event)
@@ -138,12 +136,9 @@ class SD::Designer
     @selected_items.length > 1
   end
 
-  def multi_drag(original, e)
+  def multi_drag(original)
     @just_dragged = true
-    (@selected_items - [original]).map do |itm|
-      itm.dragUpdate(e, false)
-      itm
-    end
+    (@selected_items - [original])
   end
 
   def run
@@ -152,12 +147,12 @@ class SD::Designer
       c.running = true
     end
     hide_controls
-    @data_core.resume
+    @canvas.resume
   end
 
   def design
     @mode = :design
-    @data_core.pause
+    @canvas.pause
     @canvas.children.each do |c|
       c.running = false
     end
