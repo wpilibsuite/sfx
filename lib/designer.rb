@@ -98,11 +98,13 @@ class SD::Designer
     {:standard => Java::dashfx.registers.ControlRegister.all.map(&:ruby_class)}
   end
 
-  def add_designable_control(control, x=0, y=0)
+  def add_designable_control(control, x=0, y=0, parent=@canvas)
     designer = SD::DesignerSupport::Overlay.new(control, self)
-    designer.layout_x = x
-    designer.layout_y = y
-    @canvas.children.add designer
+    if control.is_a? Java::dashfx.data.DesignablePane
+      designer.set_on_drag_dropped &method(:drag_drop)
+      designer.set_on_drag_over &method(:drag_over)
+    end
+    parent.add_child_at designer,x,y
   end
 
   def drag_over(event)
@@ -117,7 +119,8 @@ class SD::Designer
     event.setDropCompleted(
       if db.hasString
         obj = @dnd_ids[db.string.to_i].new
-        add_designable_control obj, event.scene_x - 32, event.scene_y
+        pare = event.source == @canvas ? event.source : event.source.child
+        add_designable_control obj, event.scene_x - 32, event.scene_y, pare
         @toolbox.selection_model.select_first
         with(@toolbox) do |tbx|
           timeline do
