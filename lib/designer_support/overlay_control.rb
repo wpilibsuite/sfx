@@ -3,6 +3,7 @@ module SD::DesignerSupport
   class Overlay < Java::javafx::scene::layout::GridPane
     include JRubyFX::Controller
     include Java::dashfx::data::Registerable
+    java_import 'dashfx.controls.ResizeDirections'
     fxml_root "../res/DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer
 
@@ -15,6 +16,14 @@ module SD::DesignerSupport
       :sResizeRegion =>[0.0, 1.0, 0.0, 0.0],
       :swResizeRegion =>[-1.0, 1.0, 1.0, 0.0],
       :wResizeRegion =>[-1.0, 0.0, 1.0, 0.0]}
+
+    RESIZABILITY_MAPPER = {
+      ResizeDirections::Move => [:moveRegion],
+      ResizeDirections::UpDown => [:nResizeRegion, :sResizeRegion, :nHandle, :sHandle],
+      ResizeDirections::LeftRight => [:eResizeRegion, :eResizeRegion, :eHandle, :wHandle],
+      ResizeDirections::SouthEastNorthWest => [:nwResizeRegion, :seResizeRegion],
+      ResizeDirections::NorthEastSouthWest => [:neResizeRegion, :swResizeRegion],
+    }
 
     def initialize(child, parent)
       @child = child;
@@ -29,13 +38,25 @@ module SD::DesignerSupport
     end
 
     def registered(prov)
+      sops = get_parent.getSupportedOps
+
+      @supported_ops = RESIZABILITY_MAPPER.map do |key, cor|
+        if sops.contains(key)
+          cor
+        else
+
+          cor.each {|c| self.instance_variable_get("@#{c}").opacity = 0}
+          []
+        end
+      end.flatten
+      p "supported ops are", @supported_ops
       @child.registered(prov)
     end
 
     def dragUpdate(e, original = true)
       if @drag_action
         parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
-      else
+      elsif @supported_ops.include? e.target.id.to_sym
         nodes = [self]
         if original && (e.control_down? || @parent_designer.multiple_selected?)
           nodes += @parent_designer.multi_drag(self)
