@@ -111,6 +111,14 @@ module SD::DesignerSupport
     def onClick(e)
       # ctx menu goes here
     end
+
+    def checkDblClick(e)
+      if e.click_count > 1
+        # enable nested mode!
+        @running.set true
+        # TODO: disable!
+      end
+    end
     #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
   end
 end

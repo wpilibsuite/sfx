@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<fx:root type="javafx.scene.layout.GridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.GridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#checkDblClick" xmlns:fx="http://javafx.com/fxml">
   <children>
     <BorderPane fx:id="childContainer" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
       <GridPane.margin>
