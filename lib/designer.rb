@@ -120,7 +120,7 @@ class SD::Designer
       if db.hasString
         obj = @dnd_ids[db.string.to_i].new
         pare = event.source == @canvas ? event.source : event.source.child
-        add_designable_control obj, event.scene_x - 32, event.scene_y, pare
+        add_designable_control obj, event.x, event.y, pare
         @toolbox.selection_model.select_first
         with(@toolbox) do |tbx|
           timeline do
