@@ -6,6 +6,7 @@ module SD::DesignerSupport
     java_import 'dashfx.controls.ResizeDirections'
     fxml_root "../res/DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer
+    attr_accessor :editing_nested
 
     DIRECTIONS = {:moveRegion =>[0.0, 0.0, 1.0, 1.0],
       :nwResizeRegion =>[-1.0, -1.0, 1.0, 1.0],
@@ -35,6 +36,7 @@ module SD::DesignerSupport
       @selected_ui.opacity = 0
       @running = SimpleBooleanProperty.new(false)
       @selected_ui.visibleProperty.bind(@running.not)
+      @editing_nested = false
     end
 
     def registered(prov)
@@ -114,12 +116,17 @@ module SD::DesignerSupport
 
     def checkDblClick(e)
       if e.click_count > 1
+        #@parent_designer.nested_edit(self)
         # enable nested mode!
+        @editing_nested = true
         @running.set true
         # TODO: disable!
       end
     end
     #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
+    def inspect
+      "#<DesignerOverlay @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
+    end
   end
 end
 

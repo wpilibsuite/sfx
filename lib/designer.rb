@@ -215,7 +215,7 @@ class SD::Designer
   end
 
   def update_properties
-    if @selected_items.length != 1
+    if @selected_items.length < 1 or @selected_items.find_all { |i| !i.editing_nested }.length != 1
       hide_properties
     else
       unless @properties
