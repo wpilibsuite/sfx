@@ -7,6 +7,8 @@ module SD::DesignerSupport
     fxml_root "../res/DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer
     attr_accessor :editing_nested
+    #Observable
+    property_accessor :running, :disabled
 
     DIRECTIONS = {:moveRegion =>[0.0, 0.0, 1.0, 1.0],
       :nwResizeRegion =>[-1.0, -1.0, 1.0, 1.0],
@@ -35,7 +37,9 @@ module SD::DesignerSupport
       #
       @selected_ui.opacity = 0
       @running = SimpleBooleanProperty.new(false)
-      @selected_ui.visibleProperty.bind(@running.not)
+      @disabled = SimpleBooleanProperty.new(false)
+      # TODO: intercept events
+      @selected_ui.visibleProperty.bind(@running.not.and(@disabled.not))
       @editing_nested = false
     end
 
@@ -95,14 +99,6 @@ module SD::DesignerSupport
       @selected_ui.opacity = value ? 1 : 0
     end
 
-    def running
-      @running.value
-    end
-
-    def running=(run)
-      @running.value = run
-    end
-
     on_mouse :dragDone do
       if @drag_action
         parent.finish_dragging
@@ -116,10 +112,11 @@ module SD::DesignerSupport
 
     def checkDblClick(e)
       if e.click_count > 1
-        #@parent_designer.nested_edit(self)
+        @parent_designer.nested_edit(self)
         # enable nested mode!
+
         @editing_nested = true
-        @running.set true
+        self.running = true
         # TODO: disable!
       end
     end

@@ -260,6 +260,35 @@ class SD::Designer
         @canvas.children.remove(si)
       end
       @selected_items = []
+      hide_properties
     end
+  end
+
+  def nested_edit(octrl)
+    nested_traverse(octrl, lambda { |ctrl|
+        puts "ctrl is"
+        p ctrl
+        p ctrl.parent
+        ctrl.parent.edit_nested(ctrl) do
+          exit_nesting(octrl)
+        end}) do |x|
+      x.disabled = true
+    end
+  end
+
+  def exit_nesting(octrl)
+    nested_traverse(octrl, lambda { |ctrl| ctrl.parent.exit_nested }) do |x|
+      x.disabled = false
+    end
+  end
+
+  def nested_traverse(octrl, after, &eachblock)
+    return if octrl.child == @canvas
+    ctrl = octrl.child
+    begin
+      saved = (ctrl.children.to_a - [ctrl])
+      saved.each &eachblock
+      after.call(ctrl)
+    end while (ctrl = ctrl.parent) != @canvas
   end
 end
