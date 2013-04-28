@@ -39,7 +39,7 @@ module SD::DesignerSupport
       @running = SimpleBooleanProperty.new(false)
       @disabled = SimpleBooleanProperty.new(false)
       # TODO: intercept events
-      @selected_ui.visibleProperty.bind(@running.not.and(@disabled.not))
+      @selected_ui.visibleProperty.bind(@running.or(@disabled).not)
       @editing_nested = false
     end
 
@@ -55,11 +55,11 @@ module SD::DesignerSupport
           []
         end
       end.flatten
-      p "supported ops are", @supported_ops
       @child.registered(prov)
     end
 
     def dragUpdate(e, original = true)
+      return if @editing_nested # TODO: something is wrong here...
       if @drag_action
         parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
       elsif @supported_ops.include? e.target.id.to_sym
@@ -70,6 +70,7 @@ module SD::DesignerSupport
         @drag_action = [e.scene_x, e.scene_y]
         parent.begin_dragging(nodes, nodes.map{|n| n.instance_variable_get(:@childContainer)}, e.scene_x, e.scene_y, *DIRECTIONS[e.target.id.to_sym])
       end
+      e.consume
     end
 
     def properties
@@ -99,7 +100,7 @@ module SD::DesignerSupport
       @selected_ui.opacity = value ? 1 : 0
     end
 
-    on_mouse :dragDone do
+    on_mouse :dragDone do |e|
       if @drag_action
         parent.finish_dragging
       end
@@ -110,6 +111,12 @@ module SD::DesignerSupport
       # ctx menu goes here
     end
 
+    def exit_nesting
+      # TODO: we should not need to test running
+      @editing_nested = false
+      self.running = false
+    end
+
     def checkDblClick(e)
       if e.click_count > 1
         @parent_designer.nested_edit(self)
@@ -118,11 +125,12 @@ module SD::DesignerSupport
         @editing_nested = true
         self.running = true
         # TODO: disable!
+        e.consume
       end
     end
     #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
     def inspect
-      "#<DesignerOverlay @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
+      "#<DesignerOverlay:0x#{object_id.to_s(16)} @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
     end
   end
 end

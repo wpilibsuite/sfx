@@ -14,19 +14,11 @@ class SD::Designer
     @toolbox= @TooboxTabs
     @selected_items = []
     @dnd_ids = []
-    puts "Going to find addtab...."
-    p @testBorderPane
-    p @accord
-    p @x2
-    p @x3
-    p @spaine
-    p @Content
     @add_tab = @AddTab
     @toolbox_group = {:standard => @STDToolboxFlow}
-    p @add_tab, "is addtab", @toolbox
+    puts @add_tab.id, "is addtab"
     @add_tab.id = "AddTab" # TODO: hack. FIXME
-    puts @add_tab
-    puts @toolbox
+    puts @add_tab.id
     #p find!("#AddTab")
     @root = @GridPane
     @canvas = @canvas
@@ -40,7 +32,6 @@ class SD::Designer
       tb.set_on_selection_changed do |e|
         if tb.selected
           @savedSelection = i + 1
-          puts "Changed selection to #{@savedSelection}"
         end
       end }
     @toolbox.set_on_mouse_clicked do |e|
@@ -48,8 +39,6 @@ class SD::Designer
       while q
         # TODO: this should actually be much simpler comparison
         if q.to_s.include? "TabPaneSkin$TabHeaderSkin" and q.parent and not q.parent.to_s.include? "TabPaneSkin$TabHeaderSkin"
-          puts "checking ids and status"
-          p q.id, @add_tab.id, @toolbox.get_translate_x
           if q.id == "AddTab" or @toolbox.get_translate_x == 36.0
             v = [300, 36]
             if @toolbox.get_translate_x == 36.0
@@ -79,7 +68,6 @@ class SD::Designer
     end
     @mode = :design
     stage.set_on_shown do
-      puts "setting message"
       self.message = "Ready"
     end
 
@@ -240,12 +228,15 @@ class SD::Designer
         else
           new_selections << q
         end
+        break
       end
     end while (q = q.parent) && q != @canvas
     (@selected_items + new_selections).each do |si|
       si.selected = new_selections.include? si
     end
     @selected_items = new_selections
+    puts "new selections:"
+    p @selected_items
     update_properties
   end
 
@@ -266,9 +257,6 @@ class SD::Designer
 
   def nested_edit(octrl)
     nested_traverse(octrl, lambda { |ctrl|
-        puts "ctrl is"
-        p ctrl
-        p ctrl.parent
         ctrl.parent.edit_nested(ctrl) do
           exit_nesting(octrl)
         end}) do |x|
@@ -277,18 +265,32 @@ class SD::Designer
   end
 
   def exit_nesting(octrl)
+    octrl.disabled = false
+    octrl.exit_nesting
     nested_traverse(octrl, lambda { |ctrl| ctrl.parent.exit_nested }) do |x|
-      x.disabled = false
+      if x.is_a? SD::DesignerSupport::Overlay
+        x.disabled = false
+        x.exit_nesting
+      end
+    end
+  end
+
+  def print_tree(prefix, elt)
+    if elt.respond_to? :getChildren
+      elt.children.each do |c|
+        print_tree(prefix + " ", c)
+      end
     end
   end
 
   def nested_traverse(octrl, after, &eachblock)
-    return if octrl.child == @canvas
-    ctrl = octrl.child
+    return if octrl == @canvas
+    ctrl = octrl
     begin
-      saved = (ctrl.children.to_a - [ctrl])
+      saved = (ctrl.parent.children.to_a.find_all{|i| i != ctrl})
       saved.each &eachblock
       after.call(ctrl)
-    end while (ctrl = ctrl.parent) != @canvas
+      ctrl = ctrl.parent
+    end while ctrl != @canvas
   end
 end
