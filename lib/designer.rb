@@ -2,6 +2,8 @@ require 'jrubyfx'
 require 'designer_support/toolbox_item'
 require 'designer_support/overlay_control'
 require 'designer_support/properties_popup'
+require 'designer_support/aa_tree_cell'
+require 'designer_support/toolbox_popup'
 require 'playback'
 
 class SD::Designer
@@ -27,6 +29,12 @@ class SD::Designer
 
     @data_core = Java::dashfx.data.DataCore.new()
     @canvas.registered(@data_core)
+    @data_core.known_names.add_listener do |change|
+      change.next # TODO: figure out what this magic line does
+      change.added_sub_list.each do |new_name|
+        add_known new_name
+      end
+    end
     (@toolbox.tabs.length - 1).times { |i|
       tb = @toolbox.tabs[i+1] # don't want 1st tab
       tb.set_on_selection_changed do |e|
@@ -67,6 +75,22 @@ class SD::Designer
 
     end
     @mode = :design
+    @aa_tree = @AATreeview
+    @aa_tree.set_cell_factory do |q|
+      SD::DesignerSupport::AATreeCell.new do |item, e|
+        if e.click_count > 1
+          puts "now checking for #{item.value} after I got #{e}"
+          tbx_popup = SD::DesignerSupport::ToolboxPopup.new
+          find_toolbox_parts.each do |key, data|
+            data.each{|i| tbx_popup.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
+          end
+          tbx_popup.x = e.screen_x
+          tbx_popup.y = e.screen_y
+          tbx_popup.show stage
+        end
+      end
+    end
+    @aa_tree.root = tree_item("/")
     stage.set_on_shown do
       self.message = "Ready"
     end
@@ -93,6 +117,12 @@ class SD::Designer
       designer.set_on_drag_over &method(:drag_over)
     end
     parent.add_child_at designer,x,y
+    self.message = "Added new #{control.class.name}"
+  end
+
+  def add_known(item)
+    self.message = "Found remote data. Open AutoAdd tab"
+    @aa_tree.root.children.add tree_item(item) #TODO: nested
   end
 
   def drag_over(event)
@@ -121,6 +151,13 @@ class SD::Designer
       end)
 
     event.consume()
+  end
+
+  def aa_show_toolbox(e)
+    puts "Show toolbox!?!?!?"
+    puts e
+    p e
+
   end
 
   def multiple_selected?
@@ -191,7 +228,7 @@ class SD::Designer
     @alert_msg.text = msg
     with(@msg_carrier) do |mc|
       timeline do
-        animate mc.translateYProperty, 0.sec => [200.ms, 5.sec, 5200.ms], 30.0 => [0.0, 0.0, 30.0]
+        animate mc.translateYProperty, 0.sec => [200.ms, 5.sec, 5.2.sec], 30.0 => [0.0, 0.0, 30.0]
       end.play
     end
   end

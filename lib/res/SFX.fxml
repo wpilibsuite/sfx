@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import dashfx.controls.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
@@ -12,9 +13,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
-<?import dashfx.controls.*?>
+<?scenebuilder-classpath-element ../../../SDLib/dist/SDLib.jar?>
 
-<GridPane fx:id="GridPane"  onKeyReleased="#canvas_keyup"  xmlns:fx="http://javafx.com/fxml">
+<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" xmlns:fx="http://javafx.com/fxml">
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
       <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)" translateY="0.0">
@@ -147,7 +148,27 @@
       </Tab>
       <Tab text="AutoAdd">
         <content>
-          <AnchorPane fx:id="AAContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <BorderPane prefHeight="200.0" prefWidth="200.0">
+            <center>
+              <Accordion>
+                <expandedPane>
+                  <TitledPane fx:id="x4" animated="false" text="Recent">
+                    <content>
+                      <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#aa_show_toolbox" prefHeight="-1.0" prefWidth="-1.0" />
+                    </content>
+                  </TitledPane>
+                </expandedPane>
+                <panes>
+                  <fx:reference source="x4" />
+                  <TitledPane animated="false" text="All">
+                    <content>
+                      <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                    </content>
+                  </TitledPane>
+                </panes>
+              </Accordion>
+            </center>
+          </BorderPane>
         </content>
       </Tab>
     </tabs>
