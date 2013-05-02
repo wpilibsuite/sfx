@@ -23,14 +23,14 @@
           <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #757575 0%, #cccccc 15%, #fff 100%)" />
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
             <image>
-              <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-new.png" />
+              <Image url="@document-new.png" />
             </image>
           </ImageView>
           <StackPane prefHeight="-1.0" prefWidth="-1.0">
             <children>
               <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-open.png" />
+                  <Image url="@document-open.png" />
                 </image>
               </ImageView>
               <Button mnemonicParsing="false" opacity="0.0" prefHeight="32.0" prefWidth="32.0" text="" visible="true">
@@ -49,12 +49,12 @@
           </StackPane>
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-save.png" />
+              <Image url="@document-save.png" />
             </image>
           </ImageView>
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/edit-undo.png" />
+              <Image url="@edit-undo.png" />
             </image>
           </ImageView>
           <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
@@ -83,7 +83,7 @@
           </Button>
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
             <image>
-              <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/document-properties.png" />
+              <Image url="@document-properties.png" />
             </image>
           </ImageView>
         </children>
@@ -112,7 +112,7 @@
         <graphic>
           <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@../../../../code/JavaFXSceneBuilder1.1/app/list-add.png" />
+              <Image url="@list-add.png" />
             </image>
           </ImageView>
         </graphic>
