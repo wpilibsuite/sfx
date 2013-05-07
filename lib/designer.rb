@@ -86,6 +86,9 @@ class SD::Designer
           end
           tbx_popup.x = e.screen_x
           tbx_popup.y = e.screen_y
+          register_clickoff do
+            tbx_popup.hide
+          end
           tbx_popup.show stage
         end
       end
@@ -145,6 +148,7 @@ class SD::Designer
             animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
           end.play
         end
+        @clickoff_fnc.call if @clickoff_fnc
         true
       else
         false
@@ -152,12 +156,17 @@ class SD::Designer
 
     event.consume()
   end
-
-  def aa_show_toolbox(e)
-    puts "Show toolbox!?!?!?"
-    puts e
-    p e
-
+  
+  def register_clickoff(&fnc)
+    @clickoff_fnc = fnc
+    @on_mouse = Proc.new do |e|
+      e.consume
+      puts "consumed"
+      @GridPane.remove_event_filter(MouseEvent::MOUSE_PRESSED,@on_mouse)
+      fnc.call
+      @on_mouse = nil
+    end
+    @GridPane.add_event_filter(MouseEvent::MOUSE_PRESSED,@on_mouse)
   end
 
   def multiple_selected?
@@ -247,6 +256,11 @@ class SD::Designer
         @properties = SD::DesignerSupport::PropertiesPopup.new
       end
       @properties.properties = @selected_items[0].properties
+      bnds = @selected_items[0].localToScene(@selected_items[0].getBoundsInLocal)
+      scr_x = scene.x + stage.x
+      scr_y = scene.y + stage.y
+      @properties.y = bnds.min_y + scr_y
+      @properties.x = bnds.max_x + scr_x
       @properties.show(stage)
     end
   end

@@ -154,7 +154,7 @@
                 <expandedPane>
                   <TitledPane fx:id="x4" animated="false" text="Recent">
                     <content>
-                      <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#aa_show_toolbox" prefHeight="-1.0" prefWidth="-1.0" />
+                      <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" />
                     </content>
                   </TitledPane>
                 </expandedPane>
