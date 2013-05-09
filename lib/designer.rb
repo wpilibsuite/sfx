@@ -5,6 +5,7 @@ require 'designer_support/properties_popup'
 require 'designer_support/aa_tree_cell'
 require 'designer_support/toolbox_popup'
 require 'playback'
+require 'data_source_selector'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -89,19 +90,19 @@ class SD::Designer
           register_clickoff do
             tbx_popup.hide
           end
-          tbx_popup.show stage
+          tbx_popup.show @stage
         end
       end
     end
     @aa_tree.root = tree_item("/")
-    stage.set_on_shown do
+    @stage.set_on_shown do
       self.message = "Ready"
     end
 
     #DEMO
     @canvas.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
     #PLUGINS
-    @playback = SD::Playback.new(@data_core, stage)
+    @playback = SD::Playback.new(@data_core, @stage)
   end
 
   def associate_dnd_id(val)
@@ -208,7 +209,7 @@ class SD::Designer
     bg = @bottom_gutter
     tb = @toolbox
     sb = @stop_button
-    stg = stage
+    stg = @stage
     oy = stg.y
     # The properties are read only because of OS issues, so we just create a proxy
     stg_wap = SimpleDoubleProperty.new(stg.width)
@@ -257,11 +258,11 @@ class SD::Designer
       end
       @properties.properties = @selected_items[0].properties
       bnds = @selected_items[0].localToScene(@selected_items[0].getBoundsInLocal)
-      scr_x = scene.x + stage.x
-      scr_y = scene.y + stage.y
+      scr_x = @scene.x + @stage.x
+      scr_y = @scene.y + @stage.y
       @properties.y = bnds.min_y + scr_y
       @properties.x = bnds.max_x + scr_x
-      @properties.show(stage)
+      @properties.show(@stage)
     end
   end
 
@@ -343,5 +344,15 @@ class SD::Designer
       after.call(ctrl)
       ctrl = ctrl.parent
     end while ctrl != @canvas
+  end
+  
+  def show_data_sources
+    data_core = @data_core
+    stg = @stage
+    stage(init_style: :utility, init_modality: :app, title: "Data Source Selector") do
+      init_owner stg
+      center_on_screen
+      fxml SD::DataSourceSelector, :initialize => [data_core]
+    end.show_and_wait
   end
 end

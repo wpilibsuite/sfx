@@ -15,10 +15,10 @@
 module SD
 
   class Playback
-    include JRubyFX
+    include JRubyFX::DSL
     def initialize(data_core, parent_win)
       @core = data_core
-      @stage = build(Stage, title: "PlayBack>> Controller") do
+      @stage = stage(title: "PlayBack>> Controller") do
         init_owner parent_win
       end
       @core.add_data_filter Java::dashfx.data.endpoints.PlaybackFilter.new.tap{|x| @filter = x}
@@ -65,7 +65,7 @@ module SD
     end
 
     def kill
-      stage.close
+      @stage.close
     end
 
     def play

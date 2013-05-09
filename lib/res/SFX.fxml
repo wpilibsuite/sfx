@@ -81,7 +81,7 @@
               <Insets fx:id="x1" />
             </HBox.margin>
           </Button>
-          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
+          <ImageView fitHeight="32.0" fitWidth="32.0" onMouseClicked="#show_data_sources" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@document-properties.png" />
             </image>
