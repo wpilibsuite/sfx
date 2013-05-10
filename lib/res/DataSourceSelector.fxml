@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<SplitPane dividerPositions="0.5015105740181269" focusTraversable="true" prefHeight="396.0" prefWidth="664.0" xmlns:fx="http://javafx.com/fxml">
+<SplitPane dividerPositions="0.5755287009063444" focusTraversable="true" prefHeight="396.0" prefWidth="664.0" xmlns:fx="http://javafx.com/fxml">
   <items>
     <GridPane hgap="7.0" vgap="7.0">
       <children>
@@ -39,6 +39,11 @@
             <Tooltip text="You can't remove the root" />
           </tooltip>
         </Button>
+        <Button mnemonicParsing="false" onAction="#save_it" text="Save" GridPane.columnIndex="0" GridPane.columnSpan="2147483647" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="BOTTOM">
+          <GridPane.margin>
+            <Insets bottom="7.0" right="7.0" />
+          </GridPane.margin>
+        </Button>
       </children>
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
@@ -66,7 +71,7 @@
                 <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                 <TextField fx:id="name" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                 <Label text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                <Label fx:id="type_info" text="Test Data (built-in)&#10;Generates sin/cos waves" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label fx:id="type_info" text="Test Data (built-in)&#10;Generates sin/cos waves" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <tooltip>
                     <Tooltip text="smartdashfx.data.endpoints.TestDataSource" fx:id="type_classname" />
                   </tooltip>
@@ -78,8 +83,8 @@
                 <Label text="Options:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
               </children>
               <columnConstraints>
-                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="SOMETIMES" minWidth="60.0" prefWidth="65.0" />
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="-1.0" prefWidth="-1.0" />
               </columnConstraints>
               <padding>
                 <Insets right="10.0" top="10.0" />

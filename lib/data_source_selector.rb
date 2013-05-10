@@ -16,6 +16,8 @@ module SD
   class DataSourceSelector
     include JRubyFX::Controller
     fxml_root "res/DataSourceSelector.fxml"
+    java_import 'dashfx.data.DataInitDescriptor'
+    java_import 'dashfx.data.InitInfo'
 
     def initialize(core)
       @core = core
@@ -37,6 +39,7 @@ module SD
       # TODO: should we use bindings?  yes, except the combo box is special...
       combo_add :current, ep, :in, 0
       @name.text_property.bind_bidirectional ep.name_property
+      @old_np = ep.name_property
       @name.set_on_action &method(:update_combo_view)
       @host.text = ep.init_info.host
       annote = ep.object.java_class.annotation(Java::dashfx.controls.DesignableData.java_class)
@@ -47,6 +50,16 @@ module SD
         combo_add :new_type, [e.annotation(Java::dashfx.controls.DesignableData.java_class), e]
       end
       combo_flush
+    end
+    
+    def load_info_pane(did)
+      @name.text_property.unbind_bidirectional @old_np
+      @name.text_property.bind_bidirectional did.name_property
+      @old_np = did.name_property
+      @host.text = did.init_info.host
+      annote = did.object.java_class.annotation(Java::dashfx.controls.DesignableData.java_class)
+      @type_info.text = "#{annote.name}\n#{annote.description}"
+      @type_classname.text = did.object.java_class.inspect.sub(/^class /, '')
     end
     
     def update_combo_view(e)
@@ -65,6 +78,41 @@ module SD
         SD::DSSListCell.new
       end
       combo.button_cell = SD::DSSListCell.new
+      combo.value_property.add_change_listener do
+        puts "lalalalalalala...." if @ignore_it
+        next if @ignore_it
+        p "AAAAAAA" if @ignore_it
+        if @smash_quiet #TODO: why do I need to do this?
+          puts "smashing!"
+          @smash_quiet.call
+          @smash_quiet = nil
+        end
+        puts "not ignore it, we got #{combo.value}"
+      
+        item = combo.value
+        if item == :seperator
+          loc = :in
+          idx = @all_combos[loc].index(combo)
+          # TODO: figure out strange sections
+          combo_select @combo_infos[loc][idx][:selected], loc, idx
+          combo_flush
+        elsif item.is_a? Array and item[0].kind_of? Java::dashfx.controls.DesignableData
+          puts "Creating new one!"
+          p item
+          job = item[1].ruby_class.new
+          did = DataInitDescriptor.new(job, item[0].name.match(/[\:]?([^\:]*)$/)[1], InitInfo.new(), nil)
+          # TODO: check if its in/out, just out, or just in
+          @all_combos[:in].length.times do |idx|
+            combo_add (@all_combos[:in][idx] == combo ? :current : :possible), did, :in, idx
+          end
+          combo_flush
+        elsif item.is_a? String
+          # nothing exciting
+        elsif item # TODO: don't assume
+          # reload the info pane
+          load_info_pane item
+        end
+      end
     end
     
     def combo_flush
@@ -75,12 +123,20 @@ module SD
       @combo_taints.each do |comb, idx|
         combo = @all_combos[comb][idx]
         data = @combo_infos[comb][idx]
+        @ignore_it = true
+        @smash_quiet = Proc.new do
+                  combo.selection_model.select combo.items[data[:selected]]
+        end
         combo.items.clear
         combo.items.add_all data[:items]
         combo.items.add :seperator
         combo.items.add_all @combo_bottoms
-        combo.selection_model.clear_and_select data[:selected]
+        puts "selecting #{data[:selected]}"
+        combo.selection_model.select combo.items[data[:selected]]
+        @ignore_it = false
+        puts "selected"
       end
+      @combo_taints = []
     end
     
     def combo_add(type, value, combo=nil, indx=nil)
@@ -97,6 +153,18 @@ module SD
         puts "EEK! unknown combo add type #{type}"
       end
     end
+    
+    def combo_select(selected, combo, indx)
+      @combo_infos[combo][indx][:selected] = selected
+      @combo_taints << [combo, indx]
+    end
+    
+    def save_it
+      @core.clear_all_data_endpoints
+      @root_source.value.mount_point = @root_url.text
+      @core.mount_data_endpoint @root_source.value
+      @stage.hide
+    end
   end
   
   class DSSListCell < Java::javafx.scene.control.ListCell     
@@ -106,6 +174,7 @@ module SD
       if (item != nil) 
         self.disabled = false
         self.tooltip = nil
+        puts "Painting #{item} on #{self.object_id}"
         if item == :seperator
           self.text = "------------"
           self.disabled = true
