@@ -115,6 +115,58 @@ class SD::DesignerSupport::PlacementMap
     end
   end
   
+  def find_space(min_x, max_x, min_y, max_y)
+    min_x = (min_x / @bsize).floor
+    min_y = (min_y / @bsize).floor
+    max_x = (max_x / @bsize).ceil
+    max_y = (max_y / @bsize).ceil
+    rect_width = max_x - min_x
+    rect_height = max_y - min_y
+    rect_area = rect_width * rect_height
+    # we wan't negative space, so split our inverse, then restore
+    self.invert!
+    splits = self.split.find_all{|spl| spl.area >= rect_area}
+    self.invert!
+    return nil if splits.length < 1
+    splits.each do |spl|
+      spl_grid = spl.instance_variable_get(:@occupancy_grid)
+      heights = spl_grid.map{|col| col.max_in_a_row}
+      # make sure we can fit
+      next if heights.map{|i| i >= rect_height}.max_in_a_row < rect_width
+      widths = spl_grid.transpose.map{|row| row.max_in_a_row}
+      next if widths.map{|i| i >= rect_width}.max_in_a_row < rect_height
+      # we should be able to fit in, unless its diagonal
+      likely_grids = heights.map{|i| i >= rect_height}.index_in_a_row(rect_width).product(widths.map{|i| i >= rect_width}.index_in_a_row(rect_height))
+      # => [[[x, length], [y, height]], ...]
+      # now extract all grid locations
+      likely_grids = Hash[likely_grids.map do |infopair|
+          x, length, y, height = infopair.flatten
+          [[x, y], spl_grid[x, length].map{|col| col[y, height]}]
+        end]
+      puts "Found likey grid areas:"
+      p likely_grids
+      likely_grids.each do |loc, grid|
+        # find areas that will fit
+        heights = grid.map{|col| col.max_in_a_row}
+        next if heights.map{|i| i >= rect_height}.max_in_a_row < rect_width
+        widths = grid.transpose.map{|row| row.max_in_a_row}
+        next if widths.map{|i| i >= rect_width}.max_in_a_row < rect_height
+        # hey, We think we found a spot! now we need to check for defects in the center and position ourselves around that
+        
+        y = 0
+        x = grid.index {|col| y = col.index(false)}
+        unless x or y
+          # no defects!
+          puts "Found defect free area at #{x}, #{y}"
+          return [x, y]
+        end
+        # TODO: trim out impossible areas using heights/widths variables
+        
+      end
+    end
+    return nil
+  end
+  
   def to_s
     puts "-" * ((@width/@bsize).ceil * 2)
     (@height/@bsize).ceil.times do |y|
@@ -124,5 +176,36 @@ class SD::DesignerSupport::PlacementMap
       puts ""
     end
     puts "-" *  ((@width/@bsize).ceil * 2)
+  end
+end
+
+class Array
+  def index_in_a_row(min_run=1)
+    res = []
+    cur = 0
+    idx = 0
+    self.each do |x|
+      if x
+        cur += 1 
+      else
+        res << [idx - cur, cur] if cur >= min_run
+        cur = 0
+      end
+      idx +=1
+    end
+    res
+  end
+  def max_in_a_row
+    runs = [0]
+    cur = 0
+    self.each do |x|
+      if x
+        cur += 1 
+      else
+        runs << cur if cur > 0
+        cur = 0
+      end
+    end
+    runs.max
   end
 end
