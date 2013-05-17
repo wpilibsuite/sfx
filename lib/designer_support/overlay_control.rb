@@ -132,6 +132,23 @@ module SD::DesignerSupport
     def inspect
       "#<DesignerOverlay:0x#{object_id.to_s(16)} @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
     end
+    
+    def request_ctx_menu(e)
+      @context_menu.show(@selected_ui, e.screen_x, e.screen_y)
+    end
+    
+    def z_send_backward
+      puts "TODO: send backward"
+    end
+    def z_send_bottom
+      puts "TODO: send bottom"
+    end
+    def z_send_forward
+      puts "TODO: send forward"
+    end
+    def z_send_top
+      puts "TODO: send top"
+    end
   end
 end
 
