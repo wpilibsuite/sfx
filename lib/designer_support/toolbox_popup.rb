@@ -28,7 +28,7 @@ module SD::DesignerSupport
   end
   class ToolboxPane < Java::javafx::scene::layout::BorderPane
     include JRubyFX::Controller
-    fxml_root "../res/ToolboxPopup.fxml"
+    fxml_root "ToolboxPopup.fxml"
     attr_reader :tb_area
 
     def initialize(parent)

@@ -4,7 +4,7 @@ module SD::DesignerSupport
     include JRubyFX::Controller
     include Java::dashfx::data::Registerable
     java_import 'dashfx.controls.ResizeDirections'
-    fxml_root "../res/DesignerOverlayControl.fxml"
+    fxml_root "DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer
     attr_accessor :editing_nested
     #Observable
@@ -100,7 +100,7 @@ module SD::DesignerSupport
       @selected_ui.opacity = value ? 1 : 0
     end
 
-    on_mouse :dragDone do |e|
+    on :dragDone do |e|
       if @drag_action
         parent.finish_dragging
       end
