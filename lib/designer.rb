@@ -10,13 +10,14 @@ require 'data_source_selector'
 class SD::Designer
   include JRubyFX::Controller
 
-  fxml_root "res/SFX.fxml"
+  fxml_root "SFX.fxml"
 
   def initialize
     # best to catch missing stuff now
     @toolbox= @TooboxTabs
     @selected_items = []
     @dnd_ids = []
+    @dnd_opts = {}
     @add_tab = @AddTab
     @toolbox_group = {:standard => @STDToolboxFlow}
     puts @add_tab.id, "is addtab"
@@ -30,7 +31,7 @@ class SD::Designer
 
     @data_core = Java::dashfx.data.DataCore.new()
     @canvas.registered(@data_core)
-    @data_core.known_names.add_listener do |change|
+    @data_core.known_names.add_change_listener do |change|
       change.next # TODO: figure out what this magic line does
       change.added_sub_list.each do |new_name|
         add_known new_name
@@ -83,7 +84,7 @@ class SD::Designer
           puts "now checking for #{item.value} after I got #{e}"
           tbx_popup = SD::DesignerSupport::ToolboxPopup.new
           find_toolbox_parts.each do |key, data|
-            data.each{|i| tbx_popup.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
+            data.each{|i| tbx_popup.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => item.value)}
           end
           tbx_popup.x = e.screen_x
           tbx_popup.y = e.screen_y
@@ -105,8 +106,9 @@ class SD::Designer
     @playback = SD::Playback.new(@data_core, @stage)
   end
 
-  def associate_dnd_id(val)
+  def associate_dnd_id(val, opts=nil)
     @dnd_ids << val unless @dnd_ids.include?(val)
+    @dnd_opts[val] = opts
     @dnd_ids.index(val)
   end
 
@@ -142,6 +144,10 @@ class SD::Designer
       if db.hasString
         obj = @dnd_ids[db.string.to_i].new
         pare = event.source == @canvas ? event.source : event.source.child
+        if @dnd_opts[@dnd_ids[db.string.to_i]]
+          # TODO: check for others and dont assume name
+          obj.name = @dnd_opts[@dnd_ids[db.string.to_i]][:assign_name]
+        end
         add_designable_control obj, event.x, event.y, pare
         @toolbox.selection_model.select_first
         with(@toolbox) do |tbx|

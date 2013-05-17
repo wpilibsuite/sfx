@@ -2,9 +2,9 @@
 module SD::DesignerSupport
   class ToolboxItem < Java::javafx::scene::layout::VBox
     include JRubyFX::Controller
-    fxml_root "../res/DesignerToolboxItem.fxml"
+    fxml_root "DesignerToolboxItem.fxml"
 
-    def initialize(obj, dnd_get_id)
+    def initialize(obj, dnd_get_id, opts={})
       @annote = obj.java_class.annotation(Java::dashfx.controls.Designable.java_class)
       @label.text = @annote.value
       @obj = obj
@@ -14,10 +14,11 @@ module SD::DesignerSupport
       if im_is
         @img.image = Image.new(im_is)
       end
+      @opts = opts if opts != {}
     end
 
     def dnd_get_id
-      @dnd_get_id.call @obj
+      @dnd_get_id.call @obj, @opts
     end
 
     def label
