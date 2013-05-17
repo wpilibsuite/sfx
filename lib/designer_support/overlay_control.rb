@@ -4,7 +4,7 @@ module SD::DesignerSupport
     include JRubyFX::Controller
     include Java::dashfx::data::Registerable
     java_import 'dashfx.controls.ResizeDirections'
-    fxml_root "DesignerOverlayControl.fxml"
+    fxml "DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer
     attr_accessor :editing_nested
     #Observable

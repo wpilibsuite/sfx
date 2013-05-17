@@ -2,7 +2,7 @@
 module SD::DesignerSupport
   class ToolboxItem < Java::javafx::scene::layout::VBox
     include JRubyFX::Controller
-    fxml_root "DesignerToolboxItem.fxml"
+    fxml "DesignerToolboxItem.fxml"
 
     def initialize(obj, dnd_get_id, opts={})
       @annote = obj.java_class.annotation(Java::dashfx.controls.Designable.java_class)

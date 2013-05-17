@@ -12,7 +12,7 @@ module SD::DesignerSupport
   end
   class PropertiesPane < Java::javafx::scene::layout::BorderPane
     include JRubyFX::Controller
-    fxml_root "PropertiesPopup.fxml"
+    fxml "PropertiesPopup.fxml"
 
     def initialize(parent)
       @popup = parent

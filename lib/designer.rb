@@ -10,7 +10,7 @@ require 'data_source_selector'
 class SD::Designer
   include JRubyFX::Controller
 
-  fxml_root "SFX.fxml"
+  fxml "SFX.fxml"
 
   def initialize
     # best to catch missing stuff now

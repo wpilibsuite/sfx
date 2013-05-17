@@ -33,7 +33,7 @@ module SD
 
   class PlaybackController
     include JRubyFX::Controller
-    fxml_root "PlaybackEditor.fxml"
+    fxml "PlaybackEditor.fxml"
 
     def initialize(core, filter)
       @core = core

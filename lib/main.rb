@@ -2,7 +2,7 @@ require 'jrubyfx'
 require 'SDLib.jar'
 require 'SDInterfaces.jar'
 
-fxml_dir File.join(File.dirname(__FILE__), "res")
+fxml_root File.join(File.dirname(__FILE__), "res")
 
 module SD
   class App < JRubyFX::Application

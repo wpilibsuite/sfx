@@ -15,7 +15,7 @@
 module SD
   class DataSourceSelector
     include JRubyFX::Controller
-    fxml_root "DataSourceSelector.fxml"
+    fxml "DataSourceSelector.fxml"
     java_import 'dashfx.data.DataInitDescriptor'
     java_import 'dashfx.data.InitInfo'
 
