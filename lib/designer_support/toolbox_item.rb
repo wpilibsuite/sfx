@@ -9,8 +9,7 @@ module SD::DesignerSupport
       @obj = obj
       @dnd_get_id = dnd_get_id
       @label.setTooltip tooltip(obj["Description"])
-      oi = obj["Image"]
-      im_is = obj["ClassLoader"].resource_as_stream(oi) if oi and oi.length > 0
+      im_is = obj["ImageStream"]
       if im_is
         @img.image = Image.new(im_is)
       end

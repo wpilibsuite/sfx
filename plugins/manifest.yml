@@ -1,0 +1,10 @@
+## YAML Template.
+---
+- 
+  Name: xBadx
+  Description: Horriffic non-scalable boolean from built-insx
+  Image: /bool/icon.png
+  Source: /bool/BadBool.fxml
+  Defaults:
+    value: false
+

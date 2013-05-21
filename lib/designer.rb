@@ -119,8 +119,14 @@ class SD::Designer
       desc = YAML::load_stream(Java::dashfx.registers.ControlRegister.java_class.resource_as_stream("/dashfx/controls/ValueMeterDescriptor.yml").to_io)
       #TODO: why is this doubled [[]] ???
       desc = desc[0]
+      # process the built in yaml
       desc.each do |x|
-        x["ClassLoader"] = Java::dashfx.registers.ControlRegister.java_class
+        oi = x["Image"]
+        x["ImageStream"] = if oi and oi.length > 0
+          Java::dashfx.registers.ControlRegister.java_class.resource_as_stream(oi)
+        else
+          nil
+        end
         x[:proc] = Proc.new {
           fx = FxmlLoader.new
           fx.location = Java::dashfx.registers.ControlRegister.java_class.resource(x["Source"])
@@ -131,13 +137,46 @@ class SD::Designer
           end
         }
       end
+
+      # check for the plugins folder
+      plugin_yaml = File.join(File.dirname(File.dirname(__FILE__)), "plugins")
+      if Dir.exist? plugin_yaml
+        xdesc = YAML::load_file(File.join(plugin_yaml, "manifest.yml"))
+        # process the built in yaml
+        xdesc.each do |x|
+          oi = x["Image"]
+          x["ImageStream"] = if oi and oi.length > 0
+            java.net.URL.new("file://#{plugin_yaml}#{oi}").open_stream
+          else
+            nil
+          end
+          x[:proc] = Proc.new {
+            fx = FxmlLoader.new
+            fx.location = java.net.URL.new("file://#{plugin_yaml}#{x["Source"]}")
+            fx.load.tap do |obj|
+              x["Defaults"].each do |k, v|
+                obj.send(k + "=", v)
+              end
+            end
+          }
+        end
+
+        desc += xdesc
+      end
+
+      # Process the java classes
       Java::dashfx.registers.ControlRegister.all.each do |jclass|
         annote = jclass.annotation(Java::dashfx.controls.Designable.java_class)
+        oi = annote.image
         desc << {
           "Name" => annote.value,
           "Description" => annote.description,
           "Image" => annote.image,
-          "ClassLoader" => jclass.ruby_class.java_class,
+          "ImageStream" => if oi and oi.length > 0
+            jclass.ruby_class.java_class.resource_as_stream(oi)
+          else
+            nil
+          end,
           proc: Proc.new { jclass.ruby_class.new }
         }
       end

@@ -45,12 +45,10 @@ module SD::DesignerSupport
 
     def registered(prov)
       sops = get_parent.getSupportedOps
-
       @supported_ops = RESIZABILITY_MAPPER.map do |key, cor|
         if sops.contains(key)
           cor
         else
-
           cor.each {|c| self.instance_variable_get("@#{c}").opacity = 0}
           []
         end

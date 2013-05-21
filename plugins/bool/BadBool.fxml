@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<dashfx.controls.BooleanControlBase fx:id="base" xmlns:fx="http://javafx.com/fxml">
+	<ui>
+		<CheckBox text="${base.name}" selected="${base.value}" />
+
+	</ui>
+</dashfx.controls.BooleanControlBase>
