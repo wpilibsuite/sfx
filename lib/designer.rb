@@ -7,6 +7,7 @@ require 'designer_support/toolbox_popup'
 require 'designer_support/pref_types'
 require 'playback'
 require 'data_source_selector'
+require 'yaml'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -114,7 +115,36 @@ class SD::Designer
   end
 
   def find_toolbox_parts
-    {:standard => Java::dashfx.registers.ControlRegister.all.map(&:ruby_class)}
+    unless @found_plugins
+      desc = YAML::load_stream(Java::dashfx.registers.ControlRegister.java_class.resource_as_stream("/dashfx/controls/ValueMeterDescriptor.yml").to_io)
+      #TODO: why is this doubled [[]] ???
+      desc = desc[0]
+      desc.each do |x|
+        x["ClassLoader"] = Java::dashfx.registers.ControlRegister.java_class
+        x[:proc] = Proc.new {
+          fx = FxmlLoader.new
+          fx.location = Java::dashfx.registers.ControlRegister.java_class.resource(x["Source"])
+          fx.load.tap do |obj|
+            x["Defaults"].each do |k, v|
+              obj.send(k + "=", v)
+            end
+          end
+        }
+      end
+      Java::dashfx.registers.ControlRegister.all.each do |jclass|
+        annote = jclass.annotation(Java::dashfx.controls.Designable.java_class)
+        desc << {
+          "Name" => annote.value,
+          "Description" => annote.description,
+          "Image" => annote.image,
+          "ClassLoader" => jclass.ruby_class.java_class,
+          proc: Proc.new { jclass.ruby_class.new }
+        }
+      end
+      @toolbox_bits = {:standard => desc}
+      @found_plugins = true
+    end
+    @toolbox_bits
   end
 
   def add_designable_control(control, x=0, y=0, parent=@canvas)
@@ -143,7 +173,7 @@ class SD::Designer
     db = event.dragboard
     event.setDropCompleted(
       if db.hasString
-        obj = @dnd_ids[db.string.to_i].new
+        obj = @dnd_ids[db.string.to_i][:proc].call
         pare = event.source == @canvas ? event.source : event.source.child # TODO: is this child.ui?
         if @dnd_opts[@dnd_ids[db.string.to_i]]
           # TODO: check for others and dont assume name

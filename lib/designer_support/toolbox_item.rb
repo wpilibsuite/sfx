@@ -5,12 +5,12 @@ module SD::DesignerSupport
     fxml "DesignerToolboxItem.fxml"
 
     def initialize(obj, dnd_get_id, opts={})
-      @annote = obj.java_class.annotation(Java::dashfx.controls.Designable.java_class)
-      @label.text = @annote.value
+      @label.text = obj["Name"]
       @obj = obj
       @dnd_get_id = dnd_get_id
-      @label.setTooltip tooltip(@annote.description)
-      im_is = Java::dashfx.registers.ControlRegister::getDesignableImage(obj.java_class)
+      @label.setTooltip tooltip(obj["Description"])
+      oi = obj["Image"]
+      im_is = obj["ClassLoader"].resource_as_stream(oi) if oi and oi.length > 0
       if im_is
         @img.image = Image.new(im_is)
       end
