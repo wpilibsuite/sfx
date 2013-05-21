@@ -132,22 +132,22 @@ module SD::DesignerSupport
     def inspect
       "#<DesignerOverlay:0x#{object_id.to_s(16)} @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
     end
-    
+
     def request_ctx_menu(e)
       @context_menu.show(@selected_ui, e.screen_x, e.screen_y)
     end
-    
+
     def z_send_backward
-      puts "TODO: send backward"
+      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Down)
     end
     def z_send_bottom
-      puts "TODO: send bottom"
+      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Bottom)
     end
     def z_send_forward
-      puts "TODO: send forward"
+      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Up)
     end
     def z_send_top
-      puts "TODO: send top"
+      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Top)
     end
   end
 end
