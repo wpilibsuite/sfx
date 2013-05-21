@@ -4,6 +4,7 @@ require 'designer_support/overlay_control'
 require 'designer_support/properties_popup'
 require 'designer_support/aa_tree_cell'
 require 'designer_support/toolbox_popup'
+require 'designer_support/pref_types'
 require 'playback'
 require 'data_source_selector'
 
@@ -163,7 +164,7 @@ class SD::Designer
 
     event.consume()
   end
-  
+
   def register_clickoff(&fnc)
     @clickoff_fnc = fnc
     @on_mouse = Proc.new do |e|
@@ -351,7 +352,7 @@ class SD::Designer
       ctrl = ctrl.parent
     end while ctrl != @canvas
   end
-  
+
   def show_data_sources
     data_core = @data_core
     stg = @stage
@@ -360,5 +361,27 @@ class SD::Designer
       center_on_screen
       fxml SD::DataSourceSelector, :initialize => [data_core]
     end.show_and_wait
+  end
+
+  def aa_add_all
+    @toolbox.selection_model.select_first
+    with(@toolbox) do |tbx|
+      timeline do
+        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
+      end.play
+    end
+    @aa_offset_tmp = 0
+    @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.each do |ctrl|
+      type = SD::DesignerSupport::PrefTypes.for(ctrl.type)
+      if type
+        add_designable_control build(type, name: ctrl.name), @aa_offset_tmp, @aa_offset_tmp += 20
+      else
+        puts "Warning: no default control for #{ctrl.type.mask}"
+      end
+    end
+  end
+
+  def aa_add_new
+    puts "clicked add new"
   end
 end
