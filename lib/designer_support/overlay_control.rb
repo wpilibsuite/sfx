@@ -29,8 +29,8 @@ module SD::DesignerSupport
     }
 
     def initialize(child, parent)
-      @child = child;
-      @childContainer.setCenter(child);
+      @child = child
+      @childContainer.setCenter(child.getUi);
       @parent_designer = parent
       @drag_action = nil
       @selected = false
@@ -77,7 +77,7 @@ module SD::DesignerSupport
       # ahh! must get stuff....
       props = []
       jc = child.java_class
-      [jc, *jc.declared_instance_methods].each do |src|
+      [jc, *jc.java_instance_methods].each do |src|
         src.annotations.each do |annote|
           if annote.is_a? Java::dashfx.controls.Designable and src != jc
             props << [src.invoke(child), annote] # TODO: real class

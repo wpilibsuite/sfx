@@ -144,7 +144,7 @@ class SD::Designer
     event.setDropCompleted(
       if db.hasString
         obj = @dnd_ids[db.string.to_i].new
-        pare = event.source == @canvas ? event.source : event.source.child
+        pare = event.source == @canvas ? event.source : event.source.child # TODO: is this child.ui?
         if @dnd_opts[@dnd_ids[db.string.to_i]]
           # TODO: check for others and dont assume name
           obj.name = @dnd_opts[@dnd_ids[db.string.to_i]][:assign_name]
