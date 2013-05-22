@@ -105,7 +105,6 @@ class SD::Designer
     end
 
     ip = snag_ip
-    p ip
     if ip
       self.message = "Using #{ip} as team number"
       InitInfo.team_number = ip
@@ -143,10 +142,12 @@ class SD::Designer
       # process the built in yaml
       desc.each do |x|
         oi = x["Image"]
-        x["ImageStream"] = if oi and oi.length > 0
-          Java::dashfx.registers.ControlRegister.java_class.resource_as_stream(oi)
-        else
-          nil
+        x["ImageStream"] = Proc.new do
+          if oi and oi.length > 0
+            Java::dashfx.registers.ControlRegister.java_class.resource_as_stream(oi)
+          else
+            nil
+          end
         end
         x[:proc] = Proc.new {
           fx = FxmlLoader.new
@@ -166,10 +167,12 @@ class SD::Designer
         # process the built in yaml
         xdesc.each do |x|
           oi = x["Image"]
-          x["ImageStream"] = if oi and oi.length > 0
-            java.net.URL.new("file://#{plugin_yaml}#{oi}").open_stream
-          else
-            nil
+          x["ImageStream"] = Proc.new do
+            if oi and oi.length > 0
+              java.net.URL.new("file://#{plugin_yaml}#{oi}").open_stream
+            else
+              nil
+            end
           end
           x[:proc] = Proc.new {
             fx = FxmlLoader.new
@@ -193,10 +196,12 @@ class SD::Designer
           "Name" => annote.value,
           "Description" => annote.description,
           "Image" => annote.image,
-          "ImageStream" => if oi and oi.length > 0
-            jclass.ruby_class.java_class.resource_as_stream(oi)
-          else
-            nil
+          "ImageStream" => Proc.new do
+            if oi and oi.length > 0
+              jclass.ruby_class.java_class.resource_as_stream(oi)
+            else
+              nil
+            end
           end,
           proc: Proc.new { jclass.ruby_class.new }
         }

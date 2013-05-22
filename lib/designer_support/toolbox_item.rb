@@ -9,7 +9,7 @@ module SD::DesignerSupport
       @obj = obj
       @dnd_get_id = dnd_get_id
       @label.setTooltip tooltip(obj["Description"])
-      im_is = obj["ImageStream"]
+      im_is = obj["ImageStream"].call
       if im_is
         @img.image = Image.new(im_is)
       end
