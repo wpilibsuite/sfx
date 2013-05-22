@@ -1,6 +1,7 @@
 require 'jrubyfx'
 require 'SDLib.jar'
 require 'SDInterfaces.jar'
+require "#{ENV["HOME"]}/sunspotfrcsdk/desktop-lib/networktables-desktop.jar" # TODO: file.join
 
 fxml_root File.join(File.dirname(__FILE__), "res")
 

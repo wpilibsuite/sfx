@@ -11,6 +11,8 @@ require 'yaml'
 
 class SD::Designer
   include JRubyFX::Controller
+  java_import 'dashfx.data.DataInitDescriptor'
+  java_import 'dashfx.data.InitInfo'
 
   fxml "SFX.fxml"
 
@@ -99,13 +101,32 @@ class SD::Designer
     end
     @aa_tree.root = tree_item("/")
     @stage.set_on_shown do
-      self.message = "Ready"
+      #self.message = "Ready"
+    end
+
+    ip = snag_ip
+    p ip
+    if ip
+      self.message = "Using #{ip} as team number"
+      InitInfo.team_number = ip
     end
 
     #DEMO
-    @canvas.addDataEndpoint(Java::dashfx.data.endpoints.TestDataSource.new)
+    @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
     #PLUGINS
     @playback = SD::Playback.new(@data_core, @stage)
+  end
+
+  def snag_ip
+    java.net.NetworkInterface.network_interfaces.each do |networkInterface|
+			networkInterface.inet_addresses.each do |inet|
+        addr = inet.address
+        if addr[0] == 10 && addr.length == 4 && addr[1] < 100 && addr[2] < 100 # TODO: will fail for alt 10.4.151.x
+          teamn = addr[1] * 100 + addr[2]
+          return teamn
+        end
+      end
+    end
   end
 
   def associate_dnd_id(val, opts=nil)
@@ -197,7 +218,7 @@ class SD::Designer
   end
 
   def add_known(item)
-    self.message = "Found remote data. Open AutoAdd tab"
+    #self.message = "Found remote data. Open AutoAdd tab"
     @aa_tree.root.children.add tree_item(item) #TODO: nested
   end
 
