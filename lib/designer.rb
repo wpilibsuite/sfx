@@ -103,6 +103,9 @@ class SD::Designer
     @stage.set_on_shown do
       #self.message = "Ready"
     end
+    @stage.set_on_close_request do
+      @canvas.dispose
+    end
 
     ip = snag_ip
     if ip
