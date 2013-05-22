@@ -54,19 +54,19 @@ class SD::Designer
         # TODO: this should actually be much simpler comparison
         if q.to_s.include? "TabPaneSkin$TabHeaderSkin" and q.parent and not q.parent.to_s.include? "TabPaneSkin$TabHeaderSkin"
           if q.id == "AddTab" or @toolbox.get_translate_x == 36.0
-            v = [300, 36]
+            mode = :hide
             if @toolbox.get_translate_x == 36.0
-              v.reverse!
+              mode = :show
               if q.id == "AddTab"
                 @toolbox.selection_model.clear_and_select @savedSelection
               end
             elsif q.id == "AddTab"
               @toolbox.selection_model.select_first
             end
-            with(@toolbox) do |tbx|
-              timeline do
-                animate tbx.translateXProperty, 0.sec => 500.ms, v[0] => v[1]
-              end.play
+            if mode == :hide # TODO: clean this up
+              hide_toolbox
+            else
+              show_toolbox
             end
             break
           end
@@ -248,13 +248,9 @@ class SD::Designer
           obj.name = @dnd_opts[@dnd_ids[db.string.to_i]][:assign_name]
         end
         add_designable_control obj, event.x, event.y, pare
-        @toolbox.selection_model.select_first
-        with(@toolbox) do |tbx|
-          timeline do
-            animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
-          end.play
-        end
+        hide_toolbox
         @clickoff_fnc.call if @clickoff_fnc
+        @on_mouse.call(nil) if @on_mouse
         true
       else
         false
@@ -266,8 +262,7 @@ class SD::Designer
   def register_clickoff(&fnc)
     @clickoff_fnc = fnc
     @on_mouse = Proc.new do |e|
-      e.consume
-      puts "consumed"
+      e.consume if e
       @GridPane.remove_event_filter(MouseEvent::MOUSE_PRESSED,@on_mouse)
       fnc.call
       @on_mouse = nil
@@ -371,6 +366,25 @@ class SD::Designer
     end
   end
 
+  def hide_toolbox
+    @toolbox.selection_model.select_first
+    with(@toolbox) do |tbx|
+      timeline do
+        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
+      end.play
+    end
+    @add_tab_icon.image = @add_tab_plus
+  end
+
+  def show_toolbox
+    with(@toolbox) do |tbx|
+      timeline do
+        animate tbx.translateXProperty, 0.sec => 500.ms, 36.0 => 300.0
+      end.play
+    end
+    @add_tab_icon.image = @add_tab_close
+  end
+
   def canvas_click(e)
     if @just_dragged
       @just_dragged  = false
@@ -462,12 +476,7 @@ class SD::Designer
   end
 
   def aa_add_all
-    @toolbox.selection_model.select_first
-    with(@toolbox) do |tbx|
-      timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
-      end.play
-    end
+    hide_toolbox
     @aa_offset_tmp = 0
     @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.each do |ctrl|
       type = SD::DesignerSupport::PrefTypes.for(ctrl.type)
