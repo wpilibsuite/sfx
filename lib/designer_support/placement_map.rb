@@ -21,7 +21,7 @@ class SD::DesignerSupport::PlacementMap
     @continuous = false
     @occupancy_grid = (1..(width / block_size).ceil).map{ (1..(height/ block_size).ceil).map{false} }
   end
-  
+
   def occupy_block(x, y, value=true)
     @continuous = false
     if (0..(@height/@bsize - 1).ceil).include?(y) && (0..(@width/@bsize - 1).ceil).include?(x)
@@ -30,46 +30,46 @@ class SD::DesignerSupport::PlacementMap
       raise "Out of bounds!"
     end
   end
-  
+
   def continuous?
     @continuous
   end
-  
+
   def occupy_point(x, y, value=true)
     occupy_block((x/@bsize).ceil, (y/@bsize).ceil, value)
   end
-  
+
   def block_occupied?(x, y)
     @occupancy_grid[x][y]
   end
-  
+
   def occupy_rectangle(min_x, max_x, min_y, max_y, value=true)
     min_x = (min_x / @bsize).floor
     min_y = (min_y / @bsize).floor
     max_x = (max_x / @bsize).ceil
     max_y = (max_y / @bsize).ceil
-    
+
     min_x.upto(max_x) do |x|
       min_y.upto(max_y) do |y|
         occupy_block(x, y, value)
       end
     end
   end
-  
+
   def random_place(width, height)
     width = (width/@bsize).ceil
     height = (height/@bsize).ceil
-    
+
   end
-  
+
   def area
     @occupancy_grid.map{|c| c.find_all{|i| i}}.flatten.length
   end
-  
+
   def invert!
     @occupancy_grid.map! { |col| col.map{|i| !i} }
   end
-  
+
   def split
     splits = []
     tmp_grid = @occupancy_grid.map{|col| col.clone }
@@ -80,7 +80,7 @@ class SD::DesignerSupport::PlacementMap
       x = tmp_grid.index {|col| y = col.index(true)}
       split_grid[x][y] = true
       split_around(x, y, tmp_grid, split_grid)
-    
+
       (@height/@bsize).ceil.times do |y|
         (@width/@bsize).ceil.times do |x|
           tmp_grid[x][y] = false if split_grid[x][y]
@@ -95,7 +95,7 @@ class SD::DesignerSupport::PlacementMap
       tmp
     end
   end
-  
+
   def split_around(x, y, tmp_grid, split_grid)
     return if x < 0 or y < 0 or y >= ((@height/@bsize).ceil) or x >=(@width/@bsize).ceil
     ways = [[-1,0], [+1, 0], [0, -1], [0, +1]]
@@ -114,8 +114,12 @@ class SD::DesignerSupport::PlacementMap
       split_around(x + way[0], y+way[1], tmp_grid, split_grid)
     end
   end
-  
+
   def find_space(min_x, max_x, min_y, max_y)
+    rectanglify
+    
+  end
+  def stuff(min_x, max_x, min_y, max_y)
     min_x = (min_x / @bsize).floor
     min_y = (min_y / @bsize).floor
     max_x = (max_x / @bsize).ceil
@@ -152,7 +156,7 @@ class SD::DesignerSupport::PlacementMap
         widths = grid.transpose.map{|row| row.max_in_a_row}
         next if widths.map{|i| i >= rect_width}.max_in_a_row < rect_height
         # hey, We think we found a spot! now we need to check for defects in the center and position ourselves around that
-        
+
         y = 0
         x = grid.index {|col| y = col.index(false)}
         unless x or y
@@ -161,12 +165,12 @@ class SD::DesignerSupport::PlacementMap
           return [x, y]
         end
         # TODO: trim out impossible areas using heights/widths variables
-        
+
       end
     end
     return nil
   end
-  
+
   def to_s
     puts "-" * ((@width/@bsize).ceil * 2)
     (@height/@bsize).ceil.times do |y|
@@ -186,7 +190,7 @@ class Array
     idx = 0
     self.each do |x|
       if x
-        cur += 1 
+        cur += 1
       else
         res << [idx - cur, cur] if cur >= min_run
         cur = 0
@@ -200,7 +204,7 @@ class Array
     cur = 0
     self.each do |x|
       if x
-        cur += 1 
+        cur += 1
       else
         runs << cur if cur > 0
         cur = 0

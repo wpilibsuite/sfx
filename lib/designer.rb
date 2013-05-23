@@ -7,6 +7,7 @@ require 'designer_support/toolbox_popup'
 require 'designer_support/pref_types'
 require 'playback'
 require 'data_source_selector'
+require 'settings_dialog'
 require 'yaml'
 
 class SD::Designer
@@ -107,7 +108,18 @@ class SD::Designer
       @canvas.dispose
     end
 
-    ip = snag_ip
+    @prefs = java.util.prefs.Preferences.user_node_for_package(InitInfo.java_class)
+    ip = if !@prefs.get_boolean("team_number_auto", true) and (1..9001).include? @prefs.get_int("team_number", 0)
+      @prefs.get_int("team_number", 0)
+    else
+      snag_ip.tap do |x|
+        if x && (1..9001).include?(x) && !@prefs.get_boolean("team_number_auto", false) && @prefs.get_boolean("team_number_auto", true) # nothing set
+          @prefs.put_boolean("team_number_auto", false)
+          @prefs.put_int("team_number", x)
+        end
+      end
+    end
+
     if ip
       self.message = "Using #{ip} as team number"
       InitInfo.team_number = ip
@@ -490,5 +502,15 @@ class SD::Designer
 
   def aa_add_new
     puts "clicked add new"
+  end
+
+  def edit_settings
+    stg = @stage
+    prefs = @prefs
+    stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
+      init_owner stg
+      fxml SD::SettingsDialog, :initialize => [prefs]
+      show_and_wait
+    end
   end
 end

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+  <bottom>
+    <HBox alignment="TOP_RIGHT" prefHeight="-1.0" prefWidth="-1.0" spacing="12.0">
+      <children>
+        <Button mnemonicParsing="false" text="Revert" />
+        <Button mnemonicParsing="false" onAction="#close" text="Close" />
+      </children>
+      <padding>
+        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+      </padding>
+    </HBox>
+  </bottom>
+  <center>
+    <TabPane prefHeight="200.0" prefWidth="200.0" style="" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab style="" text="General">
+          <content>
+            <GridPane hgap="12.0" vgap="8.0">
+              <children>
+                <Label text="Team Number:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="7.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <children>
+                    <TextField fx:id="team_number" minWidth="40.0" prefWidth="60.0" />
+                    <CheckBox fx:id="auto_detect_team" mnemonicParsing="false" text="Auto detect" />
+                  </children>
+                </HBox>
+              </children>
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+              </padding>
+              <rowConstraints>
+                <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
+                <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
+                <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
+                <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+              </rowConstraints>
+            </GridPane>
+          </content>
+        </Tab>
+        <Tab text="Non-General">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <FlowPane columnHalignment="LEFT" hgap="5.0" layoutX="153.0" layoutY="43.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" vgap="5.0">
+                  <children>
+                    <Button mnemonicParsing="false" prefHeight="147.0" prefWidth="74.0" text="Button" />
+                    <ComboBox prefWidth="66.0">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList">
+                          <String fx:value="Item 1" />
+                          <String fx:value="Item 2" />
+                          <String fx:value="Item 3" />
+                        </FXCollections>
+                      </items>
+                    </ComboBox>
+                    <ColorPicker />
+                    <Button mnemonicParsing="false" text="Button" />
+                    <ChoiceBox>
+                      <items>
+                        <FXCollections fx:factory="observableArrayList">
+                          <String fx:value="Item 1" />
+                          <String fx:value="Item 2" />
+                          <String fx:value="Item 3" />
+                        </FXCollections>
+                      </items>
+                    </ChoiceBox>
+                    <CheckBox mnemonicParsing="false" text="CheckBox" />
+                  </children>
+                  <padding>
+                    <Insets />
+                  </padding>
+                </FlowPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+      <BorderPane.margin>
+        <Insets left="12.0" right="12.0" top="7.0" />
+      </BorderPane.margin>
+    </TabPane>
+  </center>
+  <stylesheets>
+    <URL value="@Settings.css" />
+  </stylesheets>
+</BorderPane>

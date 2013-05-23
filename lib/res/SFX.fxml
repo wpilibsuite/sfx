@@ -16,6 +16,9 @@
 <?scenebuilder-classpath-element ../../../SDLib/dist/SDLib.jar?>
 
 <GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" xmlns:fx="http://javafx.com/fxml">
+  <fx:define>
+    <Image fx:id="add_tab_close" url="@stock_left.png" />
+  </fx:define>
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
       <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)" translateY="0.0">
@@ -86,6 +89,21 @@
               <Image url="@document-properties.png" />
             </image>
           </ImageView>
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Settings" HBox.hgrow="NEVER">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@package_settings.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <tooltip>
+              <Tooltip text="Settings" />
+            </tooltip>
+            <HBox.margin>
+              <Insets fx:id="x1" />
+            </HBox.margin>
+          </Button>
         </children>
       </HBox>
     </bottom>
@@ -112,10 +130,7 @@
         <graphic>
           <ImageView fx:id="add_tab_icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image fx:id="add_tab_plus" url="@list-add.png" />
-			  <fx:define>
-              <Image fx:id="add_tab_close" url="@stock_left.png" />
-			  </fx:define>
+              <Image url="@list-add.png" fx:id="add_tab_plus" />
             </image>
           </ImageView>
         </graphic>
