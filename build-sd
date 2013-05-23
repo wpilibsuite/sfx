@@ -1,0 +1,4 @@
+#!/bin/bash
+jrubyfx-jarify lib SFX.jar
+cp ../SDLib/dist/*.jar .
+cp ../SDInterfaces/dist/*.jar .
