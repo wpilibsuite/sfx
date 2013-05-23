@@ -17,8 +17,9 @@ class SD::SettingsDialog
   include JRubyFX::Controller
   fxml "Settings.fxml"
 
-  def initialize(prefs)
+  def initialize(prefs, main)
     @prefs = prefs
+    @main = main
     @diffs = {}
     prep_diff(@auto_detect_team, "team_number_auto", :bool, true) do |value|
       if value
@@ -27,6 +28,18 @@ class SD::SettingsDialog
       @team_number.disabled = value
     end
     prep_diff(@team_number, "team_number", :int_1, true)
+
+    std_parts = main.find_toolbox_parts[:standard]
+    @root_layout_pane.items.clear
+    @root_layout_pane.items.add_all std_parts.find_all{|x|x["Category"] == "Grouping"}
+    @root_layout_pane.set_cell_factory do
+      SD::SSListCell.new
+    end
+    @root_layout_pane.button_cell = SD::SSListCell.new
+    @root_layout_pane.value = std_parts.find{|x| x["Name"] == @prefs.get("root_canvas", "Canvas")}
+    @root_layout_pane.selection_model.selected_item_property.add_change_listener do |ov, old, new|
+      @diffs["root_canvas"] = {type: :root_canvas, value: new}
+    end
     @stage.set_on_hiding &method(:diff_and_save)
   end
 
@@ -62,11 +75,27 @@ class SD::SettingsDialog
         else
           @prefs.put_int(prop, dat[:value].to_i)
         end
+      when :root_canvas # special case
+        @prefs.put(prop, dat[:value]["Name"])
+        @main.root_canvas = dat[:value][:proc].call
       end
     end
   end
 
   def close
     @stage.hide
+  end
+end
+
+
+class SD::SSListCell < Java::javafx.scene.control.ListCell
+  include JRubyFX
+  def updateItem(item, empty)
+    super
+    if (item != nil)
+      self.text = item["Name"]
+    else
+      self.text = nil
+    end
   end
 end

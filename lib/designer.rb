@@ -207,6 +207,8 @@ class SD::Designer
       Java::dashfx.registers.ControlRegister.all.each do |jclass|
         annote = jclass.annotation(Java::dashfx.controls.Designable.java_class)
         oi = annote.image
+        cat_annote = jclass.annotation(Java::dashfx.controls.Category.java_class)
+        cat_annote = cat_annote.value if cat_annote
         desc << {
           "Name" => annote.value,
           "Description" => annote.description,
@@ -218,6 +220,7 @@ class SD::Designer
               nil
             end
           end,
+          "Category" => cat_annote,
           proc: Proc.new { jclass.ruby_class.new }
         }
       end
@@ -507,10 +510,20 @@ class SD::Designer
   def edit_settings
     stg = @stage
     prefs = @prefs
+    this = self
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
       init_owner stg
-      fxml SD::SettingsDialog, :initialize => [prefs]
+      fxml SD::SettingsDialog, :initialize => [prefs, this]
       show_and_wait
     end
+  end
+
+  def root_canvas=(cvs)
+    childs = @canvas.ui.children.to_a
+    @canvas.ui.children.clear
+    cvs.ui.children.add_all(childs)
+    cvs.registered(@data_core)
+    @BorderPane.center = cvs.ui
+    @canvas = cvs
   end
 end

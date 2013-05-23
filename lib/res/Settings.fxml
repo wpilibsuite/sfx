@@ -35,6 +35,21 @@
                     <CheckBox fx:id="auto_detect_team" mnemonicParsing="false" text="Auto detect" />
                   </children>
                 </HBox>
+                <Label text="Root Layout Panel:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <VBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <children>
+                    <ComboBox fx:id="root_layout_pane">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList">
+                          <String fx:value="Item 1" />
+                          <String fx:value="Item 2" />
+                          <String fx:value="Item 3" />
+                        </FXCollections>
+                      </items>
+                    </ComboBox>
+                    <Label text="Warning: changing this value will reset your current layout. All Controls will be saved but positioning information will be destroyed" textFill="#990000" wrapText="true" />
+                  </children>
+                </VBox>
               </children>
               <columnConstraints>
                 <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -45,7 +60,7 @@
               </padding>
               <rowConstraints>
                 <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
-                <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
+                <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" valignment="TOP" vgrow="NEVER" />
                 <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
                 <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="-1.0" vgrow="NEVER" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
