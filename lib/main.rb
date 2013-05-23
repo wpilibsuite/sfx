@@ -8,7 +8,7 @@ fxml_root File.join(File.dirname(__FILE__), "res")
 module SD
   class App < JRubyFX::Application
     def start(stage)
-      with(stage, :title => "Loading SmartDashboard")
+      with(stage, :title => "SmartDashboard")
       puts "Begin loading..."
       SD::Designer.load_into stage
       stage.show

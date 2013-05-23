@@ -257,7 +257,7 @@ class SD::Designer
     event.setDropCompleted(
       if db.hasString
         obj = @dnd_ids[db.string.to_i][:proc].call
-        pare = event.source == @canvas ? event.source : event.source.child # TODO: is this child.ui?
+        pare = event.source == @canvas.ui ? @canvas : event.source.child # TODO: is this child.ui?
         if @dnd_opts[@dnd_ids[db.string.to_i]]
           # TODO: check for others and dont assume name
           obj.name = @dnd_opts[@dnd_ids[db.string.to_i]][:assign_name]
@@ -525,5 +525,8 @@ class SD::Designer
     cvs.registered(@data_core)
     @BorderPane.center = cvs.ui
     @canvas = cvs
+    cvs.ui.setOnDragDropped &method(:drag_drop)
+    cvs.ui.setOnDragOver &method(:drag_over)
+    cvs.ui.setOnMouseReleased &method(:canvas_click)
   end
 end
