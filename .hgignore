@@ -6,3 +6,4 @@
 syntax: glob
 *.bak
 nbproject/private/*
+*.jar

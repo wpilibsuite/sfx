@@ -28,10 +28,11 @@ module SD::DesignerSupport
       ResizeDirections::NorthEastSouthWest => [:neResizeRegion, :swResizeRegion],
     }
 
-    def initialize(child, parent)
+    def initialize(child, parent_designer, parent)
       @child = child
       @childContainer.setCenter(child.getUi);
-      @parent_designer = parent
+      @parent_designer = parent_designer
+      @parent = parent
       @drag_action = nil
       @selected = false
       #
@@ -44,7 +45,7 @@ module SD::DesignerSupport
     end
 
     def registered(prov)
-      sops = get_parent.getSupportedOps
+      sops = @parent.getSupportedOps
       @supported_ops = RESIZABILITY_MAPPER.map do |key, cor|
         if sops.contains(key)
           cor
@@ -59,14 +60,14 @@ module SD::DesignerSupport
     def dragUpdate(e, original = true)
       return if @editing_nested # TODO: something is wrong here...
       if @drag_action
-        parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
+        @parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
       elsif @supported_ops.include? e.target.id.to_sym
         nodes = [self]
         if original && (e.control_down? || @parent_designer.multiple_selected?)
           nodes += @parent_designer.multi_drag(self)
         end
         @drag_action = [e.scene_x, e.scene_y]
-        parent.begin_dragging(nodes, nodes.map{|n| n.instance_variable_get(:@childContainer)}, e.scene_x, e.scene_y, *DIRECTIONS[e.target.id.to_sym])
+        @parent.begin_dragging(nodes, nodes.map{|n| n.instance_variable_get(:@childContainer)}, e.scene_x, e.scene_y, *DIRECTIONS[e.target.id.to_sym])
       end
       e.consume
     end
@@ -82,7 +83,8 @@ module SD::DesignerSupport
             props << [q, annote] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
           elsif annote.is_a? Java::dashfx.controls.DesignableProperty
             annote.value.length.times do |i|
-              props << [child.method(annote.value[i] + "Property").call, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
+              meth = child.respond_to?(annote.value[i] + "Property") ? child.method(annote.value[i] + "Property") : child.ui.method(annote.value[i] + "Property")
+              props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
             end
           end
         end
@@ -101,7 +103,7 @@ module SD::DesignerSupport
 
     on :dragDone do |e|
       if @drag_action
-        parent.finish_dragging
+        @parent.finish_dragging
       end
       @drag_action = nil
     end
@@ -137,16 +139,16 @@ module SD::DesignerSupport
     end
 
     def z_send_backward
-      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Down)
+      @parent.z_edit(self, Java::dashfx.data.ZPositions::Down)
     end
     def z_send_bottom
-      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Bottom)
+      @parent.z_edit(self, Java::dashfx.data.ZPositions::Bottom)
     end
     def z_send_forward
-      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Up)
+      @parent.z_edit(self, Java::dashfx.data.ZPositions::Up)
     end
     def z_send_top
-      self.parent.z_edit(self, Java::dashfx.data.ZPositions::Top)
+      @parent.z_edit(self, Java::dashfx.data.ZPositions::Top)
     end
   end
 end

@@ -228,7 +228,7 @@ class SD::Designer
   end
 
   def add_designable_control(control, x=0, y=0, parent=@canvas)
-    designer = SD::DesignerSupport::Overlay.new(control, self)
+    designer = SD::DesignerSupport::Overlay.new(control, self, parent)
     if control.is_a? Java::dashfx.data.DesignablePane
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
