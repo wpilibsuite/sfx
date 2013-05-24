@@ -126,6 +126,9 @@ class SD::Designer
       InitInfo.team_number = ip
     end
 
+    root = @prefs.get("root_canvas", "Canvas")
+    self.root_canvas = parts[:standard].find{|x|x["Name"] == root}[:proc].call unless root == "Canvas"
+
     #DEMO
     @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
     #PLUGINS
