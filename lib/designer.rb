@@ -305,7 +305,7 @@ class SD::Designer
 
   def run
     @mode = :run
-    @canvas.ui.children.each do |c|
+    @canvas.children.each do |c|
       c.running = true
     end
     hide_controls
@@ -315,7 +315,7 @@ class SD::Designer
   def design
     @mode = :design
     @canvas.pause
-    @canvas.ui.children.each do |c|
+    @canvas.children.each do |c|
       c.running = false
     end
     show_controls
@@ -443,7 +443,7 @@ class SD::Designer
   def canvas_keyup(e)
     if e.code == KeyCode::DELETE
       @selected_items.each do |si|
-        @canvas.ui.children.remove(si)
+        @canvas.children.remove(si)
       end
       @selected_items = []
       hide_properties
@@ -528,9 +528,9 @@ class SD::Designer
   end
 
   def root_canvas=(cvs)
-    childs = @canvas.ui.children.to_a
-    @canvas.ui.children.clear
-    cvs.ui.children.add_all(childs)
+    childs = @canvas.children.to_a
+    @canvas.children.clear
+    cvs.children.add_all(childs)
     cvs.registered(@data_core)
     @BorderPane.center = cvs.ui
     @canvas = cvs
