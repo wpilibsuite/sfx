@@ -11,6 +11,7 @@ module SD
       with(stage, :title => "SmartDashboard")
       puts "Begin loading..."
       SD::Designer.load_into stage
+      stage.icons.add image("file://" + File.join(File.dirname(__FILE__), "res", "icon.png"))
       stage.show
     end
   end
