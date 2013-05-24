@@ -19,15 +19,15 @@ class SD::DesignerSupport::PlacementMap
     @width = width
     @height = height
     @continuous = false
-    @occupancy_grid = (1..(width / block_size).ceil).map{ (1..(height/ block_size).ceil).map{false} }
+    @occupancy_grid = (0..(width / block_size).ceil).map{ (0..(height/ block_size).ceil).map{false} }
   end
 
   def occupy_block(x, y, value=true)
     @continuous = false
-    if (0..(@height/@bsize - 1).ceil).include?(y) && (0..(@width/@bsize - 1).ceil).include?(x)
+    if (0..(@height/@bsize).ceil).include?(y) && (0..(@width/@bsize).ceil).include?(x)
       @occupancy_grid[x][y] = value
     else
-      raise "Out of bounds!"
+      raise "Out of bounds! #{x} #{y}"
     end
   end
 
@@ -41,6 +41,22 @@ class SD::DesignerSupport::PlacementMap
 
   def block_occupied?(x, y)
     @occupancy_grid[x][y]
+  end
+
+  def rect_occupied?(min_x, max_x, min_y, max_y)
+    min_x = (min_x / @bsize).floor
+    min_y = (min_y / @bsize).floor
+    max_x = (max_x / @bsize).ceil
+    max_y = (max_y / @bsize).ceil
+    occp = []
+
+    min_x.upto(max_x) do |x|
+      min_y.upto(max_y) do |y|
+        occp << block_occupied?(x, y)
+      end
+    end
+
+    occp.include? true
   end
 
   def occupy_rectangle(min_x, max_x, min_y, max_y, value=true)
@@ -116,10 +132,6 @@ class SD::DesignerSupport::PlacementMap
   end
 
   def find_space(min_x, max_x, min_y, max_y)
-    rectanglify
-    
-  end
-  def stuff(min_x, max_x, min_y, max_y)
     min_x = (min_x / @bsize).floor
     min_y = (min_y / @bsize).floor
     max_x = (max_x / @bsize).ceil
