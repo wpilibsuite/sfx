@@ -128,6 +128,7 @@ class SD::Designer
 
     root = @prefs.get("root_canvas", "Canvas")
     self.root_canvas = parts[:standard].find{|x|x["Name"] == root}[:proc].call
+    SD::DesignerSupport::PrefTypes.create_toolbox(parts, @prefs)
 
     #DEMO
     @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
@@ -168,6 +169,7 @@ class SD::Designer
             nil
           end
         end
+        x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.data.SmartValueTypes.valueOf(x).mask}
         x[:proc] = Proc.new {
           fx = FxmlLoader.new
           fx.location = Java::dashfx.registers.ControlRegister.java_class.resource(x["Source"])
@@ -193,6 +195,7 @@ class SD::Designer
               nil
             end
           end
+          x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.data.SmartValueTypes.valueOf(x).mask}
           x[:proc] = Proc.new {
             fx = FxmlLoader.new
             fx.location = java.net.URL.new("file://#{plugin_yaml}#{x["Source"]}")
@@ -213,6 +216,12 @@ class SD::Designer
         oi = annote.image
         cat_annote = jclass.annotation(Java::dashfx.controls.Category.java_class)
         cat_annote = cat_annote.value if cat_annote
+        types_annote = jclass.annotation(Java::dashfx.data.Types.java_class)
+        types_annote =  if types_annote
+          types_annote.value.map{|x|x.mask}
+        else
+          []
+        end
         desc << {
           "Name" => annote.value,
           "Description" => annote.description,
@@ -225,6 +234,7 @@ class SD::Designer
             end
           end,
           "Category" => cat_annote,
+          "Types" => types_annote,
           proc: Proc.new { jclass.ruby_class.new }
         }
       end
@@ -516,10 +526,10 @@ class SD::Designer
       end
     end
     objs = @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.map do |ctrl|
-      type = SD::DesignerSupport::PrefTypes.for(ctrl.type)
-      if type
+      new_obj = SD::DesignerSupport::PrefTypes.for(ctrl.type)
+      if new_obj
         x = y = @canvas.appendable? ? nil : 0.0
-        add_designable_control build(type, name: ctrl.name), x, y
+        add_designable_control with(new_obj, name: ctrl.name), x, y
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
         nil

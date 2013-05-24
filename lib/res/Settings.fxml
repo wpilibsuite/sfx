@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml">
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="340.0" prefWidth="387.0" xmlns:fx="http://javafx.com/fxml">
   <bottom>
     <HBox alignment="TOP_RIGHT" prefHeight="-1.0" prefWidth="-1.0" spacing="12.0">
       <children>
@@ -35,10 +35,10 @@
                     <CheckBox fx:id="auto_detect_team" mnemonicParsing="false" text="Auto detect" />
                   </children>
                 </HBox>
-                <Label text="Root Layout Panel:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label text="Root Layout Panel:" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                 <VBox prefHeight="-1.0" prefWidth="-1.0" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <children>
-                    <ComboBox fx:id="root_layout_pane">
+                    <ComboBox fx:id="root_layout_pane" prefWidth="150.0">
                       <items>
                         <FXCollections fx:factory="observableArrayList">
                           <String fx:value="Item 1" />
@@ -52,8 +52,8 @@
                 </VBox>
               </children>
               <columnConstraints>
-                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="SOMETIMES" minWidth="-1.0" prefWidth="-1.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <padding>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -68,14 +68,16 @@
             </GridPane>
           </content>
         </Tab>
-        <Tab text="Non-General">
+        <Tab text="Default Types">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <GridPane hgap="12.0">
               <children>
-                <FlowPane columnHalignment="LEFT" hgap="5.0" layoutX="153.0" layoutY="43.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" vgap="5.0">
+                <Label text="Number:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label text="Bool:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label text="String:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.valignment="CENTER">
                   <children>
-                    <Button mnemonicParsing="false" prefHeight="147.0" prefWidth="74.0" text="Button" />
-                    <ComboBox prefWidth="66.0">
+                    <ComboBox fx:id="default_number" prefWidth="150.0">
                       <items>
                         <FXCollections fx:factory="observableArrayList">
                           <String fx:value="Item 1" />
@@ -84,9 +86,11 @@
                         </FXCollections>
                       </items>
                     </ComboBox>
-                    <ColorPicker />
-                    <Button mnemonicParsing="false" text="Button" />
-                    <ChoiceBox>
+                  </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <children>
+                    <ComboBox fx:id="default_bool" prefWidth="150.0">
                       <items>
                         <FXCollections fx:factory="observableArrayList">
                           <String fx:value="Item 1" />
@@ -94,15 +98,38 @@
                           <String fx:value="Item 3" />
                         </FXCollections>
                       </items>
-                    </ChoiceBox>
-                    <CheckBox mnemonicParsing="false" text="CheckBox" />
+                    </ComboBox>
                   </children>
-                  <padding>
-                    <Insets />
-                  </padding>
-                </FlowPane>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <children>
+                    <ComboBox fx:id="default_string" prefWidth="150.0">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList">
+                          <String fx:value="Item 1" />
+                          <String fx:value="Item 2" />
+                          <String fx:value="Item 3" />
+                        </FXCollections>
+                      </items>
+                    </ComboBox>
+                  </children>
+                </HBox>
               </children>
-            </AnchorPane>
+              <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="-1.0" prefWidth="-1.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <padding>
+                <Insets top="12.0" />
+              </padding>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+              </rowConstraints>
+            </GridPane>
           </content>
         </Tab>
       </tabs>

@@ -14,17 +14,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class SD::DesignerSupport::PrefTypes
-  def self.create_toolbox(all)
-    # TODO: save this as all possible controls
+  def self.create_toolbox(parts, prefs)
+    @std_parts = parts[:standard]
+    @prefs = prefs
   end
   def self.for(enum)
     svt = Java::dashfx.data.SmartValueTypes
+    floats = ints = nums = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_number", "Bad Slider")}[:proc]
     map = {
-      svt::Double.mask => Java::dashfx.controls.BadSliderControl,
-      svt::Float.mask => Java::dashfx.controls.BadSliderControl,
-      svt::Integer.mask => Java::dashfx.controls.BadSliderControl,
-      svt::Number.mask => Java::dashfx.controls.BadSliderControl,
+      svt::Double.mask => floats,
+      svt::Float.mask => floats,
+      svt::Integer.mask => ints,
+      svt::Number.mask => nums,
     }
-    map[enum.mask]
+    map[enum.mask].call
   end
 end

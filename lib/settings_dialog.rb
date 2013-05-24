@@ -27,9 +27,13 @@ class SD::SettingsDialog
       end
       @team_number.disabled = value
     end
-    prep_diff(@team_number, "team_number", :int_1, true)
-
+    prep_diff(@team_number, "team_number", :int_1)
     std_parts = main.find_toolbox_parts[:standard]
+    # TODO: no magic numbers
+    number_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 3) != 0}.empty?}
+    prep_diff(@default_number, "defaults_type_number", :combo, "Bad Slider",
+      number_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
+
     @root_layout_pane.items.clear
     @root_layout_pane.items.add_all std_parts.find_all{|x|x["Category"] == "Grouping"}
     @root_layout_pane.set_cell_factory do
@@ -43,7 +47,7 @@ class SD::SettingsDialog
     @stage.set_on_hiding &method(:diff_and_save)
   end
 
-  def prep_diff(obj, prop_name, type, default, &block)
+  def prep_diff(obj, prop_name, type, default=nil, combo_range=nil, cell_factory=nil, combo_map=nil, &block)
     case type
     when :bool
       obj.selected = @prefs.get_boolean(prop_name, default)
@@ -57,6 +61,18 @@ class SD::SettingsDialog
       @prefs.get_int(prop_name, -1).tap {|x|obj.text =  x == -1 ? "" : x.to_s }
       obj.text_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new}
+        if block
+          block.call(new)
+        end
+      end
+    when :combo
+      obj.items.clear
+      obj.items.add_all combo_range
+      obj.cell_factory = cell_factory
+      obj.button_cell = cell_factory.call
+      obj.value = combo_range.find{|x| combo_map.call(x) == @prefs.get(prop_name, default)}
+      obj.selection_model.selected_item_property.add_change_listener do |ov, old, new|
+        @diffs[prop_name] = {type: type, value: combo_map.call(new)}
         if block
           block.call(new)
         end
@@ -75,6 +91,8 @@ class SD::SettingsDialog
         else
           @prefs.put_int(prop, dat[:value].to_i)
         end
+      when :combo
+        @prefs.put(prop, dat[:value])
       when :root_canvas # special case
         @prefs.put(prop, dat[:value]["Name"])
         @main.root_canvas = dat[:value][:proc].call
