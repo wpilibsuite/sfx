@@ -513,7 +513,6 @@ class SD::Designer
           bip = child.bounds_in_parent
           pm.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
         end
-        puts pm
       end
     end
     objs = @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.map do |ctrl|
@@ -533,7 +532,6 @@ class SD::Designer
         run_later do
           objs.each do |itm|
             next unless itm
-
             @canvas.ui.layout
             x, y = catch :done do
               0.step(@canvas.ui.width, 10) do |x|
@@ -542,13 +540,9 @@ class SD::Designer
                 end
               end
             end
-            #itm.layout_children
-            puts "using #{x}, #{y} - #{itm.child.width}, #{itm.child.height}"
-            puts "vs #{itm.child.prefHeight(-1)}, #{itm.child.prefWidth(-1)}"
             itm.layout_x = x
             itm.layout_y = y
             bip = itm.bounds_in_parent
-            puts bip
             fmap.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
           end
         end
