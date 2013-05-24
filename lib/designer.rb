@@ -32,6 +32,7 @@ class SD::Designer
     @root = @GridPane
     @canvas = @canvas
     @savedSelection = 1
+    @ui2pmap = {@canvas.ui => @canvas}
     @selSem = false
 
     @data_core = Java::dashfx.data.DataCore.new()
@@ -237,7 +238,12 @@ class SD::Designer
       designer.set_on_drag_over &method(:drag_over)
     end
     parent.add_child_at designer,x,y
+    @ui2pmap[control.ui] = control
     self.message = "Added new #{control.class.name}"
+  end
+
+  def ui2p(ui)
+    @ui2pmap[ui]
   end
 
   def add_known(item)
@@ -296,7 +302,7 @@ class SD::Designer
 
   def run
     @mode = :run
-    @canvas.children.each do |c|
+    @canvas.ui.children.each do |c|
       c.running = true
     end
     hide_controls
@@ -306,7 +312,7 @@ class SD::Designer
   def design
     @mode = :design
     @canvas.pause
-    @canvas.children.each do |c|
+    @canvas.ui.children.each do |c|
       c.running = false
     end
     show_controls
@@ -434,7 +440,7 @@ class SD::Designer
   def canvas_keyup(e)
     if e.code == KeyCode::DELETE
       @selected_items.each do |si|
-        @canvas.children.remove(si)
+        @canvas.ui.children.remove(si)
       end
       @selected_items = []
       hide_properties
@@ -443,7 +449,7 @@ class SD::Designer
 
   def nested_edit(octrl)
     nested_traverse(octrl, lambda { |ctrl|
-        ctrl.parent.edit_nested(ctrl) do
+        ui2p(ctrl.parent).edit_nested(ctrl) do
           exit_nesting(octrl)
         end}) do |x|
       x.disabled = true
@@ -470,14 +476,14 @@ class SD::Designer
   end
 
   def nested_traverse(octrl, after, &eachblock)
-    return if octrl == @canvas
+    return if octrl == @canvas.ui
     ctrl = octrl
     begin
       saved = (ctrl.parent.children.to_a.find_all{|i| i != ctrl})
       saved.each &eachblock
       after.call(ctrl)
       ctrl = ctrl.parent
-    end while ctrl != @canvas
+    end while ctrl != @canvas.ui
   end
 
   def show_data_sources
@@ -525,6 +531,7 @@ class SD::Designer
     cvs.registered(@data_core)
     @BorderPane.center = cvs.ui
     @canvas = cvs
+    @ui2pmap[cvs.ui] = cvs
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
