@@ -44,10 +44,10 @@ class SD::DesignerSupport::PlacementMap
   end
 
   def rect_occupied?(min_x, max_x, min_y, max_y)
-    min_x = (min_x / @bsize).floor
-    min_y = (min_y / @bsize).floor
-    max_x = (max_x / @bsize).ceil
-    max_y = (max_y / @bsize).ceil
+    min_x = norm_x((min_x / @bsize).floor)
+    min_y = norm_y((min_y / @bsize).floor)
+    max_x = norm_x((max_x / @bsize).ceil)
+    max_y = norm_y((max_y / @bsize).ceil)
     occp = []
 
     min_x.upto(max_x) do |x|
@@ -59,11 +59,19 @@ class SD::DesignerSupport::PlacementMap
     occp.include? true
   end
 
+  def norm_x(x)
+    [[x, 0].max, (@width / @bsize).ceil].min
+  end
+
+  def norm_y(y)
+    [[y, 0].max, (@height / @bsize).ceil].min
+  end
+
   def occupy_rectangle(min_x, max_x, min_y, max_y, value=true)
-    min_x = (min_x / @bsize).floor
-    min_y = (min_y / @bsize).floor
-    max_x = (max_x / @bsize).ceil
-    max_y = (max_y / @bsize).ceil
+    min_x = norm_x((min_x / @bsize).floor)
+    min_y = norm_y((min_y / @bsize).floor)
+    max_x = norm_x((max_x / @bsize).ceil)
+    max_y = norm_y((max_y / @bsize).ceil)
 
     min_x.upto(max_x) do |x|
       min_y.upto(max_y) do |y|

@@ -5,6 +5,7 @@ require 'designer_support/properties_popup'
 require 'designer_support/aa_tree_cell'
 require 'designer_support/toolbox_popup'
 require 'designer_support/pref_types'
+require 'designer_support/placement_map'
 require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
@@ -32,11 +33,10 @@ class SD::Designer
     @root = @GridPane
     @canvas = @canvas
     @savedSelection = 1
-    @ui2pmap = {@canvas.ui => @canvas}
+    @ui2pmap = {}
     @selSem = false
 
     @data_core = Java::dashfx.data.DataCore.new()
-    @canvas.registered(@data_core)
     @data_core.known_names.add_change_listener do |change|
       change.next # TODO: figure out what this magic line does
       change.added_sub_list.each do |new_name|
@@ -127,7 +127,7 @@ class SD::Designer
     end
 
     root = @prefs.get("root_canvas", "Canvas")
-    self.root_canvas = parts[:standard].find{|x|x["Name"] == root}[:proc].call unless root == "Canvas"
+    self.root_canvas = parts[:standard].find{|x|x["Name"] == root}[:proc].call
 
     #DEMO
     @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
@@ -240,9 +240,14 @@ class SD::Designer
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
     end
-    parent.add_child_at designer,x,y
+    if x == y && y == nil && parent.appendable?
+      parent.children.add(designer)
+    else
+      parent.add_child_at designer,x,y
+    end
     @ui2pmap[control.ui] = control
     self.message = "Added new #{control.class.name}"
+    designer
   end
 
   def ui2p(ui)
@@ -500,14 +505,53 @@ class SD::Designer
   end
 
   def aa_add_all
-    hide_toolbox
-    @aa_offset_tmp = 0
-    @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.each do |ctrl|
+    fmap = if @canvas.appendable?
+      nil
+    else
+      SD::DesignerSupport::PlacementMap.new(10, @canvas.ui.width, @canvas.ui.height).tap do |pm|
+        @canvas.children.each do |child|
+          bip = child.bounds_in_parent
+          pm.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
+        end
+        puts pm
+      end
+    end
+    objs = @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.map do |ctrl|
       type = SD::DesignerSupport::PrefTypes.for(ctrl.type)
       if type
-        add_designable_control build(type, name: ctrl.name), @aa_offset_tmp, @aa_offset_tmp += 20
+        x = y = @canvas.appendable? ? nil : 0.0
+        add_designable_control build(type, name: ctrl.name), x, y
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
+        nil
+      end
+    end
+    hide_toolbox
+    unless @canvas.appendable?
+      Thread.new do
+        sleep 0.2
+        run_later do
+          objs.each do |itm|
+            next unless itm
+
+            @canvas.ui.layout
+            x, y = catch :done do
+              0.step(@canvas.ui.width, 10) do |x|
+                0.step(@canvas.ui.height, 10) do |y|
+                  throw(:done, [x,y]) unless fmap.rect_occupied?(x, x+itm.width, y, y+itm.height)
+                end
+              end
+            end
+            #itm.layout_children
+            puts "using #{x}, #{y} - #{itm.child.width}, #{itm.child.height}"
+            puts "vs #{itm.child.prefHeight(-1)}, #{itm.child.prefWidth(-1)}"
+            itm.layout_x = x
+            itm.layout_y = y
+            bip = itm.bounds_in_parent
+            puts bip
+            fmap.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
+          end
+        end
       end
     end
   end
@@ -528,9 +572,11 @@ class SD::Designer
   end
 
   def root_canvas=(cvs)
-    childs = @canvas.children.to_a
-    @canvas.children.clear
-    cvs.children.add_all(childs)
+    if @canvas
+      childs = @canvas.children.to_a
+      @canvas.children.clear
+      cvs.children.add_all(childs)
+    end
     cvs.registered(@data_core)
     @BorderPane.center = cvs.ui
     @canvas = cvs

@@ -107,9 +107,6 @@
         </children>
       </HBox>
     </bottom>
-    <center>
-      <DataAnchorPane fx:id="canvas" onDragDropped="#drag_drop" onDragOver="#drag_over" onMouseReleased="#canvas_click" prefHeight="200.0" prefWidth="200.0" style="&#10;" />
-    </center>
     <left>
       <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="-fx-background-color: linear-gradient(to left, #757575 0%, #ccc 15%, #fff 100%);" translateX="0.0">
         <children>
