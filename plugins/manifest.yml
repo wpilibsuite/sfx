@@ -5,6 +5,7 @@
   Description: Horriffic non-scalable boolean from built-insx
   Image: /bool/icon.png
   Source: /bool/BadBool.fxml
+  Types: Boolean
   Defaults:
     value: false
 

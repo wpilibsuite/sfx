@@ -31,8 +31,14 @@ class SD::SettingsDialog
     std_parts = main.find_toolbox_parts[:standard]
     # TODO: no magic numbers
     number_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 3) != 0}.empty?}
+    string_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 4) != 0}.empty?}
+    bool_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 0x40) != 0}.empty?}
     prep_diff(@default_number, "defaults_type_number", :combo, "Bad Slider",
       number_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
+    prep_diff(@default_string, "defaults_type_string", :combo, "Label",
+      string_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
+    prep_diff(@default_bool, "defaults_type_bool", :combo, "xBadx",
+      bool_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
 
     @root_layout_pane.items.clear
     @root_layout_pane.items.add_all std_parts.find_all{|x|x["Category"] == "Grouping"}
