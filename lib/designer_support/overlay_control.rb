@@ -10,7 +10,8 @@ module SD::DesignerSupport
     #Observable
     property_accessor :running, :disabled
 
-    DIRECTIONS = {:moveRegion =>[0.0, 0.0, 1.0, 1.0],
+    DIRECTIONS = {
+      :moveRegion =>[0.0, 0.0, 1.0, 1.0],
       :nwResizeRegion =>[-1.0, -1.0, 1.0, 1.0],
       :nResizeRegion =>[0.0, -1.0, 0.0, 1.0],
       :neResizeRegion =>[1.0, -1.0, 0.0, 1.0],
@@ -18,12 +19,13 @@ module SD::DesignerSupport
       :seResizeRegion =>[1.0, 1.0, 0.0, 0.0],
       :sResizeRegion =>[0.0, 1.0, 0.0, 0.0],
       :swResizeRegion =>[-1.0, 1.0, 1.0, 0.0],
-      :wResizeRegion =>[-1.0, 0.0, 1.0, 0.0]}
+      :wResizeRegion =>[-1.0, 0.0, 1.0, 0.0],
+    }
 
     RESIZABILITY_MAPPER = {
       ResizeDirections::Move => [:moveRegion],
       ResizeDirections::UpDown => [:nResizeRegion, :sResizeRegion, :nHandle, :sHandle],
-      ResizeDirections::LeftRight => [:eResizeRegion, :eResizeRegion, :eHandle, :wHandle],
+      ResizeDirections::LeftRight => [:eResizeRegion, :wResizeRegion, :eHandle, :wHandle],
       ResizeDirections::SouthEastNorthWest => [:nwResizeRegion, :seResizeRegion],
       ResizeDirections::NorthEastSouthWest => [:neResizeRegion, :swResizeRegion],
     }
