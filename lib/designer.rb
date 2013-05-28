@@ -265,6 +265,8 @@ class SD::Designer
     if x == y && y == nil && parent.appendable?
       parent.children.add(designer)
     else
+      x -= 10 if x
+      y -= 10 if y
       parent.add_child_at designer,x,y
     end
     @ui2pmap[control.ui] = control
