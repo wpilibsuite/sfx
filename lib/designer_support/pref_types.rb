@@ -21,11 +21,13 @@ class SD::DesignerSupport::PrefTypes
   def self.for(enum)
     svt = Java::dashfx.data.SmartValueTypes
     floats = ints = nums = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_number", "Bad Slider")}[:proc]
+    strings = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_string", "Label")}[:proc]
     map = {
       svt::Double.mask => floats,
       svt::Float.mask => floats,
       svt::Integer.mask => ints,
       svt::Number.mask => nums,
+      svt::String.mask => strings,
     }
     map[enum.mask].call
   end
