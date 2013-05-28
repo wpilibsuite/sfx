@@ -1,7 +1,7 @@
 require 'jrubyfx'
 $LOAD_PATH << "."
-require 'SDLib.jar'
-require 'SDInterfaces.jar'
+require 'sfxlib.jar'
+require 'sfxmeta.jar'
 require "#{ENV["HOME"]}/sunspotfrcsdk/desktop-lib/networktables-desktop.jar" # TODO: file.join
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"
 

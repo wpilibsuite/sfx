@@ -21,7 +21,7 @@ module SD
       @stage = stage(title: "PlayBack>> Controller") do
         init_owner parent_win
       end
-      @core.add_data_filter Java::dashfx.data.endpoints.PlaybackFilter.new.tap{|x| @filter = x}
+      @core.add_data_filter Java::dashfx.lib.data.endpoints.PlaybackFilter.new.tap{|x| @filter = x}
     end
 
     def launch

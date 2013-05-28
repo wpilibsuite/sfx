@@ -2,8 +2,8 @@
 module SD::DesignerSupport
   class Overlay < Java::javafx::scene::layout::GridPane
     include JRubyFX::Controller
-    include Java::dashfx::data::Registerable
-    java_import 'dashfx.controls.ResizeDirections'
+    include Java::dashfx::lib::controls::Control
+    java_import 'dashfx.lib.controls.ResizeDirections'
     fxml "DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer
     attr_accessor :editing_nested
@@ -80,10 +80,10 @@ module SD::DesignerSupport
       jc = child.java_class
       [jc, *jc.java_instance_methods].each do |src|
         src.annotations.each do |annote|
-          if annote.is_a? Java::dashfx.controls.Designable and src != jc
+          if annote.is_a? Java::dashfx.lib.controls.Designable and src != jc
             q = src.invoke(child).to_java
             props << [q, annote] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
-          elsif annote.is_a? Java::dashfx.controls.DesignableProperty
+          elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty
             annote.value.length.times do |i|
               meth = child.respond_to?(annote.value[i] + "Property") ? child.method(annote.value[i] + "Property") : child.ui.method(annote.value[i] + "Property")
               props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
@@ -109,6 +109,11 @@ module SD::DesignerSupport
       end
       @drag_action = nil
     end
+
+    def getUI
+      self
+    end
+
     #
     def onClick(e)
       # ctx menu goes here
@@ -141,16 +146,20 @@ module SD::DesignerSupport
     end
 
     def z_send_backward
-      @parent.z_edit(self, Java::dashfx.data.ZPositions::Down)
+      @parent.z_edit(self, Java::dashfx.lib.data.ZPositions::Down)
     end
     def z_send_bottom
-      @parent.z_edit(self, Java::dashfx.data.ZPositions::Bottom)
+      @parent.z_edit(self, Java::dashfx.lib.data.ZPositions::Bottom)
     end
     def z_send_forward
-      @parent.z_edit(self, Java::dashfx.data.ZPositions::Up)
+      @parent.z_edit(self, Java::dashfx.lib.data.ZPositions::Up)
     end
     def z_send_top
-      @parent.z_edit(self, Java::dashfx.data.ZPositions::Top)
+      @parent.z_edit(self, Java::dashfx.lib.data.ZPositions::Top)
+    end
+
+    def morph_into
+
     end
   end
 end

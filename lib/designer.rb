@@ -13,8 +13,9 @@ require 'yaml'
 
 class SD::Designer
   include JRubyFX::Controller
-  java_import 'dashfx.data.DataInitDescriptor'
-  java_import 'dashfx.data.InitInfo'
+  java_import 'dashfx.lib.data.DataInitDescriptor'
+  java_import 'dashfx.lib.data.InitInfo'
+  java_import 'dashfx.lib.registers.ControlRegister'
 
   fxml "SFX.fxml"
 
@@ -36,7 +37,7 @@ class SD::Designer
     @ui2pmap = {}
     @selSem = false
 
-    @data_core = Java::dashfx.data.DataCore.new()
+    @data_core = Java::dashfx.lib.data.DataCore.new()
     @data_core.known_names.add_change_listener do |change|
       change.next # TODO: figure out what this magic line does
       change.added_sub_list.each do |new_name|
@@ -131,7 +132,7 @@ class SD::Designer
     SD::DesignerSupport::PrefTypes.create_toolbox(parts, @prefs)
 
     #DEMO
-    @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
+    @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
     #PLUGINS
     @playback = SD::Playback.new(@data_core, @stage)
     # TESTING
@@ -168,23 +169,26 @@ class SD::Designer
 
   def find_toolbox_parts
     unless @found_plugins
-      desc = YAML::load_stream(Java::dashfx.registers.ControlRegister.java_class.resource_as_stream("/dashfx/controls/ValueMeterDescriptor.yml").to_io)
+      xdesc = YAML::load_stream(ControlRegister.java_class.resource_as_stream("/manifest.yml").to_io)
       #TODO: why is this doubled [[]] ???
-      desc = desc[0]
+      xdesc = xdesc[0]
       # process the built in yaml
-      desc.each do |x|
+      if xdesc["API"] != 0.1
+        abort("Built in manifest version is wrong! Something went horrible! expected 0.1 but got #{xdesc["Manifest API"]}")
+      end
+      xdesc["Data"].each do |x|
         oi = x["Image"]
         x["ImageStream"] = Proc.new do
           if oi and oi.length > 0
-            Java::dashfx.registers.ControlRegister.java_class.resource_as_stream(oi)
+            ControlRegister.java_class.resource_as_stream(oi)
           else
             nil
           end
         end
-        x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.data.SmartValueTypes.valueOf(x).mask}
+        x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
         x[:proc] = Proc.new {
           fx = FxmlLoader.new
-          fx.location = Java::dashfx.registers.ControlRegister.java_class.resource(x["Source"])
+          fx.location = ControlRegister.java_class.resource(x["Source"])
           fx.load.tap do |obj|
             x["Defaults"].each do |k, v|
               obj.send(k + "=", v)
@@ -192,13 +196,18 @@ class SD::Designer
           end
         }
       end
+      desc = xdesc["Data"]
 
       # check for the plugins folder
       plugin_yaml = File.join(File.dirname(File.dirname(__FILE__)), "plugins")
       if Dir.exist? plugin_yaml
         xdesc = YAML::load_file(File.join(plugin_yaml, "manifest.yml"))
+        if xdesc["API"] != 0.1
+          puts("Built in external manifest version is wrong! expected 0.1 but got #{xdesc["Manifest API"]}")
+          xdesc["Data"] = []
+        end
         # process the built in yaml
-        xdesc.each do |x|
+        xdesc["Data"].each do |x|
           oi = x["Image"]
           x["ImageStream"] = Proc.new do
             if oi and oi.length > 0
@@ -207,7 +216,7 @@ class SD::Designer
               nil
             end
           end
-          x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.data.SmartValueTypes.valueOf(x).mask}
+          x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
           x[:proc] = Proc.new {
             fx = FxmlLoader.new
             fx.location = java.net.URL.new("file://#{plugin_yaml}#{x["Source"]}")
@@ -219,16 +228,16 @@ class SD::Designer
           }
         end
 
-        desc += xdesc
+        desc += xdesc["Data"]
       end
 
       # Process the java classes
-      Java::dashfx.registers.ControlRegister.all.each do |jclass|
-        annote = jclass.annotation(Java::dashfx.controls.Designable.java_class)
+      ControlRegister.all.each do |jclass|
+        annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
         oi = annote.image
-        cat_annote = jclass.annotation(Java::dashfx.controls.Category.java_class)
+        cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
         cat_annote = cat_annote.value if cat_annote
-        types_annote = jclass.annotation(Java::dashfx.data.Types.java_class)
+        types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
         types_annote =  if types_annote
           types_annote.value.map{|x|x.mask}
         else
@@ -258,7 +267,7 @@ class SD::Designer
 
   def add_designable_control(control, x=0, y=0, parent=@canvas)
     designer = SD::DesignerSupport::Overlay.new(control, self, parent)
-    if control.is_a? Java::dashfx.data.DesignablePane
+    if control.is_a? Java::dashfx.lib.controls.DesignablePane
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
     end

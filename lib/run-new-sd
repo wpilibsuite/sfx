@@ -1,1 +1,1 @@
-ruby -I ../../jrubyfx/lib -I ../../FXMLLoader/lib -I ../../SDLib/dist -I ../../SDInterfaces/dist main.rb $@ | tee ../../jrubyfx/test.log
+ruby -I ../../jrubyfx/lib -I ../../FXMLLoader/lib -I ../../sfxlib/dist -I ../../sfxmeta/dist main.rb $@ | tee ../../jrubyfx/test.log

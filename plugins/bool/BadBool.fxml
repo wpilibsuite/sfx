@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<dashfx.controls.BooleanControlBase fx:id="base" xmlns:fx="http://javafx.com/fxml">
+<dashfx.controls.bases.BooleanControlBase fx:id="base" xmlns:fx="http://javafx.com/fxml">
 	<ui>
 		<CheckBox text="${base.name}" selected="${base.value}" />
 
 	</ui>
-</dashfx.controls.BooleanControlBase>
+</dashfx.controls.bases.BooleanControlBase>

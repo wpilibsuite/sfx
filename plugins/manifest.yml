@@ -1,5 +1,9 @@
-## YAML Template.
----
+API: 0.1
+Name: Built-in sfx controls
+Description: Built in -fx:smartdashboard controls from sfx.jar
+Version: 0.0.1a1
+Plugin ID: 611C21A7-6D24-4F51-81D6-E5615F59DADA
+Data:
 - 
   Name: xBadx
   Description: Horriffic non-scalable boolean from built-insx

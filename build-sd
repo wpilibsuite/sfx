@@ -1,6 +1,4 @@
 #!/bin/bash
-#cp ../SDLib/build/classes/* lib/ -r
-#cp ../SDInterfaces/build/classes/* lib/ -r
-jruby -I ../jrubyfx ../jrubyfx/bin/jrubyfx-jarify lib SFX.jar
-cp ../SDLib/dist/*.jar .
-cp ../SDInterfaces/dist/*.jar .
+jruby -I ../jrubyfx ../jrubyfx/bin/jrubyfx-jarify lib sfx.jar
+cp ../sfxlib/dist/*.jar .
+cp ../sfxmeta/dist/*.jar .

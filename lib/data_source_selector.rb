@@ -16,8 +16,8 @@ module SD
   class DataSourceSelector
     include JRubyFX::Controller
     fxml "DataSourceSelector.fxml"
-    java_import 'dashfx.data.DataInitDescriptor'
-    java_import 'dashfx.data.InitInfo'
+    java_import 'dashfx.lib.data.DataInitDescriptor'
+    java_import 'dashfx.lib.data.InitInfo'
 
     def initialize(core)
       @core = core
@@ -42,26 +42,26 @@ module SD
       @old_np = ep.name_property
       @name.set_on_action &method(:update_combo_view)
       @host.text = ep.init_info.host
-      annote = ep.object.java_class.annotation(Java::dashfx.controls.DesignableData.java_class)
+      annote = ep.object.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
       @type_info.text = "#{annote.name}\n#{annote.description}"
       @type_classname.text = ep.object.java_class.inspect.sub(/^class /, '')
       # Search for all types
-      Java::dashfx.registers.DataProcessorRegister.get_all.each do |e|
-        combo_add :new_type, [e.annotation(Java::dashfx.controls.DesignableData.java_class), e]
+      Java::dashfx.lib.registers.DataProcessorRegister.get_all.each do |e|
+        combo_add :new_type, [e.annotation(Java::dashfx.lib.controls.DesignableData.java_class), e]
       end
       combo_flush
     end
-    
+
     def load_info_pane(did)
       @name.text_property.unbind_bidirectional @old_np
       @name.text_property.bind_bidirectional did.name_property
       @old_np = did.name_property
       @host.text = did.init_info.host
-      annote = did.object.java_class.annotation(Java::dashfx.controls.DesignableData.java_class)
+      annote = did.object.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
       @type_info.text = "#{annote.name}\n#{annote.description}"
       @type_classname.text = did.object.java_class.inspect.sub(/^class /, '')
     end
-    
+
     def update_combo_view(e)
       # TODO: its probbably better to search for the ones that need redrawing and force just that.
       @all_combos.each do |k, its|
@@ -72,7 +72,7 @@ module SD
         end
       end
     end
-    
+
     def combo_init(combo)
       combo.set_cell_factory do |param|
         SD::DSSListCell.new
@@ -88,7 +88,7 @@ module SD
           @smash_quiet = nil
         end
         puts "not ignore it, we got #{combo.value}"
-      
+
         item = combo.value
         if item == :seperator
           loc = :in
@@ -96,7 +96,7 @@ module SD
           # TODO: figure out strange sections
           combo_select @combo_infos[loc][idx][:selected], loc, idx
           combo_flush
-        elsif item.is_a? Array and item[0].kind_of? Java::dashfx.controls.DesignableData
+        elsif item.is_a? Array and item[0].kind_of? Java::dashfx.lib.controls.DesignableData
           puts "Creating new one!"
           p item
           job = item[1].ruby_class.new
@@ -114,7 +114,7 @@ module SD
         end
       end
     end
-    
+
     def combo_flush
       if @combo_taints.include? :all
         # TODO: may not be square
@@ -138,7 +138,7 @@ module SD
       end
       @combo_taints = []
     end
-    
+
     def combo_add(type, value, combo=nil, indx=nil)
       case type
       when :current, :possible
@@ -153,12 +153,12 @@ module SD
         puts "EEK! unknown combo add type #{type}"
       end
     end
-    
+
     def combo_select(selected, combo, indx)
       @combo_infos[combo][indx][:selected] = selected
       @combo_taints << [combo, indx]
     end
-    
+
     def save_it
       @core.clear_all_data_endpoints
       @root_source.value.mount_point = @root_url.text
@@ -166,29 +166,29 @@ module SD
       @stage.hide
     end
   end
-  
-  class DSSListCell < Java::javafx.scene.control.ListCell     
+
+  class DSSListCell < Java::javafx.scene.control.ListCell
     include JRubyFX
     def updateItem(item, empty)
       super
-      if (item != nil) 
+      if (item != nil)
         self.disabled = false
         self.tooltip = nil
         puts "Painting #{item} on #{self.object_id}"
         if item == :seperator
           self.text = "------------"
           self.disabled = true
-        elsif item.is_a? Array and item[0].kind_of? Java::dashfx.controls.DesignableData
+        elsif item.is_a? Array and item[0].kind_of? Java::dashfx.lib.controls.DesignableData
           self.text = "New #{item[0].name.match(/[\:]?([^\:]*)$/)[1]}"
           self.tooltip = build(Tooltip, item[1].name)
         elsif item.is_a? String
           self.text = item
         else # TODO: don't assume
           self.text = item.name
-        end                        
+        end
       else
         self.text = nil
       end
-    end         
+    end
   end
 end

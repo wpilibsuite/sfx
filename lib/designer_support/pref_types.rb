@@ -19,7 +19,7 @@ class SD::DesignerSupport::PrefTypes
     @prefs = prefs
   end
   def self.for(enum)
-    svt = Java::dashfx.data.SmartValueTypes
+    svt = Java::dashfx.lib.data.SmartValueTypes
     floats = ints = nums = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_number", "Bad Slider")}[:proc]
     strings = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_string", "Label")}[:proc]
     bools = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_bool", "xBadx")}[:proc]
