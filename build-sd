@@ -1,4 +1,6 @@
 #!/bin/bash
-jrubyfx-jarify lib SFX.jar
+#cp ../SDLib/build/classes/* lib/ -r
+#cp ../SDInterfaces/build/classes/* lib/ -r
+jruby -I ../jrubyfx ../jrubyfx/bin/jrubyfx-jarify lib SFX.jar
 cp ../SDLib/dist/*.jar .
 cp ../SDInterfaces/dist/*.jar .
