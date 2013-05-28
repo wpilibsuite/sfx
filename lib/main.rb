@@ -8,15 +8,15 @@ fxml_root File.join(File.dirname(__FILE__), "res"), "res"
 module SD
   class App < JRubyFX::Application
     def start(stage)
-      with(stage, :title => "SmartDashboard")
-      puts "Begin loading..."
-      SD::Designer.load_into stage
-      stage.icons.add image("file://" + File.join(File.dirname(__FILE__), "res", "icon.png"))
-      stage.show
+      with(stage, :title => "SmartDashboard") do
+        fxml SD::Designer
+        icons.add image("file://" + File.join(File.dirname(__FILE__), "res", "icon.png"))
+        show
+      end
     end
   end
 end
 
-require 'designer.rb'
+require 'designer'
 
 SD::App.launch

@@ -20,7 +20,7 @@
             <MenuItem mnemonicParsing="false" onAction="#z_send_top" text="Send to Top" />
           </items>
         </Menu>
-		<MenuItem mnemonicParsing="false" onAction="#morph_into" text="Morph Into..." /><!-- TODO: better name -->
+        <MenuItem mnemonicParsing="false" onAction="#morph_into" text="Morph Into..." /><!-- TODO: better name -->
       </items>
     </ContextMenu>
   </fx:define>

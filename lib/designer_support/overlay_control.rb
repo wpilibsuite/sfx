@@ -82,11 +82,16 @@ module SD::DesignerSupport
         src.annotations.each do |annote|
           if annote.is_a? Java::dashfx.lib.controls.Designable and src != jc
             q = src.invoke(child).to_java
-            props << [q, annote] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
+            # TODO: proper types
+            type = jc.java_method("get" + src.name.gsub(/^(get|set)/, '').gsub(/Property$/, '').gsub(/^([a-z])/){|x|x.upcase}).return_type
+            props << [q, annote, type] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
           elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty
             annote.value.length.times do |i|
-              meth = child.respond_to?(annote.value[i] + "Property") ? child.method(annote.value[i] + "Property") : child.ui.method(annote.value[i] + "Property")
-              props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i])]
+              prop_name = annote.value[i] + "Property"
+              meth = child.respond_to?(prop_name) ? child.method(prop_name) : child.ui.method(prop_name)
+              get_name = "get" + (annote.value[i].gsub(/^([a-z])/){|x|x.upcase})
+              type = (child.respond_to?(get_name) ? child.java_method(get_name) : child.ui.java_method(get_name)).return_type
+              props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i]), type]
             end
           end
         end
