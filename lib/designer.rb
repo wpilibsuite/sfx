@@ -134,6 +134,18 @@ class SD::Designer
     @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
     #PLUGINS
     @playback = SD::Playback.new(@data_core, @stage)
+    # TESTING
+    SD::DesignerSupport::Overlay.preparse_new(5)
+    @properties = SD::DesignerSupport::PropertiesPopup.new
+
+    @stage.focused_property.add_change_listener do |v, o, new|
+      unless new
+        @was_showing = @properties.showing?
+        @properties.hide
+      else
+        @properties.show(@stage) if @was_showing
+      end
+    end
   end
 
   def snag_ip
@@ -176,7 +188,7 @@ class SD::Designer
           fx.load.tap do |obj|
             x["Defaults"].each do |k, v|
               obj.send(k + "=", v)
-            end
+            end if x["Defaults"]
           end
         }
       end
@@ -256,7 +268,7 @@ class SD::Designer
       parent.add_child_at designer,x,y
     end
     @ui2pmap[control.ui] = control
-    self.message = "Added new #{control.class.name}"
+    self.message = "Added new #{control.java_class.name}"
     designer
   end
 
@@ -392,9 +404,6 @@ class SD::Designer
     if @selected_items.length < 1 or @selected_items.find_all { |i| !i.editing_nested }.length != 1
       hide_properties
     else
-      unless @properties
-        @properties = SD::DesignerSupport::PropertiesPopup.new
-      end
       @properties.properties = @selected_items[0].properties
       bnds = @selected_items[0].localToScene(@selected_items[0].getBoundsInLocal)
       scr_x = @scene.x + @stage.x
