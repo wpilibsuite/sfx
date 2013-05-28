@@ -22,12 +22,14 @@ class SD::DesignerSupport::PrefTypes
     svt = Java::dashfx.data.SmartValueTypes
     floats = ints = nums = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_number", "Bad Slider")}[:proc]
     strings = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_string", "Label")}[:proc]
+    bools = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_bool", "xBadx")}[:proc]
     map = {
       svt::Double.mask => floats,
       svt::Float.mask => floats,
       svt::Integer.mask => ints,
       svt::Number.mask => nums,
       svt::String.mask => strings,
+      svt::Boolean.mask => bools,
     }
     map[enum.mask].call
   end
