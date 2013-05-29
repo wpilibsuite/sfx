@@ -88,9 +88,14 @@ module SD::DesignerSupport
           elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty
             annote.value.length.times do |i|
               prop_name = annote.value[i] + "Property"
-              meth = child.respond_to?(prop_name) ? child.method(prop_name) : child.ui.method(prop_name)
+              meth = child.method(prop_name)
               get_name = "get" + (annote.value[i].gsub(/^([a-z])/){|x|x.upcase})
-              type = (child.respond_to?(get_name) ? child.java_method(get_name) : child.ui.java_method(get_name)).return_type
+              type = child.java_method(get_name)
+              # TODO: this is absurd
+              if type.name == :"()"
+                type = child.java_class.java_instance_methods.find{|x|x.name==get_name}
+              end
+              type = type.return_type
               props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i]), type]
             end
           end
