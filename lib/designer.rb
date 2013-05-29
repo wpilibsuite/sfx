@@ -401,6 +401,8 @@ class SD::Designer
       c.running = true
     end
     hide_controls
+    hide_toolbox
+    hide_properties
     @canvas.resume
   end
 
@@ -506,8 +508,10 @@ class SD::Designer
   end
 
   def hide_toolbox
+    return if @toolbox_status == :hidden
+    @toolbox_status = :hidden
     @clickoff_tbx = Proc.new {|x|}
-    @on_tmouse.call
+    @on_tmouse.call if @on_tmouse
     @toolbox.selection_model.select_first
     with(@toolbox) do |tbx|
       timeline do
@@ -518,6 +522,8 @@ class SD::Designer
   end
 
   def show_toolbox
+    return if @toolbox_status == :visible
+    @toolbox_status = :visible
     with(@toolbox) do |tbx|
       timeline do
         animate tbx.translateXProperty, 0.sec => 500.ms, 36.0 => 300.0
@@ -534,6 +540,7 @@ class SD::Designer
       @just_dragged  = false
       return
     end
+    return if @mode != :design
     q = e.target
     new_selections = e.control_down? ? @selected_items : []
     begin
