@@ -69,6 +69,7 @@ module SD::DesignerSupport
           nodes += @parent_designer.multi_drag(self)
         end
         @drag_action = [e.scene_x, e.scene_y]
+        @parent_designer.properties_draghide()
         @parent.begin_dragging(nodes, nodes.map{|n| n.instance_variable_get(:@childContainer)}, e.scene_x, e.scene_y, *DIRECTIONS[e.target.id.to_sym])
       end
       e.consume
@@ -116,6 +117,7 @@ module SD::DesignerSupport
     on :dragDone do |e|
       if @drag_action
         @parent.finish_dragging
+        @parent_designer.properties_dragshow(self)
       end
       @drag_action = nil
     end

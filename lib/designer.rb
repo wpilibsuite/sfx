@@ -470,13 +470,34 @@ class SD::Designer
       hide_properties
     else
       @properties.properties = @selected_items[0].properties
-      bnds = @selected_items[0].localToScene(@selected_items[0].getBoundsInLocal)
-      scr_x = @scene.x + @stage.x
-      scr_y = @scene.y + @stage.y
-      @properties.y = bnds.min_y + scr_y
-      @properties.x = bnds.max_x + scr_x
-      @properties.show(@stage)
+      properties_show_around @selected_items[0]
     end
+  end
+
+  def properties_draghide
+    hide_properties
+  end
+
+  def properties_dragshow(elt)
+    properties_show_around(elt)
+  end
+
+  def properties_show_around(elt)
+    bnds = elt.localToScene(elt.getBoundsInLocal)
+    scr_x = @scene.x + @stage.x
+    scr_y = @scene.y + @stage.y
+    scr = Screen.getScreensForRectangle(scr_x, scr_y, 1, 1)[0]
+    loc_x = bnds.max_x + scr_x + 5
+    loc_y = bnds.min_y + scr_y
+    if scr.bounds.max_x <= loc_x + @properties.width
+      loc_x = bnds.min_x + scr_x - 5 - @properties.width
+    end
+    if scr.bounds.max_y <= loc_y + @properties.height
+      loc_y = bnds.max_y + scr_y - @properties.height
+    end
+    @properties.y = loc_y
+    @properties.x = loc_x
+    @properties.show(@stage)
   end
 
   def hide_toolbox
