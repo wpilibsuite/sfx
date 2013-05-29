@@ -2,29 +2,45 @@
 
 <?import java.lang.*?>
 <?import java.util.*?>
+<?import javafx.collections.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<fx:root type="javafx.scene.layout.BorderPane" prefHeight="235.0" prefWidth="482.0000999999975" style="-fx-background-color: linear-gradient(to top, #889b 85%, #99a5 )" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.BorderPane" prefHeight="257.0000999999975" prefWidth="295.999977929685" style="-fx-background-color: linear-gradient(to top, #889b 85%, #99a5 )" xmlns:fx="http://javafx.com/fxml">
   <center>
-    <VBox fx:id="prop_list" prefHeight="-1.0" prefWidth="-1.0" />
+    <GridPane fx:id="prop_list" hgap="12.0" vgap="9.0">
+      <columnConstraints>
+        <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="-1.0" />
+        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+      </columnConstraints>
+      <padding>
+        <Insets left="12.0" right="12.0" />
+      </padding>
+      <rowConstraints>
+        <RowConstraints vgrow="SOMETIMES" />
+        <RowConstraints vgrow="SOMETIMES" />
+        <RowConstraints vgrow="ALWAYS" />
+      </rowConstraints>
+    </GridPane>
   </center>
   <top>
     <HBox fx:id="titlebar" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" onMouseDragged="#move" onMousePressed="#begin_move" onMouseReleased="#finish_move" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="-fx-background-color: #00000001">
       <children>
-        <Button mnemonicParsing="false" onAction="#close" style="-fx-background-color: transparent;" text="-">
-          <font>
-            <Font name="System Bold" size="15.0" />
-          </font>
-        </Button>
-        <Label alignment="TOP_LEFT" text="Awesome Control 9000">
+        <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Label fx:id="title" alignment="TOP_LEFT" text="Awesome Control 9000">
           <font>
             <Font name="System Bold" size="13.0" />
           </font>
         </Label>
+        <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+        <Button mnemonicParsing="false" onAction="#close" style="-fx-background-color: transparent;" text="X">
+          <font>
+            <Font name="System Bold" size="15.0" />
+          </font>
+        </Button>
       </children>
       <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

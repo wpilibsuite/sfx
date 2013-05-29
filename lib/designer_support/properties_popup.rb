@@ -9,6 +9,9 @@ module SD::DesignerSupport
     def properties=(props)
       content[0].properties = props
     end
+    def title=(props)
+      content[0].title = props
+    end
   end
   class PropertiesPane < Java::javafx::scene::layout::BorderPane
     include JRubyFX::Controller
@@ -23,16 +26,22 @@ module SD::DesignerSupport
 
     def properties=(props)
       @prop_list.children.clear
+      @prop_list.row_constraints.clear
+      @prop_list.row_constraints.add_all (0...props.length).map{row_constraints(vgrow: :sometimes)}
+      @prop_list.row_constraints.add row_constraints(vgrow: :always)
+      col = 0
       props.each do |prop|
         with(@prop_list) do
-          hbox do |hb|
-            label(prop[1].value + ": ", tooltip: tooltip!(prop[1].description))
-            hb.add Java::dashfx.lib.designers.Designers.getFor(prop[2]).tap{|x|x.design(prop[0])}.getUiBits
-          end
+          add label!(prop[1].value + ": ", tooltip: tooltip!(prop[1].description)), 0, col
+          add Java::dashfx.lib.designers.Designers.getFor(prop[2]).tap{|x|x.design(prop[0])}.getUiBits, 1, col
+          col += 1
         end
       end
     end
 
+    def title=(props)
+      @title.text = props
+    end
     def move(e)
       if @drag_info
         @popup.x = @drag_info[:original_x]+ (e.screen_x - @drag_info[:m_x])

@@ -295,8 +295,8 @@ class SD::Designer
   end
 
   # called to wrap the control in an overlay and to place in a control
-  def add_designable_control(control, x=0, y=0, parent=@canvas)
-    designer = SD::DesignerSupport::Overlay.new(control, self, parent)
+  def add_designable_control(control, x=0, y=0, parent=@canvas, oname=nil)
+    designer = SD::DesignerSupport::Overlay.new(control, self, parent, oname)
 
     # if its designable, add hooks for nested editing to work
     if control.is_a? Java::dashfx.lib.controls.DesignablePane
@@ -342,7 +342,7 @@ class SD::Designer
           # TODO: check for others and dont assume name
           obj.name = @dnd_opts[@dnd_ids[db.string.to_i]][:assign_name]
         end
-        add_designable_control obj, event.x, event.y, pare
+        add_designable_control obj, event.x, event.y, pare, @dnd_ids[db.string.to_i]["Name"]
         hide_toolbox
         @clickoff_fnc.call if @clickoff_fnc
         @on_mouse.call(nil) if @on_mouse
@@ -470,6 +470,11 @@ class SD::Designer
       hide_properties
     else
       @properties.properties = @selected_items[0].properties
+      sic = @selected_items[0].child
+      name = sic.name if sic.respond_to? :name
+      name = @selected_items[0].original_name unless name
+      name = sic.java_class.name.split(".").last unless name
+      @properties.title = name
       properties_show_around @selected_items[0]
     end
   end
@@ -637,10 +642,11 @@ class SD::Designer
       end
     end
     objs = @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.map do |ctrl|
-      new_obj = SD::DesignerSupport::PrefTypes.for(ctrl.type)
+      new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
+      new_obj = new_objd[:proc].call
       if new_obj
         x = y = @canvas.appendable? ? nil : 0.0
-        add_designable_control with(new_obj, name: ctrl.name), x, y
+        add_designable_control with(new_obj, name: ctrl.name), x, y, @canvas, new_objd["Name"]
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
         nil

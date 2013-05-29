@@ -20,9 +20,9 @@ class SD::DesignerSupport::PrefTypes
   end
   def self.for(enum)
     svt = Java::dashfx.lib.data.SmartValueTypes
-    floats = ints = nums = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_number", "Bad Slider")}[:proc]
-    strings = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_string", "Label")}[:proc]
-    bools = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_bool", "xBadx")}[:proc]
+    floats = ints = nums = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_number", "Bad Slider")}
+    strings = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_string", "Label")}
+    bools = @std_parts.find{|x|x["Name"] == @prefs.get("defaults_type_bool", "xBadx")}
     map = {
       svt::Double.mask => floats,
       svt::Float.mask => floats,
@@ -31,6 +31,6 @@ class SD::DesignerSupport::PrefTypes
       svt::String.mask => strings,
       svt::Boolean.mask => bools,
     }
-    map[enum.mask].call
+    map[enum.mask]
   end
 end

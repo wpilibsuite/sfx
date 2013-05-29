@@ -5,7 +5,7 @@ module SD::DesignerSupport
     include Java::dashfx::lib::controls::Control
     java_import 'dashfx.lib.controls.ResizeDirections'
     fxml "DesignerOverlayControl.fxml"
-    attr_reader :child, :parent_designer
+    attr_reader :child, :parent_designer, :original_name
     attr_accessor :editing_nested
     #Observable
     property_accessor :running, :disabled
@@ -30,7 +30,7 @@ module SD::DesignerSupport
       ResizeDirections::NorthEastSouthWest => [:neResizeRegion, :swResizeRegion],
     }
 
-    def initialize(child, parent_designer, parent)
+    def initialize(child, parent_designer, parent, original_name=nil)
       @child = child
       @childContainer.setCenter(child.getUi);
       @parent_designer = parent_designer
@@ -44,6 +44,7 @@ module SD::DesignerSupport
       # TODO: intercept events
       @selected_ui.visibleProperty.bind(@running.or(@disabled).not)
       @editing_nested = false
+      @original_name = original_name
     end
 
     def registered(prov)
