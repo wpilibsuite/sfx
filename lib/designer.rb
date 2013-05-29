@@ -356,19 +356,19 @@ class SD::Designer
 
   def register_clickoff(&fnc)
     @clickoff_fnc = fnc
-    @on_mouse = Proc.new do |e|
+    on_mouse = @on_mouse = Proc.new do |e|
       e.consume if e
-      @GridPane.remove_event_filter(MouseEvent::MOUSE_PRESSED,@on_mouse)
+      @GridPane.remove_event_filter(MouseEvent::MOUSE_PRESSED,on_mouse)
       fnc.call
       @on_mouse = nil
     end
-    @GridPane.add_event_filter(MouseEvent::MOUSE_PRESSED,@on_mouse)
+    @GridPane.add_event_filter(MouseEvent::MOUSE_PRESSED,on_mouse)
   end
 
   # TODO: somehow merge with above method
   def register_toolbox_clickoff(&fnc)
     @clickoff_tbx = fnc
-    @on_tmouse = Proc.new do |e|
+    on_tmouse = @on_tmouse = Proc.new do |e|
       q = e.nil? ? false : e.target
       while q
         if q == @toolbox
@@ -378,12 +378,12 @@ class SD::Designer
         end
       end
       if q == nil # no parents found
-        @GridPane.remove_event_filter(MouseEvent::MOUSE_PRESSED,@on_tmouse)
+        @GridPane.remove_event_filter(MouseEvent::MOUSE_PRESSED,on_tmouse)
         @clickoff_tbx.call
         @on_tmouse = nil
       end
     end
-    @GridPane.add_event_filter(MouseEvent::MOUSE_PRESSED,@on_tmouse)
+    @GridPane.add_event_filter(MouseEvent::MOUSE_PRESSED,on_tmouse)
   end
 
   def multiple_selected?
