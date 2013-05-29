@@ -76,6 +76,7 @@ module SD::DesignerSupport
       e.consume
     end
 
+    # get all the properties
     def properties
       # ahh! must get stuff....
       props = []
@@ -93,7 +94,7 @@ module SD::DesignerSupport
               meth = child.method(prop_name)
               get_name = "get" + (annote.value[i].gsub(/^([a-z])/){|x|x.upcase})
               type = child.java_method(get_name)
-              # TODO: this is absurd
+              # TODO: this is absurd, sometimes it fails to find the method
               if type.name == :"()"
                 type = child.java_class.java_instance_methods.find{|x|x.name==get_name}
               end
@@ -127,9 +128,8 @@ module SD::DesignerSupport
       self
     end
 
-    #
     def onClick(e)
-      # ctx menu goes here
+      # ?
     end
 
     def exit_nesting
@@ -139,7 +139,7 @@ module SD::DesignerSupport
     end
 
     def checkDblClick(e)
-      if e.click_count > 1
+      if e.click_count > 1 && child.is_a?(Java::dashfx.lib.controls.DesignablePane)
         @parent_designer.nested_edit(self)
         # enable nested mode!
 
@@ -149,7 +149,7 @@ module SD::DesignerSupport
         e.consume
       end
     end
-    #    add_method_signature :onClick, [Void::TYPE, MouseEvent]
+
     def inspect
       "#<DesignerOverlay:0x#{object_id.to_s(16)} @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
     end
@@ -158,6 +158,7 @@ module SD::DesignerSupport
       @context_menu.show(@selected_ui, e.screen_x, e.screen_y)
     end
 
+    # Z ordering requests
     def z_send_backward
       @parent.z_edit(self, Java::dashfx.lib.data.ZPositions::Down)
     end
@@ -172,7 +173,7 @@ module SD::DesignerSupport
     end
 
     def morph_into
-
+      # TODO: transmorgafier
     end
 
     def delete

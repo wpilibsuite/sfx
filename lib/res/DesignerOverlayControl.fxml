@@ -25,7 +25,7 @@
     </ContextMenu>
   </fx:define>
   <children>
-    <BorderPane fx:id="childContainer" prefHeight="-1.0" prefWidth="-1.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+    <BorderPane fx:id="childContainer" prefHeight="-1.0" prefWidth="-1.0" minWidth="10" minHeight="10" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
       <GridPane.margin>
         <Insets />
       </GridPane.margin>

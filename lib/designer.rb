@@ -558,14 +558,10 @@ class SD::Designer
 
   def select(*items)
     new_selections = items
-    p items
     (@selected_items + new_selections).each do |si|
-      p si
       si.selected = new_selections.include? si
     end
     @selected_items = new_selections
-    puts "new selections:"
-    p @selected_items
     update_properties
   end
 
@@ -589,6 +585,7 @@ class SD::Designer
   end
 
   def nested_edit(octrl)
+    puts "entering nested mode on #{octrl}"
     nested_traverse(octrl, lambda { |ctrl|
         ui2p(ctrl.parent).edit_nested(ctrl) do
           exit_nesting(octrl)
@@ -598,6 +595,7 @@ class SD::Designer
   end
 
   def exit_nesting(octrl)
+    puts "exiting nested mode on #{octrl}"
     octrl.disabled = false
     octrl.exit_nesting
     nested_traverse(octrl, lambda { |ctrl| ctrl.parent.exit_nested }) do |x|
@@ -616,6 +614,7 @@ class SD::Designer
     end
   end
 
+  # helper function for traversing parents when nesting editing
   def nested_traverse(octrl, after, &eachblock)
     return if octrl == @canvas.ui
     ctrl = octrl
@@ -627,6 +626,7 @@ class SD::Designer
     end while ctrl != @canvas.ui
   end
 
+  # Settings for the canvas TODO: add other canvas properties
   def show_data_sources
     data_core = @data_core
     stg = @stage
@@ -637,17 +637,22 @@ class SD::Designer
     end.show_and_wait
   end
 
+  # Add all known controls
   def aa_add_all
+    # get a placement map if we need one (Aka we cant just append the item)
     fmap = if @canvas.appendable?
       nil
     else
       SD::DesignerSupport::PlacementMap.new(10, @canvas.ui.width, @canvas.ui.height).tap do |pm|
+        # add all the current children to the occupancy map
         @canvas.children.each do |child|
           bip = child.bounds_in_parent
           pm.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
         end
       end
     end
+
+    # for each of the items in the tree view (TODO: NOT A TREE VIEW), add it as the pref type
     objs = @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.map do |ctrl|
       new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
       new_obj = new_objd[:proc].call
@@ -660,6 +665,7 @@ class SD::Designer
       end
     end
     hide_toolbox
+    # if we need to position stuff ourselves, wait a bit so layout passes happen
     unless @canvas.appendable?
       Thread.new do
         sleep 0.2
@@ -667,6 +673,7 @@ class SD::Designer
           objs.each do |itm|
             next unless itm
             @canvas.ui.layout
+            # do a brute force search on spaces that fit
             x, y = catch :done do
               0.step(@canvas.ui.width, 10) do |x|
                 0.step(@canvas.ui.height, 10) do |y|
@@ -674,6 +681,7 @@ class SD::Designer
                 end
               end
             end
+            # once we find a location, place the control at that location and mask it off in the map
             itm.layout_x = x
             itm.layout_y = y
             bip = itm.bounds_in_parent
@@ -688,7 +696,9 @@ class SD::Designer
     puts "clicked add new"
   end
 
+  # edit the smart dashboard settings
   def edit_settings
+    hide_properties
     stg = @stage
     prefs = @prefs
     this = self
@@ -699,6 +709,7 @@ class SD::Designer
     end
   end
 
+  # Assign the designer surface and set up handlers
   def root_canvas=(cvs)
     if @canvas
       childs = @canvas.children.to_a
