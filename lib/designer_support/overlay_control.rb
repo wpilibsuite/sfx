@@ -171,6 +171,13 @@ module SD::DesignerSupport
     def morph_into
 
     end
+
+    def delete
+      @parent_designer.tap do |pd|
+        pd.select(self)
+        pd.delete_selected
+      end
+    end
   end
 end
 
