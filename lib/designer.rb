@@ -720,6 +720,7 @@ class SD::Designer
     @BorderPane.center = cvs.ui
     @canvas = cvs
     @ui2pmap[cvs.ui] = cvs
+    cvs.ui.style = "" # TODO: hack
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
