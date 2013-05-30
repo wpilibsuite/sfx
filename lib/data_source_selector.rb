@@ -23,17 +23,17 @@ module SD
       @core = core
       @all_combos = {
         :in => [@root_source],
-        :out => [@root_sink]
+        #:out => [@root_sink]
       }
       @combo_infos = {
         :in => [{selected: 0, items: ["None"]}],
-        :out => [{selected: 0, items: ["None"]}],
+       # :out => [{selected: 0, items: ["None"]}],
       }
       @combo_taints = []
       @combo_bottoms = []
       epts = @core.all_data_endpoints
       ep = epts[0]
-      [@root_source, @root_sink].each do |cb|
+      [@root_source].each do |cb| # root_sink
         combo_init cb
       end
       # TODO: should we use bindings?  yes, except the combo box is special...
@@ -112,7 +112,7 @@ module SD
     def combo_flush
       if @combo_taints.include? :all
         # TODO: may not be square
-        @combo_taints = ([:in, :out].product (0...@combo_infos[:in].length).to_a)
+        @combo_taints = ([:in].product (0...@combo_infos[:in].length).to_a) # TODO: out
       end
       @combo_taints.each do |comb, idx|
         combo = @all_combos[comb][idx]

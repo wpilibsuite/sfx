@@ -21,7 +21,7 @@
             </FXCollections>
           </items>
         </ComboBox>
-        <ComboBox fx:id="root_sink" editable="false" maxWidth="1.7976931348623157E308" promptText="None" GridPane.columnIndex="3" GridPane.rowIndex="0">
+        <ComboBox fx:id="root_sink" disable="true" editable="false" maxWidth="1.7976931348623157E308" promptText="None" GridPane.columnIndex="3" GridPane.rowIndex="0">
           <items>
             <FXCollections fx:factory="observableArrayList">
               <String fx:value="None" />
@@ -33,7 +33,7 @@
             <Font size="18.0" fx:id="x1" />
           </font>
         </Text>
-        <Button mnemonicParsing="false" text="Add Data Mount Point" GridPane.columnIndex="0" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+        <Button disable="true" mnemonicParsing="false" text="Add Data Mount Point" GridPane.columnIndex="0" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
         <Button disable="true" mnemonicParsing="false" text="x" textFill="RED" GridPane.columnIndex="4" GridPane.rowIndex="0">
           <tooltip>
             <Tooltip text="You can't remove the root" />
