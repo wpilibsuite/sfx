@@ -227,7 +227,7 @@ class SD::Designer
       desc = xdesc["Data"]
 
       # check for the plugins folder
-      plugin_yaml = File.join(File.dirname(File.dirname(__FILE__)), "plugins")
+      plugin_yaml = $PLUGIN_DIR
       if Dir.exist? plugin_yaml
         xdesc = YAML::load_file(File.join(plugin_yaml, "manifest.yml"))
         if xdesc["API"] != 0.1
