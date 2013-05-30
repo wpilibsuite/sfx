@@ -452,6 +452,7 @@ class SD::Designer
     animate_controls(false)
   end
 
+  # set the popup message at the bottom
   def message=(msg)
     @alert_msg.text = msg
     with(@msg_carrier) do |mc|
@@ -489,6 +490,7 @@ class SD::Designer
     properties_show_around(elt)
   end
 
+  # display the properties near some element
   def properties_show_around(elt)
     bnds = elt.localToScene(elt.getBoundsInLocal)
     scr_x = @scene.x + @stage.x

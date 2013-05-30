@@ -79,15 +79,11 @@ module SD
       end
       combo.button_cell = SD::DSSListCell.new
       combo.value_property.add_change_listener do
-        puts "lalalalalalala...." if @ignore_it
         next if @ignore_it
-        p "AAAAAAA" if @ignore_it
         if @smash_quiet #TODO: why do I need to do this?
-          puts "smashing!"
           @smash_quiet.call
           @smash_quiet = nil
         end
-        puts "not ignore it, we got #{combo.value}"
 
         item = combo.value
         if item == :seperator
@@ -97,8 +93,6 @@ module SD
           combo_select @combo_infos[loc][idx][:selected], loc, idx
           combo_flush
         elsif item.is_a? Array and item[0].kind_of? Java::dashfx.lib.controls.DesignableData
-          puts "Creating new one!"
-          p item
           job = item[1].ruby_class.new
           did = DataInitDescriptor.new(job, item[0].name.match(/[\:]?([^\:]*)$/)[1], InitInfo.new(), nil)
           # TODO: check if its in/out, just out, or just in
@@ -131,10 +125,8 @@ module SD
         combo.items.add_all data[:items]
         combo.items.add :seperator
         combo.items.add_all @combo_bottoms
-        puts "selecting #{data[:selected]}"
         combo.selection_model.select combo.items[data[:selected]]
         @ignore_it = false
-        puts "selected"
       end
       @combo_taints = []
     end
@@ -174,7 +166,6 @@ module SD
       if (item != nil)
         self.disabled = false
         self.tooltip = nil
-        puts "Painting #{item} on #{self.object_id}"
         if item == :seperator
           self.text = "------------"
           self.disabled = true
