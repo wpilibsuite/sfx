@@ -28,32 +28,29 @@ class SD::SettingsDialog
       @team_number.disabled = value
     end
     prep_diff(@team_number, "team_number", :int_1)
+
     std_parts = main.find_toolbox_parts[:standard]
     # TODO: no magic numbers
     number_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 3) != 0}.empty?}
     string_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 4) != 0}.empty?}
     bool_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 0x40) != 0}.empty?}
-    prep_diff(@default_number, "defaults_type_number", :combo, "Bad Slider",
-      number_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
-    prep_diff(@default_string, "defaults_type_string", :combo, "Label",
-      string_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
-    prep_diff(@default_bool, "defaults_type_bool", :combo, "xBadx",
-      bool_types, Proc.new{SD::SSListCell.new}, Proc.new{|x|x["Name"]})
+    root_types = std_parts.find_all{|x|x["Category"] == "Grouping"}
 
-    @root_layout_pane.items.clear
-    @root_layout_pane.items.add_all std_parts.find_all{|x|x["Category"] == "Grouping"}
-    @root_layout_pane.set_cell_factory do
-      SD::SSListCell.new
-    end
-    @root_layout_pane.button_cell = SD::SSListCell.new
-    @root_layout_pane.value = std_parts.find{|x| x["Name"] == @prefs.get("root_canvas", "Canvas")}
-    @root_layout_pane.selection_model.selected_item_property.add_change_listener do |ov, old, new|
-      @diffs["root_canvas"] = {type: :root_canvas, value: new}
-    end
+    prep_diff(@default_number, "defaults_type_number", :combo, "Bad Slider",
+      number_types, SD::SSListCell, Proc.new{|x|x["Name"]})
+    prep_diff(@default_string, "defaults_type_string", :combo, "Label",
+      string_types, SD::SSListCell, Proc.new{|x|x["Name"]})
+    prep_diff(@default_bool, "defaults_type_bool", :combo, "xBadx",
+      bool_types, SD::SSListCell, Proc.new{|x|x["Name"]})
+    prep_diff(@root_layout_pane, "root_canvas", :combo, "Canvas",
+      root_types, SD::SSListCell, Proc.new{|x|x["Name"]}, Proc.new{|dat|
+        @main.root_canvas = dat[:raw_value][:proc].call})
+
     @stage.set_on_hiding &method(:diff_and_save)
   end
 
-  def prep_diff(obj, prop_name, type, default=nil, combo_range=nil, cell_factory=nil, combo_map=nil, &block)
+  # prepare each type of item
+  def prep_diff(obj, prop_name, type, default=nil, combo_range=nil, cell_class=nil, combo_map=nil, on_save=nil, &block)
     case type
     when :bool
       obj.selected = @prefs.get_boolean(prop_name, default)
@@ -63,7 +60,7 @@ class SD::SettingsDialog
           block.call(new)
         end
       end
-    when  :int_1
+    when :int_1
       @prefs.get_int(prop_name, -1).tap {|x|obj.text =  x == -1 ? "" : x.to_s }
       obj.text_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new}
@@ -74,11 +71,11 @@ class SD::SettingsDialog
     when :combo
       obj.items.clear
       obj.items.add_all combo_range
-      obj.cell_factory = cell_factory
-      obj.button_cell = cell_factory.call
+      obj.cell_factory = Proc.new{cell_class.new}
+      obj.button_cell = cell_class.new
       obj.value = combo_range.find{|x| combo_map.call(x) == @prefs.get(prop_name, default)}
       obj.selection_model.selected_item_property.add_change_listener do |ov, old, new|
-        @diffs[prop_name] = {type: type, value: combo_map.call(new)}
+        @diffs[prop_name] = {type: type, value: combo_map.call(new), raw_value: new, on_save: on_save}
         if block
           block.call(new)
         end
@@ -99,9 +96,7 @@ class SD::SettingsDialog
         end
       when :combo
         @prefs.put(prop, dat[:value])
-      when :root_canvas # special case
-        @prefs.put(prop, dat[:value]["Name"])
-        @main.root_canvas = dat[:value][:proc].call
+        dat[:on_save].call(dat) if dat[:on_save]
       end
     end
   end
