@@ -178,8 +178,8 @@
                             <children>
                               <Label text="Add: " />
                               <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
-                              <ToggleButton mnemonicParsing="false" onAction="#aa_add_new" text="New" />
-                              <Button mnemonicParsing="false" text="Others" />
+                              <ToggleButton disable="true" mnemonicParsing="false" onAction="#aa_add_new" text="New" />
+                              <Button  disable="true" mnemonicParsing="false" text="Others" />
                             </children>
                             <BorderPane.margin>
                               <Insets bottom="5.0" top="2.0" />

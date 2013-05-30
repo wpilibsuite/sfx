@@ -152,6 +152,7 @@ module SD::DesignerSupport
     end
 
     def inspect
+      return "nill designer" unless @running # TODO: don't call inspect in fxmlloader
       "#<DesignerOverlay:0x#{object_id.to_s(16)} @selected=#{selected.inspect} @running=#{running.inspect} @editing_nested=#{editing_nested.inspect} @child=#{child.inspect}>"
     end
 
