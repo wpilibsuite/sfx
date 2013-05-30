@@ -4,6 +4,7 @@ module SD::DesignerSupport
     def initialize
       super()
       content.add(PropertiesPane.new self)
+      self.hide_on_escape = true
     end
 
     def properties=(props)
