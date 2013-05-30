@@ -17,19 +17,19 @@
 
 <GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" xmlns:fx="http://javafx.com/fxml">
   <fx:define>
-    <Image fx:id="add_tab_close" url="@stock_left.png" />
+    <Image url="@stock_left.png" fx:id="add_tab_close" />
   </fx:define>
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
       <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)" translateY="0.0">
         <children>
           <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #757575 0%, #cccccc 15%, #fff 100%)" />
-          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" style="">
+          <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@document-new.png" />
             </image>
           </ImageView>
-          <StackPane prefHeight="-1.0" prefWidth="-1.0">
+          <StackPane opacity="0.45" prefHeight="-1.0" prefWidth="-1.0">
             <children>
               <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -50,12 +50,12 @@
               </Button>
             </children>
           </StackPane>
-          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+          <ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true">
             <image>
               <Image url="@document-save.png" />
             </image>
           </ImageView>
-          <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+          <ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.42" pickOnBounds="true" preserveRatio="true">
             <image>
               <Image url="@edit-undo.png" />
             </image>
@@ -72,24 +72,22 @@
               </HBox>
             </children>
           </HBox>
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#run" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Run" HBox.hgrow="NEVER">
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#show_data_sources" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings" HBox.hgrow="NEVER">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@media-playback-start.png" />
+                  <Image url="@document-properties.png" />
                 </image>
               </ImageView>
             </graphic>
+            <tooltip>
+              <Tooltip text="Data Settings" />
+            </tooltip>
             <HBox.margin>
               <Insets fx:id="x1" />
             </HBox.margin>
           </Button>
-          <ImageView fitHeight="32.0" fitWidth="32.0" onMouseClicked="#show_data_sources" pickOnBounds="true" preserveRatio="true" style="">
-            <image>
-              <Image url="@document-properties.png" />
-            </image>
-          </ImageView>
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Settings" HBox.hgrow="NEVER">
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="SmartDashboard Settings" HBox.hgrow="NEVER">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -98,7 +96,22 @@
               </ImageView>
             </graphic>
             <tooltip>
-              <Tooltip text="Settings" />
+              <Tooltip text="SmartDashboard Settings" />
+            </tooltip>
+            <HBox.margin>
+              <Insets fx:id="x1" />
+            </HBox.margin>
+          </Button>
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#run" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Run" HBox.hgrow="NEVER">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@media-playback-start.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <tooltip>
+              <Tooltip text="Run" />
             </tooltip>
             <HBox.margin>
               <Insets fx:id="x1" />
@@ -179,7 +192,7 @@
                               <Label text="Add: " />
                               <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
                               <ToggleButton disable="true" mnemonicParsing="false" onAction="#aa_add_new" text="New" />
-                              <Button  disable="true" mnemonicParsing="false" text="Others" />
+                              <Button disable="true" mnemonicParsing="false" text="Others" />
                             </children>
                             <BorderPane.margin>
                               <Insets bottom="5.0" top="2.0" />
