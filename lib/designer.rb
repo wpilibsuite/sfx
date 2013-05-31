@@ -93,25 +93,7 @@ class SD::Designer
 
     # Set the auto add tree cells
     @aa_tree.set_cell_factory do |q|
-      SD::DesignerSupport::AATreeCell.new do |item, e|
-        # This block is called when we launch the toolbox, currently a double click
-        if e.click_count > 1
-          puts "now checking for #{item.value} after I got #{e}"
-          #open a popup and populate it
-          tbx_popup = SD::DesignerSupport::ToolboxPopup.new
-          find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-            data.each{|i| tbx_popup.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => item.value)}
-          end
-          # position the popup at the location of the mouse
-          tbx_popup.x = e.screen_x
-          tbx_popup.y = e.screen_y
-          # when we click other places, hide the toolbox
-          register_clickoff do
-            tbx_popup.hide
-          end
-          tbx_popup.show @stage
-        end
-      end
+      SD::DesignerSupport::AATreeCell.new
     end
 
     # On shown and on closing handlers
@@ -174,7 +156,7 @@ class SD::Designer
   # iterate over all the interfaces on this computer and find one that matches 10.x.y.z, where x and y < 100
   def snag_ip
     java.net.NetworkInterface.network_interfaces.each do |networkInterface|
-			networkInterface.inet_addresses.each do |inet|
+      networkInterface.inet_addresses.each do |inet|
         addr = inet.address
         if addr[0] == 10 && addr.length == 4 && addr[1] < 100 && addr[2] < 100 # TODO: will fail for alt 10.4.151.x
           teamn = addr[1] * 100 + addr[2]
@@ -336,22 +318,51 @@ class SD::Designer
     db = event.dragboard
     event.setDropCompleted(
       if db.hasString
-        obj = @dnd_ids[db.string.to_i][:proc].call
-        pare = event.source == @canvas.ui ? @canvas : event.source.child # TODO: is this child.ui?
-        if @dnd_opts[@dnd_ids[db.string.to_i]]
-          # TODO: check for others and dont assume name
-          obj.name = @dnd_opts[@dnd_ids[db.string.to_i]][:assign_name]
+        if db.string.start_with? "AutoAdd:"
+          id = db.string[8..-1] #strip prefix
+          #open a popup and populate it
+          tbx_popup = SD::DesignerSupport::ToolboxPopup.new
+          find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
+            data.each do |i|
+              ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
+              ti.set_on_mouse_clicked do
+                drop_add associate_dnd_id(i, :assign_name => id), event.x, event.y, event.source
+                @on_mouse.call if @on_mouse # hide it
+              end
+              tbx_popup.add ti
+            end
+          end
+          # position the popup at the location of the mouse
+          tbx_popup.x = event.screen_x
+          tbx_popup.y = event.screen_y
+          # when we click other places, hide the toolbox
+          register_clickoff do
+            tbx_popup.hide
+          end
+          tbx_popup.show @stage
+        else
+          drop_add(db.string.to_i, event.x, event.y, event.source)
         end
-        add_designable_control obj, event.x, event.y, pare, @dnd_ids[db.string.to_i]["Name"]
-        hide_toolbox
-        @clickoff_fnc.call if @clickoff_fnc
-        @on_mouse.call(nil) if @on_mouse
         true
       else
         false
       end)
 
     event.consume()
+  end
+
+  # called to add a namable control to the items
+  def drop_add(id,x, y, source)
+    pare = source == @canvas.ui ? @canvas : source.child
+    obj = @dnd_ids[id][:proc].call
+    if @dnd_opts[@dnd_ids[id]]
+      # TODO: check for others and dont assume name
+      obj.name = @dnd_opts[@dnd_ids[id]][:assign_name]
+    end
+    add_designable_control obj, x, y, pare, @dnd_ids[id]["Name"]
+    hide_toolbox
+    @clickoff_fnc.call if @clickoff_fnc
+    @on_mouse.call(nil) if @on_mouse
   end
 
   def register_clickoff(&fnc)

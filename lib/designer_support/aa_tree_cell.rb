@@ -16,8 +16,15 @@
 class SD::DesignerSupport::AATreeCell < Java::javafx.scene.control.TreeCell
   def initialize(&block)
     super
-    set_on_mouse_clicked do |e|
-      block.call(tree_item, e)
+    set_on_drag_detected do |e|
+        # This block is called when we launch the toolbox, currently a begining of a drop
+        db = startDragAndDrop(TransferMode::COPY);
+
+        content = ClipboardContent.new
+        content.putString("AutoAdd:#{tree_item.value}");
+        db.setContent(content);
+
+        e.consume();
     end
   end
 
