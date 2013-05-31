@@ -603,7 +603,6 @@ class SD::Designer
   end
 
   def nested_edit(octrl)
-    puts "entering nested mode on #{octrl}"
     nested_traverse(octrl, lambda { |ctrl|
         ui2p(ctrl.parent).edit_nested(ctrl) do
           exit_nesting(octrl)
@@ -613,10 +612,9 @@ class SD::Designer
   end
 
   def exit_nesting(octrl)
-    puts "exiting nested mode on #{octrl}"
     octrl.disabled = false
     octrl.exit_nesting
-    nested_traverse(octrl, lambda { |ctrl| ctrl.parent.exit_nested }) do |x|
+    nested_traverse(octrl, lambda { |ctrl| ui2p(ctrl.parent).exit_nested }) do |x|
       if x.is_a? SD::DesignerSupport::Overlay
         x.disabled = false
         x.exit_nesting
