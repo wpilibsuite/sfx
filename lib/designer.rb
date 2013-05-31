@@ -315,6 +315,7 @@ class SD::Designer
     event.consume();
   end
 
+  # whenever we drop something on the canvas, this is called. There are two cases: auto add droppings, or normal droppings
   def drag_drop(event)
     db = event.dragboard
     event.setDropCompleted(
@@ -356,10 +357,11 @@ class SD::Designer
   # called to add a namable control to the items
   def drop_add(id,x, y, source)
     pare = source == @canvas.ui ? @canvas : source.child
-    obj = @dnd_ids[id][:proc].call
-    if @dnd_opts[@dnd_ids[id]]
-      # TODO: check for others and dont assume name
-      obj.name = @dnd_opts[@dnd_ids[id]][:assign_name] if obj.respond_to? :name
+    dnd_obj = @dnd_ids[id]
+    obj = dnd_obj[:proc].call # create the object that we are dragging on
+    if @dnd_opts[dnd_obj]
+      # TODO: check for other options
+      obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name
     end
     add_designable_control obj, x, y, pare, @dnd_ids[id]["Name"]
     hide_toolbox
@@ -367,6 +369,7 @@ class SD::Designer
     @on_mouse.call(nil) if @on_mouse
   end
 
+  # These functions are used to do "clickoffs" aka close a window when you click anywhere
   def register_clickoff(&fnc)
     @clickoff_fnc = fnc
     on_mouse = @on_mouse = Proc.new do |e|
@@ -617,14 +620,6 @@ class SD::Designer
       if x.is_a? SD::DesignerSupport::Overlay
         x.disabled = false
         x.exit_nesting
-      end
-    end
-  end
-
-  def print_tree(prefix, elt)
-    if elt.respond_to? :getChildren
-      elt.children.each do |c|
-        print_tree(prefix + " ", c)
       end
     end
   end
