@@ -324,7 +324,7 @@ class SD::Designer
           #open a popup and populate it
           tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
           find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-            data.each do |i|
+            data.reject{|x|x["Category"] == "Grouping"}.each do |i|
               ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
               ti.set_on_mouse_clicked do
                 drop_add associate_dnd_id(i, :assign_name => id), event.x, event.y, event.source
@@ -359,7 +359,7 @@ class SD::Designer
     obj = @dnd_ids[id][:proc].call
     if @dnd_opts[@dnd_ids[id]]
       # TODO: check for others and dont assume name
-      obj.name = @dnd_opts[@dnd_ids[id]][:assign_name]
+      obj.name = @dnd_opts[@dnd_ids[id]][:assign_name] if obj.respond_to? :name
     end
     add_designable_control obj, x, y, pare, @dnd_ids[id]["Name"]
     hide_toolbox
