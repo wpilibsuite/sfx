@@ -100,6 +100,7 @@ class SD::Designer
     @stage.set_on_shown do
       self.message = "Ready"
       @stage.title += " : Untitled"
+      SD::DesignerSupport::Overlay.preparse_new(3)
     end
     @stage.set_on_close_request do
       @canvas.dispose
@@ -321,7 +322,7 @@ class SD::Designer
         if db.string.start_with? "AutoAdd:"
           id = db.string[8..-1] #strip prefix
           #open a popup and populate it
-          tbx_popup = SD::DesignerSupport::ToolboxPopup.new
+          tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
           find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
             data.each do |i|
               ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
@@ -340,6 +341,7 @@ class SD::Designer
             tbx_popup.hide
           end
           tbx_popup.show @stage
+          SD::DesignerSupport::Overlay.preparse_new(1)
         else
           drop_add(db.string.to_i, event.x, event.y, event.source)
         end
