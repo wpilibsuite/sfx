@@ -9,9 +9,10 @@ if q
   $LOAD_PATH << xx
 end
 
+$LOAD_PATH << "#{ENV["HOME"]}/sunspotfrcsdk/desktop-lib/"
 require 'sfxlib.jar'
 require 'sfxmeta.jar'
-require "#{ENV["HOME"]}/sunspotfrcsdk/desktop-lib/networktables-desktop.jar" # TODO: file.join
+require "networktables-desktop.jar" # TODO: file.join
 #p Java::dashfx.lib.data.InitInfo
 #p Java::dashfx.lib.data.DataInitDescriptor
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"

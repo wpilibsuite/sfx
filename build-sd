@@ -1,4 +1,5 @@
 #!/bin/bash
-jruby -I ../jrubyfx ../jrubyfx/bin/jrubyfx-jarify lib sfx.jar
-cp ../sfxlib/dist/*.jar .
-cp ../sfxmeta/dist/*.jar .
+cp ../sfxlib/dist/*.jar lib
+cp ../sfxmeta/dist/*.jar lib
+cp ~/sunspotfrcsdk/desktop-lib/networktables-desktop.jar lib
+jruby -I ../jrubyfx ../jrubyfx/bin/jrubyfx-jarify -j lib sfx.jar
