@@ -22,7 +22,11 @@ module SD
     def start(stage)
       with(stage, :title => "SmartDashboard") do
         fxml SD::Designer
-        icons.add image("file://" + File.join(File.dirname(__FILE__), "res", "icon.png"))
+        icons.add image(if JRubyFX::Application.in_jar?
+            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/icon.png"
+          else
+            "file:" + File.join(File.dirname(__FILE__), "res", "icon.png")
+          end)
         show
       end
     end
