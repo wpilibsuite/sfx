@@ -6,6 +6,7 @@ require 'designer_support/aa_tree_cell'
 require 'designer_support/toolbox_popup'
 require 'designer_support/pref_types'
 require 'designer_support/placement_map'
+require 'designer_support/aa_filter'
 require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
@@ -35,16 +36,40 @@ class SD::Designer
     @ui2pmap = {}
     @selSem = false
     @mode = :design
+    @toolbox_status = :hidden
     @aa_tree = @AATreeview
+    @data_core_sublist = []
     @aa_tree.root = tree_item("/")
+
+    # Load preferences
+    @prefs = java.util.prefs.Preferences.user_node_for_package(InitInfo.java_class)
+    # get the AutoAdd Filter
+    @aa_filter = SD::DesignerSupport::AAFilter
+    @aa_filter.parse(@prefs)
 
     # Create our data core. TODO: use preferences to configure it.
     @data_core = Java::dashfx.lib.data.DataCore.new()
     # when the data core finds about new names, let us know!
     @data_core.known_names.add_change_listener do |change|
       change.next # change is an "iterator" of stuff, so use next to get the added list
+      sublist = []
       change.added_sub_list.each do |new_name|
         add_known new_name
+        # check to see if we should auto-add this
+        if @aa_filter.filter(new_name, @data_core.known_names.get)
+          sublist << new_name
+          @data_core_sublist << new_name
+        end
+      end
+      # TODO: total race condition
+      if sublist.length > 0 && @data_core_sublist.length == sublist.length
+        Thread.new do
+          sleep 0.07
+          run_later do
+            aa_add_some(*@data_core_sublist)
+            @data_core_sublist = []
+          end
+        end
       end
     end
     # When we hit the tabs, modify the selected index
@@ -105,9 +130,6 @@ class SD::Designer
     @stage.set_on_close_request do
       @canvas.dispose
     end
-
-    # Load preferences
-    @prefs = java.util.prefs.Preferences.user_node_for_package(InitInfo.java_class)
 
     # get the team number
     # if the team number is set in prefs, use it
@@ -674,6 +696,11 @@ class SD::Designer
 
   # Add all known controls
   def aa_add_all
+    # for each of the items in the tree view (TODO: NOT A TREE VIEW), add it as the pref type
+    aa_add_some(*@aa_tree.root.children.map{|x| x.value})
+  end
+
+  def aa_add_some(*names)
     # get a placement map if we need one (Aka we cant just append the item)
     fmap = if @canvas.appendable?
       nil
@@ -687,8 +714,8 @@ class SD::Designer
       end
     end
 
-    # for each of the items in the tree view (TODO: NOT A TREE VIEW), add it as the pref type
-    objs = @aa_tree.root.children.map{|x| @data_core.get_observable(x.value)}.map do |ctrl|
+    objs = names.map do |ctrl_name|
+      ctrl = @data_core.get_observable(ctrl_name)
       new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
       new_obj = new_objd[:proc].call
       if new_obj
@@ -703,7 +730,7 @@ class SD::Designer
     # if we need to position stuff ourselves, wait a bit so layout passes happen
     unless @canvas.appendable?
       Thread.new do
-        sleep 0.2
+        sleep 0.05
         run_later do
           objs.each do |itm|
             next unless itm

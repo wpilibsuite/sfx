@@ -18,6 +18,12 @@ class SD::SettingsDialog
   fxml "Settings.fxml"
 
   def initialize(prefs, main)
+    # can't do this above or @aa_never and friends are still nil
+    @auto_add_options = {
+      "never" => @aa_never,
+      "regex" => @aa_match_regex,
+      "code" => @aa_code
+    }
     @prefs = prefs
     @main = main
     @diffs = {}
@@ -45,6 +51,13 @@ class SD::SettingsDialog
     prep_diff(@root_layout_pane, "root_canvas", :combo, "Canvas",
       root_types, SD::SSListCell, Proc.new{|x|x["Name"]}, Proc.new{|dat|
         @main.root_canvas = dat[:raw_value][:proc].call})
+
+    @aa_regex.text = @prefs.get("aa_regex", "")
+
+    (@auto_add_options[@prefs.get("aa_policy", "never")] || @aa_never).tap do |si|
+      si.selected = true
+      @aa_regex.disable = si != @aa_match_regex
+    end
 
     @stage.set_on_hiding &method(:diff_and_save)
   end
@@ -97,12 +110,22 @@ class SD::SettingsDialog
       when :combo
         @prefs.put(prop, dat[:value])
         dat[:on_save].call(dat) if dat[:on_save]
+      when :aa_radio
+        p dat
+        @prefs.put(prop, dat[:value])
+        @prefs.put("aa_regex", dat[:regex])
+        SD::DesignerSupport::AAFilter.parse(@prefs)
       end
     end
   end
 
   def close
     @stage.hide
+  end
+
+  def aa_combo_change(e)
+    @aa_regex.disable = e.target != @aa_match_regex
+    @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[e.target], regex: @aa_regex.text}
   end
 end
 

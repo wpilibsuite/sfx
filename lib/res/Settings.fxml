@@ -132,6 +132,48 @@
             </GridPane>
           </content>
         </Tab>
+        <Tab text="AutoAdd">
+          <content>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+              <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                  <children>
+                    <Label text="Auto Add" />
+                    <Separator prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+                  </children>
+                </HBox>
+                <Label text="When new controls are found, add them:">
+                  <VBox.margin>
+                    <Insets left="7.0" />
+                  </VBox.margin>
+                </Label>
+                <VBox prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                  <children>
+                    <RadioButton fx:id="aa_never" mnemonicParsing="false" onAction="#aa_combo_change" text="Never">
+                      <toggleGroup>
+                        <ToggleGroup fx:id="autoAdd" />
+                      </toggleGroup>
+                    </RadioButton>
+                    <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0">
+                      <children>
+                        <RadioButton fx:id="aa_match_regex" mnemonicParsing="false" onAction="#aa_combo_change" prefWidth="152.0" text="When they match /" toggleGroup="$autoAdd" />
+                        <TextField fx:id="aa_regex" disable="false" editable="true" onKeyTyped="#aa_combo_change" prefWidth="-1.0" />
+                        <Label text="/" />
+                      </children>
+                    </HBox>
+                    <RadioButton fx:id="aa_code" mnemonicParsing="false" onAction="#aa_combo_change" text="When this expression is true:" toggleGroup="$autoAdd" />
+                  </children>
+                  <padding>
+                    <Insets left="24.0" />
+                  </padding>
+                </VBox>
+              </children>
+              <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+              </padding>
+            </VBox>
+          </content>
+        </Tab>
       </tabs>
       <BorderPane.margin>
         <Insets left="12.0" right="12.0" top="7.0" />
