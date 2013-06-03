@@ -191,7 +191,7 @@
                             <children>
                               <Label text="Add: " />
                               <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
-                              <ToggleButton disable="true" mnemonicParsing="false" onAction="#aa_add_new" text="New" />
+                              <ToggleButton mnemonicParsing="false" onAction="#aa_add_new" text="New" />
                               <Button disable="true" mnemonicParsing="false" text="Others" />
                             </children>
                             <BorderPane.margin>

@@ -46,12 +46,21 @@ module SD
       end
 
       def self.filter(name, all_names)
+        return true if @always_add
         return false unless filtered?
         if have_regex?
           return name.match(Regexp.new(@regex)) != nil
         end
         # TODO: do more
         false
+      end
+
+      def self.always_add=(value)
+        @always_add = value
+      end
+
+      def self.always_add
+        @always_add == true
       end
 
       def self.smart_value(name)

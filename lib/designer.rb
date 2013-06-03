@@ -755,7 +755,7 @@ class SD::Designer
   end
 
   def aa_add_new
-    puts "clicked add new"
+    @aa_filter.always_add = !@aa_filter.always_add
   end
 
   # edit the smart dashboard settings
