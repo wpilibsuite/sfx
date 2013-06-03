@@ -21,12 +21,12 @@ module SD
       @have_regex = false
 
       def self.parse(props)
-        tmp = props.get("aa_policy", "never")
+        tmp = props.get("aa_policy", "regex")
         @filtered, @have_regex = case tmp
         when "never"
           [false, false]
         when "regex"
-          @regex = props.get("aa_regex", "")
+          @regex = props.get("aa_regex", "SmartDashboard")
           if @regex == ""
             puts "Warning: Empty AutoAdd regex, disabling regex matching. Go to settings and enter a non-empty regex under AutoAdd"
             [false, false]

@@ -52,9 +52,9 @@ class SD::SettingsDialog
       root_types, SD::SSListCell, Proc.new{|x|x["Name"]}, Proc.new{|dat|
         @main.root_canvas = dat[:raw_value][:proc].call})
 
-    @aa_regex.text = @prefs.get("aa_regex", "")
+    @aa_regex.text = @prefs.get("aa_regex", "SmartDashboard")
 
-    (@auto_add_options[@prefs.get("aa_policy", "never")] || @aa_never).tap do |si|
+    (@auto_add_options[@prefs.get("aa_policy", "regex")] || @aa_never).tap do |si|
       si.selected = true
       @aa_regex.disable = si != @aa_match_regex
     end
@@ -111,9 +111,8 @@ class SD::SettingsDialog
         @prefs.put(prop, dat[:value])
         dat[:on_save].call(dat) if dat[:on_save]
       when :aa_radio
-        p dat
         @prefs.put(prop, dat[:value])
-        @prefs.put("aa_regex", dat[:regex])
+        @prefs.put("aa_regex", @aa_regex.text)
         SD::DesignerSupport::AAFilter.parse(@prefs)
       end
     end
@@ -124,8 +123,12 @@ class SD::SettingsDialog
   end
 
   def aa_combo_change(e)
-    @aa_regex.disable = e.target != @aa_match_regex
-    @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[e.target], regex: @aa_regex.text}
+    if e.target != @aa_regex
+      @aa_regex.disable = e.target != @aa_match_regex
+      @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[e.target], regex: @aa_regex.text}
+    else
+      @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[@aa_match_regex.toggle_group.selected_toggle], regex: @aa_regex.text}
+    end
   end
 end
 
