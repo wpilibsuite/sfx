@@ -369,6 +369,33 @@ class SD::Designer
     @on_mouse.call(nil) if @on_mouse
   end
 
+  def morph_child(overlay, event) #TODO: drip drip drip leakage
+    tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
+    find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
+      data.reject{|x|x["Category"] == "Grouping"}.each do |i|
+        ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))
+        ti.set_on_mouse_clicked do
+          obj = i[:proc].call
+          yield(obj, i)
+          @ui2pmap[obj.ui] = obj
+          self.message = "Added new #{obj.java_class.name}"
+          hide_toolbox
+          @clickoff_fnc.call if @clickoff_fnc
+          @on_mouse.call(nil) if @on_mouse
+        end
+        tbx_popup.add ti
+      end
+    end
+    # position the popup at the location of the mouse
+    tbx_popup.x = overlay.local_to_scene(overlay.bounds_in_local).min_x
+    tbx_popup.y = overlay.local_to_scene(overlay.bounds_in_local).min_y
+    # when we click other places, hide the toolbox
+    register_clickoff do
+      tbx_popup.hide
+    end
+    tbx_popup.show @stage
+  end
+
   # These functions are used to do "clickoffs" aka close a window when you click anywhere
   def register_clickoff(&fnc)
     @clickoff_fnc = fnc

@@ -108,6 +108,27 @@ module SD::DesignerSupport
       return props
     end
 
+    def prop_names
+      props = []
+      jc = child.java_class
+      [jc, *jc.java_instance_methods].each do |src|
+        src.annotations.each do |annote|
+          if annote.is_a? Java::dashfx.lib.controls.Designable and src != jc
+            q = src.invoke(child).to_java
+            props << [q, "set" + src.name.gsub(/^(get|set)/, '').gsub(/Property$/, '').gsub(/^([a-z])/){|x|x.upcase}] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
+          elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty
+            annote.value.length.times do |i|
+              prop_name = annote.value[i] + "Property"
+              meth = child.respond_to?(prop_name) ? child.method(prop_name) : child.ui.method(prop_name)
+              set_name = "set" + (annote.value[i].gsub(/^([a-z])/){|x|x.upcase})
+              props << [meth.call, set_name]
+            end
+          end
+        end
+      end
+      return props
+    end
+
     def selected
       @selected
     end
@@ -174,8 +195,14 @@ module SD::DesignerSupport
       @parent.z_edit(self, Java::dashfx.lib.data.ZPositions::Top)
     end
 
-    def morph_into
-      # TODO: transmorgafier
+    def morph_into(e)
+      @parent_designer.morph_child(self, e) do |new|
+        prop_names.each do |(prop, set_name)|
+          new.method(set_name).call(prop.get) if new.respond_to? set_name
+        end
+        @child = new
+        @childContainer.center = new.get_ui
+      end
     end
 
     def delete
