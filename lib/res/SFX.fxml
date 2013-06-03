@@ -21,9 +21,9 @@
   </fx:define>
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
-      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #757575 0%, #cccccc 15%, #eeeeee 100%)" translateY="0.0">
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #0655a1 0%, #83c2fe 15%, #e4f1fe 100%)" translateY="0.0">
         <children>
-          <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #757575 0%, #cccccc 15%, #fff 100%)" />
+          <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #0655a1 0%, #83c2fe 15%, #fff 100%)" />
           <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@document-new.png" />
@@ -121,7 +121,7 @@
       </HBox>
     </bottom>
     <left>
-      <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="-fx-background-color: linear-gradient(to left, #757575 0%, #ccc 15%, #fff 100%);" translateX="0.0">
+      <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="-fx-background-color: linear-gradient(to left, #0655a1 0%, #83c2fe 15%, #fff 100%);" translateX="0.0">
         <children>
           <StackPane prefHeight="-1.0" prefWidth="-1.0" />
         </children>
