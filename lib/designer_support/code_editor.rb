@@ -19,8 +19,9 @@ module SD
       include JRubyFX::Controller
       fxml "CodeEditor.fxml"
 
-      def initialize(blk)
+      def initialize(blk, code)
         @blk = blk
+        self.code = code
       end
 
       def code
@@ -42,12 +43,12 @@ module SD
       end
 
 
-      def self.show_and_wait(stg)
+      def self.show_and_wait(stg, code)
         res = nil
         blk = lambda{|result|res = result}
-        stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
+        stage(init_style: :utility, init_modality: :app, title: "Code Editor") do
           init_owner stg
-          fxml SD::SettingsDialog, :initialize => [blk]
+          fxml SD::DesignerSupport::CodeEditor, :initialize => [blk, code]
           show_and_wait
         end
         res

@@ -16,51 +16,52 @@
 module SD
   module DesignerSupport
     class AAFilter
-      @filtered = false
       @smart_value = nil
-      @have_regex = false
 
       def self.parse(props)
         tmp = props.get("aa_policy", "regex")
-        @filtered, @have_regex = case tmp
+        # TODO: exceptions in parsing
+
+        @regex, @code = case tmp
         when "never"
-          [false, false]
+          [nil, nil]
         when "regex"
-          @regex = props.get("aa_regex", "SmartDashboard")
-          if @regex == ""
+          regex = props.get("aa_regex", "SmartDashboard")
+          if regex == ""
             puts "Warning: Empty AutoAdd regex, disabling regex matching. Go to settings and enter a non-empty regex under AutoAdd"
-            [false, false]
+            [nil, nil]
           else
-            @regex = Regexp.new(@regex)
-            [true, true]
+            [Regexp.new(regex), nil]
           end
-        when "code" # TODO: this
-          [true, false]
+        when "code"
+          [nil, SD::DesignerSupport::AACodeFilter.init(props.get("aa_code", "false"))]
         end
       end
 
-      def self.filtered?
-        @filtered
+      def self.have_code?
+        @code != nil
       end
+
       def self.have_regex?
-        @have_regex
+        @regex != nil
       end
 
       def self.regex=(regex)
         @regex = regex
       end
+
       def self.regex
         @regex
       end
 
       def self.filter(name, all_names)
         return true if @always_add
-        return false unless filtered?
         if have_regex?
           return name.match(@regex) != nil
+        elsif have_code?
+          return @code.should_add?(name, all_names)
         end
-        # TODO: do more
-        false
+        return false
       end
 
       def self.always_add=(value)
@@ -89,6 +90,7 @@ module SD
 #{code}
         end
 ELL
+        tmp
       end
       # def should_add?(new, all)
     end

@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+require 'designer_support/code_editor'
+
 class SD::SettingsDialog
   include JRubyFX::Controller
   fxml "Settings.fxml"
@@ -53,6 +55,7 @@ class SD::SettingsDialog
         @main.root_canvas = dat[:raw_value][:proc].call})
 
     @aa_regex.text = @prefs.get("aa_regex", "SmartDashboard")
+    @aa_code_code = @prefs.get("aa_code", "return false;")
 
     (@auto_add_options[@prefs.get("aa_policy", "regex")] || @aa_never).tap do |si|
       si.selected = true
@@ -113,6 +116,7 @@ class SD::SettingsDialog
       when :aa_radio
         @prefs.put(prop, dat[:value])
         @prefs.put("aa_regex", @aa_regex.text)
+        @prefs.put("aa_code", @aa_code_code) if @aa_code_code != "return false;"
         SD::DesignerSupport::AAFilter.parse(@prefs)
       end
     end
@@ -122,12 +126,18 @@ class SD::SettingsDialog
     @stage.hide
   end
 
-  def aa_combo_change(e)
-    if e.target != @aa_regex
-      @aa_regex.disable = e.target != @aa_match_regex
-      @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[e.target], regex: @aa_regex.text}
-    else
-      @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[@aa_match_regex.toggle_group.selected_toggle], regex: @aa_regex.text}
+  def aa_combo_change
+    st = @aa_match_regex.toggle_group.selected_toggle
+    @aa_regex.disable = st != @aa_match_regex
+    @aa_code_btn.disable = st != @aa_code
+    @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[st], regex: @aa_regex.text, code: @aa_code_code}
+  end
+
+  def aa_edit_code
+    res = SD::DesignerSupport::CodeEditor.show_and_wait(@stage, @aa_code_code)
+    if res
+      @aa_code_code = res
+      @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[@aa_match_regex.toggle_group.selected_toggle], regex: @aa_regex.text, code: @aa_code_code}
     end
   end
 end

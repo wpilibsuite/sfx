@@ -161,7 +161,12 @@
                         <Label text="/" />
                       </children>
                     </HBox>
-                    <RadioButton fx:id="aa_code" mnemonicParsing="false" onAction="#aa_combo_change" text="When this expression is true:" toggleGroup="$autoAdd" />
+                    <HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="7.0">
+                      <children>
+                        <RadioButton fx:id="aa_code" mnemonicParsing="false" onAction="#aa_combo_change" text="When this expression is true:" toggleGroup="$autoAdd" />
+                        <Button fx:id="aa_code_btn" mnemonicParsing="false" onAction="#aa_edit_code" text="Edit" />
+                      </children>
+                    </HBox>
                   </children>
                   <padding>
                     <Insets left="24.0" />
