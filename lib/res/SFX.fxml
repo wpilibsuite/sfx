@@ -187,17 +187,28 @@
                           <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" showRoot="false" />
                         </center>
                         <top>
-                          <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" BorderPane.alignment="CENTER">
+                          <VBox fx:id="aa_ctrl_panel" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
                             <children>
-                              <Label text="Add: " />
-                              <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
-                              <ToggleButton mnemonicParsing="false" onAction="#aa_add_new" text="New" />
-                              <Button disable="true" mnemonicParsing="false" text="Others" />
+                              <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                                <children>
+                                  <Label text="Add: " />
+                                  <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
+                                  <ToggleButton mnemonicParsing="false" onAction="#aa_add_new" text="New" />
+                                  <Button disable="true" mnemonicParsing="false" text="Others" />
+                                  <Button fx:id="aa_expand_panel" mnemonicParsing="false" onAction="#aa_toggle_panel" text="V" />
+                                </children>
+                              </HBox>
+                              <HBox fx:id="aa_ctrl_regex" alignment="CENTER" disable="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" visible="true">
+                                <children>
+                                  <Label text="Regex: " />
+                                  <TextField fx:id="aa_regexer" prefWidth="-1.0" style="" />
+                                </children>
+                              </HBox>
                             </children>
                             <BorderPane.margin>
-                              <Insets bottom="5.0" top="2.0" />
+                              <Insets bottom="5.0" top="1.0" />
                             </BorderPane.margin>
-                          </HBox>
+                          </VBox>
                         </top>
                       </BorderPane>
                     </content>

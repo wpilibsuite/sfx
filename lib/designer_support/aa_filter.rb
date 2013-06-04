@@ -31,6 +31,7 @@ module SD
             puts "Warning: Empty AutoAdd regex, disabling regex matching. Go to settings and enter a non-empty regex under AutoAdd"
             [false, false]
           else
+            @regex = Regexp.new(@regex)
             [true, true]
           end
         when "code" # TODO: this
@@ -45,11 +46,15 @@ module SD
         @have_regex
       end
 
+      def self.regex=(regex)
+        @regex = regex
+      end
+
       def self.filter(name, all_names)
         return true if @always_add
         return false unless filtered?
         if have_regex?
-          return name.match(Regexp.new(@regex)) != nil
+          return name.match(@regex) != nil
         end
         # TODO: do more
         false
@@ -70,6 +75,19 @@ module SD
       def self.on_smart_value(&block)
         @smart_value = block
       end
+    end
+
+    # TODO: seems non-optimal
+    class AACodeFilter
+      def self.init(code)
+        tmp = self.new
+        tmp.instance_eval <<ELL
+        def should_add?(new, all)
+#{code}
+        end
+ELL
+      end
+      # def should_add?(new, all)
     end
   end
 end

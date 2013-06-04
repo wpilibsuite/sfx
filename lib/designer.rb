@@ -72,6 +72,19 @@ class SD::Designer
         end
       end
     end
+
+    # load the custom regexer
+    @aa_regexer.text_property.add_change_listener do |ov, ol, new|
+      begin
+        regx = Regexp.new(new)
+        @aa_filter.regex = regx
+        @aa_regexer.style = ""
+      rescue Exception
+        @aa_regexer.style = "-fx-border-color: red;"
+      end
+    end
+    aa_hide_regex_panel() # it shows by default
+
     # When we hit the tabs, modify the selected index
     (@toolbox.tabs.length - 1).times { |i|
       tb = @toolbox.tabs[i+1] # don't want 1st tab
@@ -756,6 +769,25 @@ class SD::Designer
 
   def aa_add_new
     @aa_filter.always_add = !@aa_filter.always_add
+  end
+
+  def aa_hide_regex_panel
+    @aa_ctrl_panel.children.remove(@aa_ctrl_regex)
+    @aa_expand_panel.text = "V"
+  end
+
+  def aa_show_regex_panel
+    @aa_ctrl_panel.children.add(@aa_ctrl_regex)
+    @aa_expand_panel.text = "^"
+  end
+
+  def aa_toggle_panel
+    @aa_regex_showing = !@aa_regex_showing
+    if @aa_regex_showing
+      aa_show_regex_panel
+    else
+      aa_hide_regex_panel
+    end
   end
 
   # edit the smart dashboard settings
