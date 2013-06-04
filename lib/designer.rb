@@ -39,6 +39,7 @@ class SD::Designer
     @toolbox_status = :hidden
     @aa_tree = @AATreeview
     @data_core_sublist = []
+    @aa_tree_list = []
     @aa_tree.root = tree_item("/")
 
     # Load preferences
@@ -78,7 +79,13 @@ class SD::Designer
       begin
         regx = Regexp.new(new)
         @aa_filter.regex = regx
-        @aa_regexer.style = ""
+        # filter the list
+        @aa_tree_list.each do |child|
+          child[:fout] = child[:value].match(regx) == nil
+        end
+        @aa_tree.root.children.clear
+        @aa_tree.root.children.add_all(@aa_tree_list.find_all{|x|!x[:fout]}.map{|x|tree_item(value: x)})
+        @aa_regexer.style = "-fx-border-color: green;"
       rescue Exception
         @aa_regexer.style = "-fx-border-color: red;"
       end
@@ -340,7 +347,9 @@ class SD::Designer
   end
 
   def add_known(item)
-    @aa_tree.root.children.add tree_item(item) #TODO: nested
+    val = {value: item, fout: false}
+    @aa_tree_list << val
+    @aa_tree.root.children.add tree_item(value: val) #TODO: nested
   end
 
   def drag_over(event)
@@ -710,7 +719,7 @@ class SD::Designer
   # Add all known controls
   def aa_add_all
     # for each of the items in the tree view (TODO: NOT A TREE VIEW), add it as the pref type
-    aa_add_some(*@aa_tree.root.children.map{|x| x.value}.find_all{|x| !@aa_regex_showing || x.match(@aa_filter.regex)})
+    aa_add_some(*@aa_tree.root.children.map{|x| x.value[:value]}.find_all{|x| !@aa_regex_showing || x.match(@aa_filter.regex)})
   end
 
   def aa_add_some(*names)

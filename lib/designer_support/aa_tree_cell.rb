@@ -31,7 +31,7 @@ class SD::DesignerSupport::AATreeCell < Java::javafx.scene.control.TreeCell
   def updateItem(strtext, empty)
       super
     if !empty && !editing?
-      self.text = item.to_s
+      self.text = item[:value].to_s
       self.graphic = tree_item.graphic
     end
   end
