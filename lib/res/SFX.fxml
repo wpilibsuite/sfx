@@ -21,9 +21,9 @@
   </fx:define>
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
-      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(to bottom, #0655a1 0%, #83c2fe 15%, #e4f1fe 100%)" translateY="0.0">
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="" translateY="0.0">
         <children>
-          <Pane prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #0655a1 0%, #83c2fe 15%, #fff 100%)" />
+          <Pane prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter" />
           <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@document-new.png" />
@@ -121,21 +121,18 @@
       </HBox>
     </bottom>
     <left>
-      <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="-fx-background-color: linear-gradient(to left, #0655a1 0%, #83c2fe 15%, #fff 100%);" translateX="0.0">
+      <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="" translateX="0.0">
         <children>
           <StackPane prefHeight="-1.0" prefWidth="-1.0" />
         </children>
       </VBox>
     </left>
   </BorderPane>
-  <TabPane fx:id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" style="" tabClosingPolicy="UNAVAILABLE" translateX="36.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
-    <stylesheets>
-      <URL value="@SFX.css" />
-    </stylesheets>
+  <TabPane fx:id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" styleClass="hidden" tabClosingPolicy="UNAVAILABLE" translateX="36.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
     <tabs>
-      <Tab fx:id="AddTab" text="">
+      <Tab fx:id="AddTab" styleClass="add-button" text="">
         <content>
-          <AnchorPane fx:id="NoContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          <AnchorPane fx:id="NoContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="add-button" />
         </content>
         <graphic>
           <ImageView fx:id="add_tab_icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
@@ -153,7 +150,7 @@
                 <expandedPane>
                   <TitledPane fx:id="x3" animated="false" text="Standard">
                     <content>
-                      <ScrollPane fx:id="spaine" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefViewportWidth="0.0" prefWidth="-1.0">
+                      <ScrollPane fx:id="spaine" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefViewportWidth="0.0" prefWidth="-1.0" styleClass="toolbox-panes">
                         <content>
                           <FlowPane fx:id="STDToolboxFlow" prefHeight="200.0" prefWidth="200.0" />
                         </content>
@@ -242,4 +239,7 @@
   <rowConstraints>
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
+  <stylesheets>
+    <URL value="@SFX.css" />
+  </stylesheets>
 </GridPane>

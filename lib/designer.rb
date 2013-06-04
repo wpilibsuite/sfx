@@ -574,6 +574,7 @@ class SD::Designer
         animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
       end.play
     end
+    @toolbox.style_class.add("hidden")
     @add_tab_icon.image = @add_tab_plus
   end
 
@@ -588,6 +589,7 @@ class SD::Designer
     register_toolbox_clickoff do
       hide_toolbox
     end
+    @toolbox.style_class.remove("hidden")
     @add_tab_icon.image = @add_tab_close
   end
 
