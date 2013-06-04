@@ -49,6 +49,9 @@ module SD
       def self.regex=(regex)
         @regex = regex
       end
+      def self.regex
+        @regex
+      end
 
       def self.filter(name, all_names)
         return true if @always_add

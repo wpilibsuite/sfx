@@ -710,7 +710,7 @@ class SD::Designer
   # Add all known controls
   def aa_add_all
     # for each of the items in the tree view (TODO: NOT A TREE VIEW), add it as the pref type
-    aa_add_some(*@aa_tree.root.children.map{|x| x.value})
+    aa_add_some(*@aa_tree.root.children.map{|x| x.value}.find_all{|x| !@aa_regex_showing || x.match(@aa_filter.regex)})
   end
 
   def aa_add_some(*names)
