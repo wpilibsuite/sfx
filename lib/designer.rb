@@ -6,6 +6,7 @@ require 'designer_support/aa_tree_cell'
 require 'designer_support/toolbox_popup'
 require 'designer_support/pref_types'
 require 'designer_support/placement_map'
+require 'designer_support/plugin_manager'
 require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
@@ -206,7 +207,15 @@ class SD::Designer
           end
         }
       end
-
+      # TODO: hack
+      xdesc["IconStream"] = Proc.new {
+        image(if JRubyFX::Application.in_jar?
+            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/32-fxicon.png"
+          else
+            "file:" + File.join(File.dirname(__FILE__), "res", "32-fxicon.png")
+          end)
+      }
+      pldesc = [xdesc]
       desc = xdesc["Data"]
 
       # check for the plugins folder
@@ -241,6 +250,7 @@ class SD::Designer
 
         # add build in descriptors to all the descriptors
         desc += xdesc["Data"]
+        pldesc << xdesc
       end
 
       # Process the java classes with their annotations
@@ -270,6 +280,7 @@ class SD::Designer
           "Types" => types_annote,
           proc: Proc.new { jclass.ruby_class.new }
         }
+        @plugin_bits = pldesc
       end
       @toolbox_bits = {:standard => desc}
       @found_plugins = true
@@ -740,6 +751,16 @@ class SD::Designer
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
       init_owner stg
       fxml SD::SettingsDialog, :initialize => [prefs, this]
+      show_and_wait
+    end
+  end
+
+  def plugin_dialog
+    stg = @stage
+    pldesc = @plugin_bits
+    stage(init_style: :utility, init_modality: :app, title: "Plugin Manager") do
+      init_owner stg
+      fxml SD::DesignerSupport::PluginManager, :initialize => [pldesc]
       show_and_wait
     end
   end
