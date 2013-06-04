@@ -86,7 +86,9 @@ class SD::Designer
         @aa_tree.root.children.clear
         @aa_tree.root.children.add_all(@aa_tree_list.find_all{|x|!x[:fout]}.map{|x|tree_item(value: x)})
         @aa_regexer.style = "-fx-border-color: green;"
-      rescue Exception
+        @aa_regex_message.text = "Valid regex"
+      rescue Exception => e
+        @aa_regex_message.text = e.message
         @aa_regexer.style = "-fx-border-color: red;"
       end
     end

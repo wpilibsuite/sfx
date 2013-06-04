@@ -201,7 +201,11 @@
                               <HBox fx:id="aa_ctrl_regex" alignment="CENTER" disable="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" visible="true">
                                 <children>
                                   <Label text="Regex: " />
-                                  <TextField fx:id="aa_regexer" prefWidth="-1.0" style="" />
+                                  <TextField fx:id="aa_regexer" prefWidth="-1.0" style="">
+                                    <tooltip>
+                                      <Tooltip text="No regex" fx:id="aa_regex_message" />
+                                    </tooltip>
+                                  </TextField>
                                 </children>
                               </HBox>
                             </children>
