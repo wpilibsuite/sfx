@@ -64,9 +64,9 @@ class SD::Designer
         # TODO: this should actually be much simpler comparison
         if q.to_s.include? "TabPaneSkin$TabHeaderSkin" and q.parent and not q.parent.to_s.include? "TabPaneSkin$TabHeaderSkin"
           # TODO: clean this up a bit.
-          if q.id == "AddTab" or @toolbox.get_translate_x == 36.0
+          if q.id == "AddTab" or @toolbox.get_translate_x == 35.0
             mode = :hide
-            if @toolbox.get_translate_x == 36.0
+            if @toolbox.get_translate_x == 35.0
               mode = :show
               if q.id == "AddTab"
                 @toolbox.selection_model.clear_and_select @savedSelection
@@ -493,7 +493,7 @@ class SD::Designer
     timeline do
       animate lg.prefWidthProperty, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
       animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
-      animate tb.translateXProperty, 0.ms => 500.ms, (36 - 36 * nul) => (36 * nul)
+      animate tb.translateXProperty, 0.ms => 500.ms, (35 - 35 * nul) => (35 * nul)
       animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
       animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width + 32 * mul)
       animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32 * mul)
@@ -571,7 +571,7 @@ class SD::Designer
     @toolbox.selection_model.select_first
     with(@toolbox) do |tbx|
       timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
+        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 35.0
       end.play
     end
     @toolbox.style_class.add("hidden")
@@ -583,7 +583,7 @@ class SD::Designer
     @toolbox_status = :visible
     with(@toolbox) do |tbx|
       timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 36.0 => 300.0
+        animate tbx.translateXProperty, 0.sec => 500.ms, 35.0 => 300.0
       end.play
     end
     register_toolbox_clickoff do

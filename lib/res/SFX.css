@@ -11,7 +11,6 @@
 
 .titled-pane:focused, .titled-pane {
     -fx-text-fill: #0655a1;
-
 }
 
 .titled-pane:focused > .title > .arrow-button .arrow, .titled-pane > .title > .arrow-button .arrow {
@@ -46,11 +45,11 @@
 
 }
 #bottom_gutter {
-	-fx-background-color: linear-gradient(to bottom, #701 0%, #df0040 15%, #df0040 100%);
+	-fx-background-color: linear-gradient(to bottom, #777 0%, #ccc 15%, #ccc 100%);
 }
 #bottom_gutter .corner_gutter {
-	-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #701 0%, #df0040 15%, #df0040 100%);
+	-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #777 0%, #ccc 15%, #ccc 100%);
 }
 #left_gutter {
-	-fx-background-color: linear-gradient(to left, #701 0%, #df0040 15%, #df0040 100%);
+	-fx-background-color: linear-gradient(to left, #777 0%, #ccc 15%, #ccc 100%);
 }

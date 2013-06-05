@@ -128,7 +128,7 @@
       </VBox>
     </left>
   </BorderPane>
-  <TabPane fx:id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" styleClass="hidden" tabClosingPolicy="UNAVAILABLE" translateX="36.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+  <TabPane fx:id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" styleClass="hidden" tabClosingPolicy="UNAVAILABLE" translateX="35.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
     <tabs>
       <Tab fx:id="AddTab" styleClass="add-button" text="">
         <content>
