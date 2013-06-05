@@ -7,3 +7,5 @@ syntax: glob
 *.bak
 nbproject/private/*
 *.jar
+gems/*
+*.zip

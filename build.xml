@@ -20,12 +20,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <project name="SFX" basedir="." default="main">
 	<property name="jruby.dest" value="${user.home}/.jruby-jar/jruby-complete-1.7.4.jar" />
 	<target name="main">
+		<delete dir="gems" />
 		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.4/jruby-complete-1.7.4.jar"
 			 dest="${jruby.dest}"
-			 verbose="true"
+			 verbose="false"
 			 skipexisting="true" />
+		<get src="https://github.com/byteit101/JRubyFXML/archive/master.zip"
+			 dest="jrubyfx.zip"
+			 verbose="false"
+			 skipexisting="false" />
+		<get src="https://github.com/byteit101/JRubyFX-FXMLLoader/archive/master.zip"
+			 dest="jrubyfx-fxmlloader.zip"
+			 verbose="false"
+			 skipexisting="false" />
+		<unzip src="jrubyfx.zip" dest="gems/"/>
+		<unzip src="jrubyfx-fxmlloader.zip" dest="gems/"/>
+		<move file="gems/JRubyFXML-master" tofile="gems/jrubyfx" />
+		<move file="gems/JRubyFX-FXMLLoader-master" tofile="gems/jrubyfx-fxmlloader" />
+		<java jar="${jruby.dest}" fork="true" dir="gems/jrubyfx">
+			<arg line="-S rake -I . reflect"/>
+		</java>
 		<java jar="${jruby.dest}" fork="true">
-			<arg line="-S rake single-jar"/>
+			<env key="jrubyfx" value="gems/jrubyfx/lib" />
+			<env key="fxmlloader" value="gems/jrubyfx-fxmlloader/lib" />
+			<arg line="-S rake patch single-jar"/>
 		</java>
 	</target>
 

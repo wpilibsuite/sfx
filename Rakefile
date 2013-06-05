@@ -20,6 +20,12 @@ task "single-jar" => :compile do
   require 'jrubyfx_tasks'
   JRubyFX::Tasks::download_jruby("1.7.4") # TODO: should we use JRUBY_VERSION instead? downside => must be same jar as current
   JRubyFX::Tasks::jarify_jrubyfx("lib/*", "lib/main.rb", nil, "sfx.jar")
+  ant do
+    zip(destfile: "sfx.zip") do
+      fileset dir: ".", includes: "plugins/"
+      fileset dir: ".", includes: "sfx.jar"
+    end
+  end
 end
 
 desc "Compiles a bunch of other files"
@@ -46,5 +52,15 @@ task :clean do
   FileList["**/*.jar"].each do |ajar|
     rm ajar
   end
+  rm_rf "gems"
+  FileList["*.zip"].each do |ajar|
+    rm ajar
+  end
 end
 
+
+desc "Patches local gems"
+task :patch do
+  cp "fixes/observable_value.rb", File.join(jrubyfx_path, "jrubyfx", "core_ext")
+  cp "fixes/j8_expression_value.rb", File.join(jrubyfx_fxmlloader_path, "fxmllader")
+end
