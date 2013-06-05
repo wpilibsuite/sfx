@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2013 patrick
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<project name="SFX" basedir="." default="main">
+	<property name="jruby.dest" value="${user.home}/.jruby-jar/jruby-complete-1.7.4.jar" />
+	<target name="main">
+		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.4/jruby-complete-1.7.4.jar"
+			 dest="${jruby.dest}"
+			 verbose="true"
+			 skipexisting="true" />
+		<java jar="${jruby.dest}" fork="true">
+			<arg line="-S rake single-jar"/>
+		</java>
+	</target>
+
+	<target name="single-jar">
+		<exec executable="rake">
+			<arg value="single-jar" />
+		</exec>
+	</target>
+</project>

@@ -1,32 +1,50 @@
-require 'rawr'
-#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
+#!/usr/bin/env rake
+require 'ant'
+task :default => "single-jar"
+
+nwt_jar = "#{ENV['HOME']}/sunspotfrcsdk/desktop-lib/networktables-desktop.jar"
+nwt_jar = ENV['NWT_JAR'] if ENV['NWT_JAR']
+jrubyfx_path = ENV['jrubyfx'] || "../jrubyfx/lib/"
+jrubyfx_fxmlloader_path = ENV['fxmlloader'] || "../FXMLLoader/lib/"
+$LOAD_PATH << jrubyfx_fxmlloader_path
+$LOAD_PATH << jrubyfx_path
 
 
-require 'rubygems'
-require 'rake'
-require 'rake/clean'
-require 'rubygems/package_task'
+desc "Creates a single jar from all the other files"
+task "single-jar" => :compile do
+  cp "../sfxlib/dist/sfxlib.jar", "lib/"
+  cp "../sfxmeta/dist/sfxmeta.jar", "lib/"
+  cp nwt_jar, "lib/networktables-desktop.jar"
 
-spec = Gem::Specification.new do |s|
-  s.name = 'SFX'
-  s.version = '0.0.1'
-  s.has_rdoc = true
-  s.extra_rdoc_files = ['README', 'LICENSE']
-  s.summary = 'Your summary here'
-  s.description = s.summary
-  s.author = ''
-  s.email = ''
-  # s.executables = ['your_executable_here']
-  s.files = %w(LICENSE README Rakefile) + Dir.glob("{bin,lib,spec}/**/*")
-  s.require_path = "lib"
-  s.bindir = "bin"
+  # now we stuff stuff together (ha ha)
+  require 'jrubyfx_tasks'
+  JRubyFX::Tasks::download_jruby("1.7.4") # TODO: should we use JRUBY_VERSION instead? downside => must be same jar as current
+  JRubyFX::Tasks::jarify_jrubyfx("lib/*", "lib/main.rb", nil, "sfx.jar")
 end
 
-Gem::PackageTask.new(spec) do |p|
-  p.gem_spec = spec
-  p.need_tar = true
-  p.need_zip = true
+desc "Compiles a bunch of other files"
+task :compile do
+  ant do
+    ant(dir: "../sfxmeta/", target: "jar")
+    ant(dir: "../sfxlib/") do
+      target name: "clean" # must clean or the annotation processors will fail
+      target name: "jar"
+    end
+  end
+end
+
+desc "Removes all build files"
+task :clean do
+  ant do
+    ant(dir: "../sfxlib/") do
+      target name: "clean"
+    end
+    ant(dir: "../sfxmeta/") do
+      target name: "clean"
+    end
+  end
+  FileList["**/*.jar"].each do |ajar|
+    rm ajar
+  end
 end
 
