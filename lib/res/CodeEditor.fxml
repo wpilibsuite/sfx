@@ -35,4 +35,7 @@
       </padding>
     </VBox>
   </center>
+  <stylesheets>
+    <URL value="@general.css" />
+  </stylesheets>
 </BorderPane>

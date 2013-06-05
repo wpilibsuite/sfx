@@ -28,4 +28,7 @@
       </children>
     </HBox>
   </top>
+  <stylesheets>
+    <URL value="@general.css" />
+  </stylesheets>
 </BorderPane>

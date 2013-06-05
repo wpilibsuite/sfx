@@ -53,4 +53,7 @@
       </items>
     </SplitPane>
   </center>
+  <stylesheets>
+    <URL value="@general.css" />
+  </stylesheets>
 </BorderPane>

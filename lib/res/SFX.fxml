@@ -256,5 +256,6 @@
   </rowConstraints>
   <stylesheets>
     <URL value="@SFX.css" />
+    <URL value="@general.css" />
   </stylesheets>
 </GridPane>

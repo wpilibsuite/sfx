@@ -34,16 +34,6 @@
 	-fx-background-color: #60dc00;
 }
 
-.button, .toggle-button {
-	-fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to bottom, #fefefe, #d8d8d8), linear-gradient(to bottom, #f8f8f8, #e0e0e0);
-	-fx-border-radius: 2px;
-	-fx-background-radius: 2px;
-}
-
-.button:pressed, .toggle-button:selected {
-	-fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to top, #fefefe, #d8d8d8), linear-gradient(to top, #f8f8f8, #e0e0e0);
-
-}
 #bottom_gutter {
 	-fx-background-color: linear-gradient(to bottom, #777 0%, #ccc 15%, #ccc 100%);
 }
