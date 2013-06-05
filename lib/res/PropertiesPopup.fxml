@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.collections.*?>
 <?import javafx.geometry.*?>
@@ -9,7 +10,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<fx:root type="javafx.scene.layout.BorderPane" prefHeight="257.0000999999975" prefWidth="295.999977929685" style="-fx-background-color: linear-gradient(to top, #889b 85%, #99a5 )" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.BorderPane" prefHeight="257.0000999999975" prefWidth="295.999977929685" style="-fx-background-color: linear-gradient(to top, #bbb 85%, #eee);&#10;-fx-background-radius: 5;&#10;-fx-border-radius: 5;" xmlns:fx="http://javafx.com/fxml">
   <center>
     <GridPane fx:id="prop_list" hgap="12.0" vgap="9.0">
       <columnConstraints>
@@ -26,8 +27,11 @@
       </rowConstraints>
     </GridPane>
   </center>
+  <stylesheets>
+    <URL value="@general.css" />
+  </stylesheets>
   <top>
-    <HBox fx:id="titlebar" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" onMouseDragged="#move" onMousePressed="#begin_move" onMouseReleased="#finish_move" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="-fx-background-color: #00000001">
+    <HBox fx:id="titlebar" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" onMouseDragged="#move" onMousePressed="#begin_move" onMouseReleased="#finish_move" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="">
       <children>
         <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
         <Label fx:id="title" alignment="TOP_LEFT" text="Awesome Control 9000">
@@ -36,7 +40,7 @@
           </font>
         </Label>
         <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Button mnemonicParsing="false" onAction="#close" style="-fx-background-color: transparent;" text="X">
+        <Button mnemonicParsing="false" onAction="#close" style="-fx-background-color: transparent;" text="X" textFill="#df0040">
           <font>
             <Font name="System Bold" size="15.0" />
           </font>
@@ -47,7 +51,4 @@
       </padding>
     </HBox>
   </top>
-  <stylesheets>
-    <URL value="@general.css" />
-  </stylesheets>
 </fx:root>
