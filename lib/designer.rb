@@ -260,6 +260,7 @@ class SD::Designer
             "file:" + File.join(File.dirname(__FILE__), "res", "32-fxicon.png")
           end)
       }
+      xdesc["Location"] = "built-in"
       pldesc = [xdesc]
       desc = xdesc["Data"]
 
@@ -295,6 +296,7 @@ class SD::Designer
 
         # add build in descriptors to all the descriptors
         desc += xdesc["Data"]
+        xdesc["Location"] = plugin_yaml
         pldesc << xdesc
       end
 

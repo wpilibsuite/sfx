@@ -36,6 +36,7 @@ class SD::DesignerSupport::PluginManager
     @uuid.text = obj["Plugin ID"]
     @version.text = obj["Version"]
     @api_version.text = obj["API"].to_s
+    @llocation.text = obj["Location"] || "Unknown"
     @contents.text = obj["Data"].map{|x|x["Name"]}.join("\n")
   end
 end

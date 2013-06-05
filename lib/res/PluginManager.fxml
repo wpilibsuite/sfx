@@ -23,7 +23,7 @@
             <Label fx:id="name" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             <Label fx:id="desc" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label fx:id="version" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label fx:id="location" text="Unknown" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label fx:id="llocation" text="Unknown" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label fx:id="uuid" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <CheckBox fx:id="enabled" disable="true" mnemonicParsing="false" selected="true" text="" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label text="API:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
