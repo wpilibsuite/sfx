@@ -198,7 +198,7 @@ module SD::DesignerSupport
     def morph_into(e)
       @parent_designer.morph_child(self, e) do |new|
         prop_names.each do |(prop, set_name)|
-          new.method(set_name).call(prop.get) if new.respond_to? set_name
+          new.method(set_name).call(prop.get) if new.respond_to? set_name rescue nil # property is invalid/different type
         end
         @child = new
         @childContainer.center = new.get_ui
