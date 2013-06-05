@@ -7,6 +7,7 @@ require 'designer_support/toolbox_popup'
 require 'designer_support/pref_types'
 require 'designer_support/placement_map'
 require 'designer_support/aa_filter'
+require 'designer_support/plugin_manager'
 require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
@@ -110,9 +111,9 @@ class SD::Designer
         # TODO: this should actually be much simpler comparison
         if q.to_s.include? "TabPaneSkin$TabHeaderSkin" and q.parent and not q.parent.to_s.include? "TabPaneSkin$TabHeaderSkin"
           # TODO: clean this up a bit.
-          if q.id == "AddTab" or @toolbox.get_translate_x == 36.0
+          if q.id == "AddTab" or @toolbox.get_translate_x == 35.0
             mode = :hide
-            if @toolbox.get_translate_x == 36.0
+            if @toolbox.get_translate_x == 35.0
               mode = :show
               if q.id == "AddTab"
                 @toolbox.selection_model.clear_and_select @savedSelection
@@ -251,6 +252,15 @@ class SD::Designer
         }
       end
 
+      # TODO: hack
+      xdesc["IconStream"] = Proc.new {
+        image(if JRubyFX::Application.in_jar?
+            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/32-fxicon.png"
+          else
+            "file:" + File.join(File.dirname(__FILE__), "res", "32-fxicon.png")
+          end)
+      }
+      pldesc = [xdesc]
       desc = xdesc["Data"]
 
       # check for the plugins folder
@@ -285,6 +295,7 @@ class SD::Designer
 
         # add build in descriptors to all the descriptors
         desc += xdesc["Data"]
+        pldesc << xdesc
       end
 
       # Process the java classes with their annotations
@@ -314,6 +325,7 @@ class SD::Designer
           "Types" => types_annote,
           proc: Proc.new { jclass.ruby_class.new }
         }
+        @plugin_bits = pldesc
       end
       @toolbox_bits = {:standard => desc}
       @found_plugins = true
@@ -528,7 +540,7 @@ class SD::Designer
     timeline do
       animate lg.prefWidthProperty, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
       animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
-      animate tb.translateXProperty, 0.ms => 500.ms, (36 - 36 * nul) => (36 * nul)
+      animate tb.translateXProperty, 0.ms => 500.ms, (35 - 35 * nul) => (35 * nul)
       animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
       animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width + 32 * mul)
       animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32 * mul)
@@ -606,9 +618,10 @@ class SD::Designer
     @toolbox.selection_model.select_first
     with(@toolbox) do |tbx|
       timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 36.0
+        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 35.0
       end.play
     end
+    @toolbox.style_class.add("hidden")
     @add_tab_icon.image = @add_tab_plus
   end
 
@@ -617,12 +630,13 @@ class SD::Designer
     @toolbox_status = :visible
     with(@toolbox) do |tbx|
       timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 36.0 => 300.0
+        animate tbx.translateXProperty, 0.sec => 500.ms, 35.0 => 300.0
       end.play
     end
     register_toolbox_clickoff do
       hide_toolbox
     end
+    @toolbox.style_class.remove("hidden")
     @add_tab_icon.image = @add_tab_close
   end
 
@@ -810,6 +824,16 @@ class SD::Designer
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
       init_owner stg
       fxml SD::SettingsDialog, :initialize => [prefs, this]
+      show_and_wait
+    end
+  end
+
+  def plugin_dialog
+    stg = @stage
+    pldesc = @plugin_bits
+    stage(init_style: :utility, init_modality: :app, title: "Plugin Manager") do
+      init_owner stg
+      fxml SD::DesignerSupport::PluginManager, :initialize => [pldesc]
       show_and_wait
     end
   end

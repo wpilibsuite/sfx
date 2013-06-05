@@ -23,9 +23,9 @@ module SD
       with(stage, :title => "SmartDashboard") do
         fxml SD::Designer
         icons.add image(if JRubyFX::Application.in_jar?
-            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/icon.png"
+            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/16-fxicon.png"
           else
-            "file:" + File.join(File.dirname(__FILE__), "res", "icon.png")
+            "file:" + File.join(File.dirname(__FILE__), "res", "16-fxicon.png")
           end)
         show
       end
