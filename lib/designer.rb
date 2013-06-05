@@ -447,8 +447,8 @@ class SD::Designer
       end
     end
     # position the popup at the location of the mouse
-    tbx_popup.x = overlay.local_to_scene(overlay.bounds_in_local).min_x
-    tbx_popup.y = overlay.local_to_scene(overlay.bounds_in_local).min_y
+    tbx_popup.x = overlay.local_to_scene(overlay.bounds_in_local).min_x + @stage.x
+    tbx_popup.y = overlay.local_to_scene(overlay.bounds_in_local).min_y + @stage.y
     # when we click other places, hide the toolbox
     register_clickoff do
       tbx_popup.hide
