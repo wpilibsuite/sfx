@@ -617,6 +617,7 @@ class SD::Designer
     with(@toolbox) do |tbx|
       timeline do
         animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 35.0
+        animate tbx.maxHeightProperty, 499.ms => 500.ms, -1.0 => 250.0
       end.play
     end
     @toolbox.style_class.add("hidden")
@@ -626,6 +627,7 @@ class SD::Designer
   def show_toolbox
     return if @toolbox_status == :visible
     @toolbox_status = :visible
+    @toolbox.max_height = -1
     with(@toolbox) do |tbx|
       timeline do
         animate tbx.translateXProperty, 0.sec => 500.ms, 35.0 => 300.0
@@ -818,20 +820,11 @@ class SD::Designer
     hide_properties
     stg = @stage
     prefs = @prefs
+    plbits = @plugin_bits
     this = self
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
       init_owner stg
-      fxml SD::SettingsDialog, :initialize => [prefs, this]
-      show_and_wait
-    end
-  end
-
-  def plugin_dialog
-    stg = @stage
-    pldesc = @plugin_bits
-    stage(init_style: :utility, init_modality: :app, title: "Plugin Manager") do
-      init_owner stg
-      fxml SD::DesignerSupport::PluginManager, :initialize => [pldesc]
+      fxml SD::SettingsDialog, :initialize => [prefs, this, plbits]
       show_and_wait
     end
   end

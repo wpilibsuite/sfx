@@ -13,6 +13,8 @@
   <bottom>
     <HBox alignment="TOP_RIGHT" prefHeight="-1.0" prefWidth="-1.0" spacing="12.0">
       <children>
+        <Button mnemonicParsing="false" onAction="#plugin_manager" text="Plugins" />
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
         <Button disable="true" mnemonicParsing="false" text="Revert" />
         <Button mnemonicParsing="false" onAction="#close" text="Close" />
       </children>
@@ -187,6 +189,6 @@
   </center>
   <stylesheets>
     <URL value="@css/Settings.css" />
-	<URL value="@css/general.css" />
+    <URL value="@css/general.css" />
   </stylesheets>
 </BorderPane>

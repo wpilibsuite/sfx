@@ -15,13 +15,13 @@
 <?import javafx.scene.shape.*?>
 <?scenebuilder-classpath-element ../../../SDLib/dist/SDLib.jar?>
 
-<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" xmlns:fx="http://javafx.com/fxml">
+<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns:fx="http://javafx.com/fxml">
   <fx:define>
     <Image url="@img/stock_left.png" fx:id="add_tab_close" />
   </fx:define>
-  <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+  <BorderPane fx:id="BorderPane" pickOnBounds="false" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
-      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" style="" translateY="0.0">
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
         <children>
           <Pane prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter" />
           <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
@@ -72,22 +72,7 @@
               </HBox>
             </children>
           </HBox>
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#show_data_sources" onContextMenuRequested="#plugin_dialog" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings" HBox.hgrow="NEVER">
-            <graphic>
-              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
-                <image>
-                  <Image url="@img/document-properties.png" />
-                </image>
-              </ImageView>
-            </graphic>
-            <tooltip>
-              <Tooltip text="Data Settings" />
-            </tooltip>
-            <HBox.margin>
-              <Insets fx:id="x1" />
-            </HBox.margin>
-          </Button>
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="SmartDashboard Settings" HBox.hgrow="NEVER">
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="-Infinity" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="-1.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Settings" HBox.hgrow="NEVER">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -123,12 +108,24 @@
     <left>
       <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="" translateX="0.0">
         <children>
-          <StackPane prefHeight="-1.0" prefWidth="-1.0" />
+          <StackPane prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#show_data_sources" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@img/document-properties.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <tooltip>
+              <Tooltip text="Data Settings" />
+            </tooltip>
+          </Button>
         </children>
       </VBox>
     </left>
   </BorderPane>
-  <TabPane fx:id="TooboxTabs" maxWidth="1.7976931348623157E308" minWidth="300.0" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" styleClass="hidden" tabClosingPolicy="UNAVAILABLE" translateX="35.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0">
+  <TabPane fx:id="TooboxTabs" maxHeight="250.0" maxWidth="1.7976931348623157E308" minWidth="300.0" mouseTransparent="false" pickOnBounds="false" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" styleClass="hidden" tabClosingPolicy="UNAVAILABLE" translateX="35.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0" GridPane.valignment="TOP">
     <tabs>
       <Tab fx:id="AddTab" styleClass="add-button" text="">
         <content>

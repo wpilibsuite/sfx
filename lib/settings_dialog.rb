@@ -19,13 +19,14 @@ class SD::SettingsDialog
   include JRubyFX::Controller
   fxml "Settings.fxml"
 
-  def initialize(prefs, main)
+  def initialize(prefs, main, plbits)
     # can't do this above or @aa_never and friends are still nil
     @auto_add_options = {
       "never" => @aa_never,
       "regex" => @aa_match_regex,
       "code" => @aa_code
     }
+    @plugin_bits = plbits
     @prefs = prefs
     @main = main
     @diffs = {}
@@ -138,6 +139,16 @@ class SD::SettingsDialog
     if res
       @aa_code_code = res
       @diffs["aa_policy"] = {type: :aa_radio, value: @auto_add_options.invert[@aa_match_regex.toggle_group.selected_toggle], regex: @aa_regex.text, code: @aa_code_code}
+    end
+  end
+
+  def plugin_manager
+    stg = @stage
+    pldesc = @plugin_bits
+    stage(init_style: :utility, init_modality: :app, title: "Plugin Manager") do
+      init_owner stg
+      fxml SD::DesignerSupport::PluginManager, :initialize => [pldesc]
+      show_and_wait
     end
   end
 end
