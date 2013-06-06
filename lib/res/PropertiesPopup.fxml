@@ -28,7 +28,7 @@
     </GridPane>
   </center>
   <stylesheets>
-    <URL value="@general.css" />
+    <URL value="@css/general.css" />
   </stylesheets>
   <top>
     <HBox fx:id="titlebar" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" onMouseDragged="#move" onMousePressed="#begin_move" onMouseReleased="#finish_move" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="">

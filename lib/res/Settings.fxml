@@ -186,7 +186,7 @@
     </TabPane>
   </center>
   <stylesheets>
-    <URL value="@Settings.css" />
-	<URL value="@general.css" />
+    <URL value="@css/Settings.css" />
+	<URL value="@css/general.css" />
   </stylesheets>
 </BorderPane>

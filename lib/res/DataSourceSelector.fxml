@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.collections.*?>
 <?import javafx.geometry.*?>
@@ -106,6 +107,6 @@
     </ScrollPane>
   </items>
   <stylesheets>
-    <URL value="@general.css" />
+    <URL value="@css/general.css" />
   </stylesheets>
 </SplitPane>

@@ -17,7 +17,7 @@
 
 <GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" xmlns:fx="http://javafx.com/fxml">
   <fx:define>
-    <Image url="@stock_left.png" fx:id="add_tab_close" />
+    <Image url="@img/stock_left.png" fx:id="add_tab_close" />
   </fx:define>
   <BorderPane fx:id="BorderPane" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
@@ -26,14 +26,14 @@
           <Pane prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter" />
           <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
             <image>
-              <Image url="@document-new.png" />
+              <Image url="@img/document-new.png" />
             </image>
           </ImageView>
           <StackPane opacity="0.45" prefHeight="-1.0" prefWidth="-1.0">
             <children>
               <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@document-open.png" />
+                  <Image url="@img/document-open.png" />
                 </image>
               </ImageView>
               <Button mnemonicParsing="false" opacity="0.0" prefHeight="32.0" prefWidth="32.0" text="" visible="true">
@@ -52,12 +52,12 @@
           </StackPane>
           <ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@document-save.png" />
+              <Image url="@img/document-save.png" />
             </image>
           </ImageView>
           <ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.42" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@edit-undo.png" />
+              <Image url="@img/edit-undo.png" />
             </image>
           </ImageView>
           <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
@@ -76,7 +76,7 @@
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@document-properties.png" />
+                  <Image url="@img/document-properties.png" />
                 </image>
               </ImageView>
             </graphic>
@@ -91,7 +91,7 @@
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@package_settings.png" />
+                  <Image url="@img/package_settings.png" />
                 </image>
               </ImageView>
             </graphic>
@@ -106,7 +106,7 @@
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@media-playback-start.png" />
+                  <Image url="@img/media-playback-start.png" />
                 </image>
               </ImageView>
             </graphic>
@@ -137,7 +137,7 @@
         <graphic>
           <ImageView fx:id="add_tab_icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@list-add.png" fx:id="add_tab_plus" />
+              <Image url="@img/list-add.png" fx:id="add_tab_plus" />
             </image>
           </ImageView>
         </graphic>
@@ -239,7 +239,7 @@
         <graphic>
           <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
             <image>
-              <Image url="@media-playback-stop.png" />
+              <Image url="@img/media-playback-stop.png" />
             </image>
           </ImageView>
         </graphic>
@@ -255,7 +255,7 @@
     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
   </rowConstraints>
   <stylesheets>
-    <URL value="@SFX.css" />
-    <URL value="@general.css" />
+    <URL value="@css/SFX.css" />
+    <URL value="@css/general.css" />
   </stylesheets>
 </GridPane>

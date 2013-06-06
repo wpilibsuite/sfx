@@ -255,9 +255,9 @@ class SD::Designer
       # TODO: hack
       xdesc["IconStream"] = Proc.new {
         image(if JRubyFX::Application.in_jar?
-            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/32-fxicon.png"
+            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/img/32-fxicon.png"
           else
-            "file:" + File.join(File.dirname(__FILE__), "res", "32-fxicon.png")
+            "file:" + File.join(File.dirname(__FILE__), "res", "img", "32-fxicon.png")
           end)
       }
       xdesc["Location"] = "built-in"
