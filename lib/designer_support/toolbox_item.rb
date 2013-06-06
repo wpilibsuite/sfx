@@ -5,10 +5,9 @@ module SD::DesignerSupport
     fxml "DesignerToolboxItem.fxml"
 
     def initialize(obj, dnd_get_id, opts={})
-      @label.text = obj["Name"]
       @obj = obj
       @dnd_get_id = dnd_get_id
-      @label.setTooltip tooltip(obj["Description"])
+      Tooltip.install self, tooltip(graphic: vbox!{label(obj["Name"]); label(obj["Description"])})
       im_is = obj["ImageStream"].call
       if im_is
         @img.image = Image.new(im_is)

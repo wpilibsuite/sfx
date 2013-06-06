@@ -15,7 +15,6 @@
         <Image url="@noicon.png" />
       </image>
     </ImageView>
-    <Label fx:id="label" text="Control X" />
   </children>
   <padding>
     <Insets bottom="3.0" />
