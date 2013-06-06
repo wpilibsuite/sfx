@@ -40,11 +40,11 @@ blue: 0655a1
 orange: ?
 */
 #bottom_gutter {
-	-fx-background-color: linear-gradient(to bottom, derive(#0655a1, +80%) 0%, #0655a1 20%, #0655a1 100%);
+	-fx-background-color: linear-gradient(to bottom, #666, #ccc 10%, #ccc 100%);
 }
 #bottom_gutter .corner_gutter {
-	-fx-background-color: radial-gradient(center 100% 0%, radius 100%, derive(#0655a1, +80%) 0%, #0655a1 20%, #0655a1 100%);
+	-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #666, #ccc 10%, #ccc 100%);
 }
 #left_gutter {
-	-fx-background-color: linear-gradient(to left, derive(#0655a1, +80%) 0%, #0655a1 20%, #0655a1 100%);
+	-fx-background-color: linear-gradient(to left, #666, #ccc 10%, #ccc 100%);
 }
