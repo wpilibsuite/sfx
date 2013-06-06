@@ -16,17 +16,15 @@ require "networktables-desktop.jar" # TODO: file.join
 #p Java::dashfx.lib.data.InitInfo
 #p Java::dashfx.lib.data.DataInitDescriptor
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"
+resource_root :images, File.join(File.dirname(__FILE__), "res", "img"), "res/img"
 
 module SD
   class App < JRubyFX::Application
     def start(stage)
       with(stage, :title => "SmartDashboard") do
         fxml SD::Designer
-        icons.add image(if JRubyFX::Application.in_jar?
-            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/img/16-fxicon.png"
-          else
-            "file:" + File.join(File.dirname(__FILE__), "res", "img", "16-fxicon.png")
-          end)
+        icons.add image(resource_url(:images, "16-fxicon.png").to_s)
+        icons.add image(resource_url(:images, "32-fxicon.png").to_s)
         show
       end
     end

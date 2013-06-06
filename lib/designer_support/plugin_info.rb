@@ -56,11 +56,7 @@ module SD
           @info.description = item["Description"]
           icon_url = item["IconStream"]
           icon = icon_url.call if icon_url
-          @info.image = (icon || image(if JRubyFX::Application.in_jar?
-            JRuby.runtime.jruby_class_loader.get_resource_as_stream "res/img/plugin.png"
-          else
-            "file:" + File.join(File.dirname(__FILE__), "..", "res", "img", "plugin.png")
-          end))
+          @info.image = (icon || image(resource_url(:images, "plugin.png").to_s))
         end
       end
     end
