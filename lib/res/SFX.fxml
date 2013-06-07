@@ -106,10 +106,10 @@
       </HBox>
     </bottom>
     <left>
-      <VBox fx:id="left_gutter" fillWidth="true" maxHeight="1.7976931348623157E308" prefHeight="-1.0" prefWidth="32.0" style="" translateX="0.0">
+      <VBox fx:id="left_gutter" alignment="TOP_RIGHT" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-1.0" minWidth="0.0" prefHeight="-1.0" prefWidth="32.0" style="" translateX="0.0">
         <children>
           <StackPane prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#show_data_sources" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings">
+          <Button alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#show_data_sources" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>

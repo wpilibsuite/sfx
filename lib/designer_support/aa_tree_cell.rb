@@ -21,7 +21,7 @@ class SD::DesignerSupport::AATreeCell < Java::javafx.scene.control.TreeCell
         db = startDragAndDrop(TransferMode::COPY);
 
         content = ClipboardContent.new
-        content.putString("AutoAdd:#{tree_item.value}");
+        content.putString("AutoAdd:#{tree_item.value[:value]}");
         db.setContent(content);
 
         e.consume();

@@ -536,7 +536,7 @@ class SD::Designer
     stg_xap = SimpleDoubleProperty.new(stg.x)
     stg_xap.add_change_listener {|ov, old, new| stg.x = new }
     timeline do
-      animate lg.prefWidthProperty, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
+      animate lg.maxWidthProperty, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
       animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
       animate tb.translateXProperty, 0.ms => 500.ms, (35 - 35 * nul) => (35 * nul)
       animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
