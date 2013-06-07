@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<property name="jruby.dest" value="${user.home}/.jruby-jar/jruby-complete-1.7.4.jar" />
 	<target name="main">
 		<delete dir="gems" />
+		<mkdir dir="${user.home}/.jruby-jar" />
 		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.4/jruby-complete-1.7.4.jar"
 			 dest="${jruby.dest}"
 			 verbose="false"
