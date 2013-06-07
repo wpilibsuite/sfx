@@ -62,5 +62,5 @@ end
 desc "Patches local gems"
 task :patch do
   cp "fixes/observable_value.rb", File.join(jrubyfx_path, "jrubyfx", "core_ext")
-  cp "fixes/j8_expression_value.rb", File.join(jrubyfx_fxmlloader_path, "fxmllader")
+  cp "fixes/j8_expression_value.rb", File.join(jrubyfx_fxmlloader_path, "fxmlloader")
 end

@@ -37,6 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<unzip src="jrubyfx-fxmlloader.zip" dest="gems/"/>
 		<move file="gems/JRubyFXML-master" tofile="gems/jrubyfx" />
 		<move file="gems/JRubyFX-FXMLLoader-master" tofile="gems/jrubyfx-fxmlloader" />
+		<java jar="${jruby.dest}" fork="true" dir="gems/jrubyfx-fxmlloader">
+			<arg line="-S rake jar"/>
+		</java>
 		<java jar="${jruby.dest}" fork="true" dir="gems/jrubyfx">
 			<arg line="-S rake -I . reflect"/>
 		</java>
