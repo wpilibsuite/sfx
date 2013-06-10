@@ -23,7 +23,11 @@
     <bottom>
       <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
         <children>
-          <Pane prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter" />
+          <Pane prefHeight="-1.0" prefWidth="266.0" styleClass="empty-filler">
+            <children>
+              <Pane layoutX="234.0" layoutY="0.0" prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter" />
+            </children>
+          </Pane>
           <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
             <image>
               <Image url="@img/document-new.png" />
@@ -106,9 +110,61 @@
       </HBox>
     </bottom>
     <left>
-      <VBox fx:id="left_gutter" alignment="TOP_RIGHT" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-1.0" minWidth="0.0" prefHeight="-1.0" prefWidth="32.0" style="" translateX="0.0">
+      <VBox fx:id="left_gutter" alignment="TOP_RIGHT" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="-1.0" minWidth="0.0" prefHeight="-1.0" prefWidth="266.0" style="" translateX="0.0">
         <children>
-          <StackPane prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+          <Accordion fx:id="accord" prefWidth="234.0" VBox.vgrow="ALWAYS">
+            <expandedPane>
+              <TitledPane fx:id="x3" animated="false" text="Standard">
+                <content>
+                  <ScrollPane fx:id="spaine" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefViewportWidth="0.0" prefWidth="-1.0" styleClass="toolbox-panes">
+                    <content>
+                      <FlowPane fx:id="STDToolboxFlow" prefHeight="200.0" prefWidth="200.0" />
+                    </content>
+                  </ScrollPane>
+                </content>
+              </TitledPane>
+            </expandedPane>
+            <panes>
+              <TitledPane fx:id="x2" animated="false" text="Grouping">
+                <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                    <center>
+                      <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" showRoot="false" />
+                    </center>
+                    <top>
+                      <VBox fx:id="aa_ctrl_panel" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                        <children>
+                          <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                            <children>
+                              <Label text="Add: " />
+                              <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
+                              <ToggleButton mnemonicParsing="false" onAction="#aa_add_new" text="New" />
+                              <Button disable="true" mnemonicParsing="false" text="Others" />
+                              <Button fx:id="aa_expand_panel" mnemonicParsing="false" onAction="#aa_toggle_panel" text="V" />
+                            </children>
+                          </HBox>
+                          <HBox fx:id="aa_ctrl_regex" alignment="CENTER" disable="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" visible="true">
+                            <children>
+                              <Label text="Regex: " />
+                              <TextField fx:id="aa_regexer" prefWidth="-1.0" style="">
+                                <tooltip>
+                                  <Tooltip text="No regex" fx:id="aa_regex_message" />
+                                </tooltip>
+                              </TextField>
+                            </children>
+                          </HBox>
+                        </children>
+                        <BorderPane.margin>
+                          <Insets bottom="5.0" top="1.0" />
+                        </BorderPane.margin>
+                      </VBox>
+                    </top>
+                  </BorderPane>
+                </content>
+              </TitledPane>
+              <fx:reference source="x3" />
+            </panes>
+          </Accordion>
           <Button alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#show_data_sources" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
@@ -125,111 +181,6 @@
       </VBox>
     </left>
   </BorderPane>
-  <TabPane fx:id="TooboxTabs" maxHeight="250.0" maxWidth="1.7976931348623157E308" minWidth="300.0" mouseTransparent="false" pickOnBounds="false" prefHeight="200.0" prefWidth="3.0" rotateGraphic="false" side="RIGHT" styleClass="hidden" tabClosingPolicy="UNAVAILABLE" translateX="35.0" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="0" GridPane.valignment="TOP">
-    <tabs>
-      <Tab fx:id="AddTab" styleClass="add-button" text="">
-        <content>
-          <AnchorPane fx:id="NoContent" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="add-button" />
-        </content>
-        <graphic>
-          <ImageView fx:id="add_tab_icon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-              <Image url="@img/list-add.png" fx:id="add_tab_plus" />
-            </image>
-          </ImageView>
-        </graphic>
-      </Tab>
-      <Tab text="Toolbox">
-        <content>
-          <BorderPane fx:id="testBorderPane" prefHeight="200.0" prefWidth="200.0">
-            <center>
-              <Accordion fx:id="accord">
-                <expandedPane>
-                  <TitledPane fx:id="x3" animated="false" text="Standard">
-                    <content>
-                      <ScrollPane fx:id="spaine" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefViewportWidth="0.0" prefWidth="-1.0" styleClass="toolbox-panes">
-                        <content>
-                          <FlowPane fx:id="STDToolboxFlow" prefHeight="200.0" prefWidth="200.0" />
-                        </content>
-                      </ScrollPane>
-                    </content>
-                  </TitledPane>
-                </expandedPane>
-                <panes>
-                  <fx:reference source="x3" />
-                  <TitledPane fx:id="x2" animated="false" text="Grouping">
-                    <content>
-                      <AnchorPane fx:id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                    </content>
-                  </TitledPane>
-                </panes>
-              </Accordion>
-            </center>
-          </BorderPane>
-        </content>
-      </Tab>
-      <Tab text="AutoAdd">
-        <content>
-          <BorderPane prefHeight="200.0" prefWidth="200.0">
-            <center>
-              <Accordion>
-                <expandedPane>
-                  <TitledPane fx:id="x4" animated="false" text="Recent">
-                    <content>
-                      <BorderPane prefHeight="200.0" prefWidth="200.0">
-                        <center>
-                          <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" showRoot="false" />
-                        </center>
-                        <top>
-                          <VBox fx:id="aa_ctrl_panel" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
-                            <children>
-                              <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
-                                <children>
-                                  <Label text="Add: " />
-                                  <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
-                                  <ToggleButton mnemonicParsing="false" onAction="#aa_add_new" text="New" />
-                                  <Button disable="true" mnemonicParsing="false" text="Others" />
-                                  <Button fx:id="aa_expand_panel" mnemonicParsing="false" onAction="#aa_toggle_panel" text="V" />
-                                </children>
-                              </HBox>
-                              <HBox fx:id="aa_ctrl_regex" alignment="CENTER" disable="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" visible="true">
-                                <children>
-                                  <Label text="Regex: " />
-                                  <TextField fx:id="aa_regexer" prefWidth="-1.0" style="">
-                                    <tooltip>
-                                      <Tooltip text="No regex" fx:id="aa_regex_message" />
-                                    </tooltip>
-                                  </TextField>
-                                </children>
-                              </HBox>
-                            </children>
-                            <BorderPane.margin>
-                              <Insets bottom="5.0" top="1.0" />
-                            </BorderPane.margin>
-                          </VBox>
-                        </top>
-                      </BorderPane>
-                    </content>
-                  </TitledPane>
-                </expandedPane>
-                <panes>
-                  <fx:reference source="x4" />
-                  <TitledPane animated="false" text="All">
-                    <content>
-                      <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                    </content>
-                  </TitledPane>
-                </panes>
-              </Accordion>
-            </center>
-          </BorderPane>
-        </content>
-      </Tab>
-    </tabs>
-    <GridPane.margin>
-      <Insets fx:id="x1" />
-    </GridPane.margin>
-  </TabPane>
   <AnchorPane mouseTransparent="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
     <children>
       <Button fx:id="stop_button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#design" onContextMenuRequested="#do_playback_mode" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Stop" translateX="-32.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">

@@ -12,6 +12,7 @@ require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
 require 'yaml'
+require 'res/ScenicView.jar'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -22,6 +23,7 @@ class SD::Designer
   fxml "SFX.fxml"
 
   def initialize
+    com.javafx.experiments.scenicview.ScenicView.show(@scene);
     # best to catch missing stuff now
     @toolbox= @TooboxTabs
     @selected_items = []
@@ -29,7 +31,6 @@ class SD::Designer
     @dnd_opts = {}
     @add_tab = @AddTab
     @toolbox_group = {:standard => @STDToolboxFlow}
-    @add_tab.id = "AddTab" # TODO: hack. FIXME
     @root = @GridPane
     @canvas = @canvas
     @savedSelection = 1
@@ -94,7 +95,7 @@ class SD::Designer
       end
     end
     aa_hide_regex_panel() # it shows by default
-
+=begin
     # When we hit the tabs, modify the selected index
     (@toolbox.tabs.length - 1).times { |i|
       tb = @toolbox.tabs[i+1] # don't want 1st tab
@@ -132,7 +133,7 @@ class SD::Designer
         q = q.parent
       end
     end
-
+=end
     # get all toolbox bits and add them to the ui toolbox
     parts = find_toolbox_parts
     parts.each do |key, data|
