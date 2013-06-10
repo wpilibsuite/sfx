@@ -215,6 +215,7 @@ class SD::Designer
 
   # easy dnd way to send objects. should use actual text or an hash
   def associate_dnd_id(val, opts=nil)
+    hide_toolbox # TODO: cheap hack
     @dnd_ids << val unless @dnd_ids.include?(val)
     @dnd_opts[val] = opts
     @dnd_ids.index(val)
