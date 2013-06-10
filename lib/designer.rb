@@ -12,7 +12,6 @@ require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
 require 'yaml'
-require 'res/ScenicView.jar'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -23,7 +22,6 @@ class SD::Designer
   fxml "SFX.fxml"
 
   def initialize
-    #com.javafx.experiments.scenicview.ScenicView.show(@scene);
     # best to catch missing stuff now
     @toolbox= @left_gutter
     @selected_items = []
