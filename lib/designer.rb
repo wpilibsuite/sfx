@@ -23,7 +23,7 @@ class SD::Designer
   fxml "SFX.fxml"
 
   def initialize
-    com.javafx.experiments.scenicview.ScenicView.show(@scene);
+    #com.javafx.experiments.scenicview.ScenicView.show(@scene);
     # best to catch missing stuff now
     @toolbox= @TooboxTabs
     @selected_items = []
@@ -609,35 +609,48 @@ class SD::Designer
     @properties.show(@stage)
   end
 
-  def hide_toolbox
-    return if @toolbox_status == :hidden
+  def show_hide_toolbox
+    if @toolbox_status == :hidden
+      show_toolbox
+    else
+      hide_toolbox(true)
+    end
+  end
+
+  def hide_toolbox(really=false)
+    return if @toolbox_status == :hidden or !really
     @toolbox_status = :hidden
-    @clickoff_tbx = Proc.new {|x|}
-    @on_tmouse.call if @on_tmouse
-    @toolbox.selection_model.select_first
-    with(@toolbox) do |tbx|
+    exp = @hack_expander
+    corn = @hack_corner
+#    @clickoff_tbx = Proc.new {|x|}
+#    @on_tmouse.call if @on_tmouse
+    with(@left_gutter) do |tbx|
       timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 300.0 => 35.0
-        animate tbx.maxHeightProperty, 499.ms => 500.ms, -1.0 => 250.0
+        animate tbx.maxWidthProperty, 0.ms => 500.ms, 300.0 => 32.0
+        animate tbx.prefWidthProperty, 0.ms => 500.ms, 300.0 => 32.0
+        animate exp.prefWidthProperty, 0.ms => 500.ms, 300.0 => 32.0
+        animate corn.layoutXProperty, 0.ms => 500.ms, (300.0 - 32) => 0.0
       end.play
     end
-    @toolbox.style_class.add("hidden")
     @add_tab_icon.image = @add_tab_plus
   end
 
   def show_toolbox
     return if @toolbox_status == :visible
     @toolbox_status = :visible
-    @toolbox.max_height = -1
-    with(@toolbox) do |tbx|
+    exp = @hack_expander
+    corn = @hack_corner
+    with(@left_gutter) do |tbx|
       timeline do
-        animate tbx.translateXProperty, 0.sec => 500.ms, 35.0 => 300.0
+        animate tbx.maxWidthProperty, 0.sec => 500.ms, 32.0 => 300.0
+        animate tbx.prefWidthProperty, 0.sec => 500.ms, 32.0 => 300.0
+        animate exp.prefWidthProperty, 0.ms => 500.ms, 32.0 => 300.0
+        animate corn.layoutXProperty, 0.ms => 500.ms, 0.0 => (300.0 - 32)
       end.play
     end
-    register_toolbox_clickoff do
-      hide_toolbox
-    end
-    @toolbox.style_class.remove("hidden")
+#    register_toolbox_clickoff do
+#      hide_toolbox
+#    end
     @add_tab_icon.image = @add_tab_close
   end
 
