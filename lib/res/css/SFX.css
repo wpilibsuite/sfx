@@ -22,14 +22,6 @@
 	-fx-border-width: 0;
 }
 
-#TooboxTabs .tab {
-	-fx-background-color: -fx-tab-border-color, white; /*linear-gradient(to bottom, #f89300, #f89300 80%, derive(#f89300, -40%));*/
-}
-
-#TooboxTabs .tab.add-button {
-	-fx-background-color: -fx-tab-border-color, #60dc00;
-}
-
 .add-button {
 	-fx-background-color: #60dc00;
 }
@@ -42,12 +34,6 @@ orange: ?
 #bottom_gutter {
 	-fx-background-color: linear-gradient(to bottom, #666, #ccc 10%, #ccc 100%);
 }
-#bottom_gutter .corner_gutter {
-	-fx-background-color: radial-gradient(center 100% 0%, radius 100%, #666, #ccc 10%, #ccc 100%);
-}
 #left_gutter {
 	-fx-background-color: linear-gradient(to left, #666, #ccc 2%, #ccc 100%);
-}
-.empty-filler {
-	-fx-background-color: #ccc;
 }

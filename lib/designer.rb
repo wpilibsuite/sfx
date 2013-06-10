@@ -25,7 +25,7 @@ class SD::Designer
   def initialize
     #com.javafx.experiments.scenicview.ScenicView.show(@scene);
     # best to catch missing stuff now
-    @toolbox= @TooboxTabs
+    @toolbox= @left_gutter
     @selected_items = []
     @dnd_ids = []
     @dnd_opts = {}
@@ -523,27 +523,18 @@ class SD::Designer
     mul = hide ? -1 : 1
     nul = hide ? 0 : 1
     # TODO: this should be cleaned up
-    lg = @left_gutter
     bg = @bottom_gutter
-    tb = @toolbox
     sb = @stop_button
     stg = @stage
     oy = stg.y
+    ox = stg.x
     # The properties are read only because of OS issues, so we just create a proxy
-    stg_wap = SimpleDoubleProperty.new(stg.width)
-    stg_wap.add_change_listener {|ov, old, new| stg.setWidth(new) }
     stg_hap = SimpleDoubleProperty.new(stg.height)
-    stg_hap.add_change_listener {|ov, old, new| stg.setHeight(new); stg.y = oy }
-    stg_xap = SimpleDoubleProperty.new(stg.x)
-    stg_xap.add_change_listener {|ov, old, new| stg.x = new }
+    stg_hap.add_change_listener {|ov, old, new| stg.setHeight(new); stg.y = oy; stg.x = ox; }
     timeline do
-      animate lg.maxWidthProperty, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
       animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
-      animate tb.translateXProperty, 0.ms => 500.ms, (35 - 35 * nul) => (35 * nul)
       animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
-      animate stg_wap, 0.ms => 500.ms, stg.width => (stg.width + 32 * mul)
       animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32 * mul)
-      animate stg_xap, 0.ms => 500.ms, stg.x => (stg.x - 32 * mul)
     end.play
   end
 
@@ -613,45 +604,37 @@ class SD::Designer
     if @toolbox_status == :hidden
       show_toolbox
     else
-      hide_toolbox(true)
+      hide_toolbox
     end
   end
 
-  def hide_toolbox(really=false)
-    return if @toolbox_status == :hidden or !really
+  def hide_toolbox
+    return if @toolbox_status == :hidden
     @toolbox_status = :hidden
-    exp = @hack_expander
-    corn = @hack_corner
-#    @clickoff_tbx = Proc.new {|x|}
-#    @on_tmouse.call if @on_tmouse
+    asl = @add_slider
+    @clickoff_tbx = Proc.new {|x|}
+    @on_tmouse.call if @on_tmouse
     with(@left_gutter) do |tbx|
       timeline do
-        animate tbx.maxWidthProperty, 0.ms => 500.ms, 300.0 => 32.0
-        animate tbx.prefWidthProperty, 0.ms => 500.ms, 300.0 => 32.0
-        animate exp.prefWidthProperty, 0.ms => 500.ms, 300.0 => 32.0
-        animate corn.layoutXProperty, 0.ms => 500.ms, (300.0 - 32) => 0.0
+        animate tbx.translateXProperty, 0.ms => 500.ms, 0.0 => -266.0
+        animate asl.minWidthProperty, 0.ms => 500.ms, 266.0 => 0.0
       end.play
     end
-    @add_tab_icon.image = @add_tab_plus
   end
 
   def show_toolbox
     return if @toolbox_status == :visible
     @toolbox_status = :visible
-    exp = @hack_expander
-    corn = @hack_corner
+    asl = @add_slider
     with(@left_gutter) do |tbx|
       timeline do
-        animate tbx.maxWidthProperty, 0.sec => 500.ms, 32.0 => 300.0
-        animate tbx.prefWidthProperty, 0.sec => 500.ms, 32.0 => 300.0
-        animate exp.prefWidthProperty, 0.ms => 500.ms, 32.0 => 300.0
-        animate corn.layoutXProperty, 0.ms => 500.ms, 0.0 => (300.0 - 32)
+        animate tbx.translateXProperty, 0.sec => 500.ms, -266.0 => 0.0
+        animate asl.minWidthProperty, 0.ms => 500.ms, 0.0 => 266.0
       end.play
     end
-#    register_toolbox_clickoff do
-#      hide_toolbox
-#    end
-    @add_tab_icon.image = @add_tab_close
+    register_toolbox_clickoff do
+      hide_toolbox
+    end
   end
 
   def canvas_click(e)

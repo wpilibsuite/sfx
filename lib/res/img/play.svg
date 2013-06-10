@@ -16,7 +16,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="play.svg"
-   inkscape:export-filename="/home/patrick/NetBeansProjects/SFX/lib/res/media-playback-start.png"
+   inkscape:export-filename="/home/patrick/NetBeansProjects/SFX/lib/res/img/media-playback-start.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -50,8 +50,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6568542"
-     inkscape:cx="-5.678639"
-     inkscape:cy="13.665476"
+     inkscape:cx="13.431827"
+     inkscape:cy="8.4257041"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
@@ -82,7 +82,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <path
-       style="fill:url(#linearGradient3759);fill-opacity:1;stroke:none"
+       style="fill:url(#linearGradient3759);fill-opacity:1;stroke:#008000;stroke-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none"
        d="M 6,28 26,16 6,4 z"
        id="path4735"
        inkscape:connector-curvature="0"
