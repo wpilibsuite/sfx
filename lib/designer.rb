@@ -552,16 +552,27 @@ class SD::Designer
   end
 
   def save
-    File.open("sfx default save.fxsdash", "w") do |io|
-      doc =  YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@canvas))
-      puts doc
-      io << doc
+    dialog = file_chooser(:title => "Save Layout...") do
+      add_extension_filter("-fx:SmartDashboard save files (*.fxsdash)")
+    end
+    file = dialog.showSaveDialog(@stage)
+    return unless file
+    file = file.path
+    file += ".fxsdash" unless file.end_with? ".fxsdash"
+    File.open(file, "w") do |io|
+      io << YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@canvas))
     end
     self.message = "Saved!"
+    @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
   end
 
   def open
-    doc =  YAML.load_file("sfx default save.fxsdash")
+    dialog = file_chooser(:title => "Open Layout...") do
+      add_extension_filter("-fx:SmartDashboard save files (*.fxsdash)")
+    end
+    file = dialog.show_open_dialog(@stage)
+    return unless file
+    doc =  YAML.load_file(file.path)
     @canvas.children.clear
     self.root_canvas = doc.object.new
     std = find_toolbox_parts[:standard]
@@ -580,6 +591,7 @@ class SD::Designer
         end.send(nom, val)
       end
     end
+    @stage.title = "SmartDashboard : #{File.basename(file.path, ".fxsdash")}"
     self.message = "File Load Successfull"
   end
 
