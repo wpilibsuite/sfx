@@ -502,12 +502,10 @@ class SD::Designer
     hide_controls
     hide_toolbox
     hide_properties
-    @canvas.resume
   end
 
   def design
     @mode = :design
-    @canvas.pause
     @canvas.children.each do |c|
       c.running = false
     end
