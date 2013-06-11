@@ -8,6 +8,7 @@ require 'designer_support/pref_types'
 require 'designer_support/placement_map'
 require 'designer_support/aa_filter'
 require 'designer_support/plugin_manager'
+require 'io_support/dash_object'
 require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
@@ -77,7 +78,7 @@ class SD::Designer
     # load the custom regexer
     @aa_regexer.text_property.add_change_listener do |ov, ol, new|
       begin
-        regx = Regexp.new(new)
+        regx = Regexp.new(new, "i")
         @aa_filter.regex = regx
         # filter the list
         @aa_tree_list.each do |child|
@@ -548,6 +549,38 @@ class SD::Designer
         animate mc.translateYProperty, 0.sec => [200.ms, 5.sec, 5.2.sec], 30.0 => [0.0, 0.0, 30.0]
       end.play
     end
+  end
+
+  def save
+    File.open("sfx default save.fxsdash", "w") do |io|
+      doc =  YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@canvas))
+      puts doc
+      io << doc
+    end
+    self.message = "Saved!"
+  end
+
+  def open
+    doc =  YAML.load_file("sfx default save.fxsdash")
+    @canvas.children.clear
+    self.root_canvas = doc.object.new
+    std = find_toolbox_parts[:standard]
+    doc.children.each do |cdesc|
+      desc = std.find{|x|x['Name'] == cdesc.object}
+      obj = desc[:proc].call
+      obj.ui.setPrefWidth cdesc.sprops["Width"]
+      obj.ui.setPrefHeight cdesc.sprops["Height"]
+      add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], @canvas, cdesc.object)
+      cdesc.props.each do |prop, val|
+        nom = "set#{prop}"
+        if obj.respond_to? nom
+          obj
+        else
+          obj.ui
+        end.send(nom, val)
+      end
+    end
+    self.message = "File Load Successfull"
   end
 
   def hide_properties

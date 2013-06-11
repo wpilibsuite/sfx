@@ -9,3 +9,4 @@ nbproject/private/*
 *.jar
 gems/*
 *.zip
+*.fxsdash

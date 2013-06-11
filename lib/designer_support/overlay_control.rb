@@ -129,6 +129,16 @@ module SD::DesignerSupport
       return props
     end
 
+    # Used for YAML export
+    def export_props
+      # TODO: COlors and complex classes won't work like this
+      Hash[prop_names.map{|x|[x[1].gsub(/^set/, ""), x[0].value]}]
+    end
+    def export_static_props
+      Hash[%w{LayoutX LayoutY}.map {|prop| [prop, send("get#{prop}")] } +
+          %w{Width Height}.map {|prop| [prop, child.ui.send("get#{prop}")] }]
+    end
+
     def selected
       @selected
     end
@@ -160,8 +170,12 @@ module SD::DesignerSupport
       self.running = false
     end
 
+    def pane?
+      child.is_a?(Java::dashfx.lib.controls.DesignablePane)
+    end
+
     def checkDblClick(e)
-      if e.click_count > 1 && child.is_a?(Java::dashfx.lib.controls.DesignablePane)
+      if e.click_count > 1 && pane?
         @parent_designer.nested_edit(self)
         # enable nested mode!
 
@@ -196,12 +210,13 @@ module SD::DesignerSupport
     end
 
     def morph_into(e)
-      @parent_designer.morph_child(self, e) do |new|
+      @parent_designer.morph_child(self, e) do |new, i|
         prop_names.each do |(prop, set_name)|
           new.method(set_name).call(prop.get) if new.respond_to? set_name rescue nil # property is invalid/different type
         end
         @child = new
         @childContainer.center = new.get_ui
+        @original_name = i["Name"]
       end
     end
 
