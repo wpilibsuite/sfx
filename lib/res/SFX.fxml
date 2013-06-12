@@ -44,11 +44,15 @@
               </Pane>
             </children>
           </HBox>
-          <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="0.49" pickOnBounds="true" preserveRatio="true" style="">
-            <image>
-              <Image url="@img/document-new.png" />
-            </image>
-          </ImageView>
+          <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#new_document" text="New">
+            <graphic>
+              <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="1.0" pickOnBounds="true" preserveRatio="true" style="">
+                <image>
+                  <Image url="@img/document-new.png" />
+                </image>
+              </ImageView>
+            </graphic>
+          </Button>
           <SplitMenuButton fx:id="open_btn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#open" style="" text="Open">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">

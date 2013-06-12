@@ -123,7 +123,7 @@ class SD::Designer
       # TODO: I cant seem to prevent window from closing
       if @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
         answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
-        if answer == :cancel
+        if answer == :cancel_oh_so_broken
           event.consume
           stop_it = true
         elsif answer == :save
@@ -150,9 +150,7 @@ class SD::Designer
       InitInfo.team_number = ip
     end
 
-    # assign the root canvas node from preferences
-    root = @prefs.get("root_canvas", "Canvas")
-    self.root_canvas = parts[:standard].find{|x|x["Name"] == root}[:proc].call
+    new_document
 
     # set up preferred types
     SD::DesignerSupport::PrefTypes.create_toolbox(parts, @prefs)
@@ -643,6 +641,16 @@ class SD::Designer
       end.send(nom, val)
     end
     cdesc.children.each {|x| open_visitor(x, std, obj) }
+  end
+
+  def new_document
+    # assign the root canvas node from preferences
+    root = @prefs.get("root_canvas", "Canvas")
+    @canvas = nil
+    @current_save_data = nil
+    @currently_open_file = nil
+    @stage.title = "SmartDashboard : Untitled"
+    self.root_canvas = find_toolbox_parts[:standard].find{|x|x["Name"] == root}[:proc].call
   end
 
   def hide_properties
