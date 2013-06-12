@@ -1,15 +1,12 @@
-
 .button, .toggle-button {
-	-fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to bottom, #fefefe, #d8d8d8), linear-gradient(to bottom, #f8f8f8, #e0e0e0);
-	-fx-border-radius: 2px;
-	-fx-background-radius: 2px;
+  -fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to bottom, #fefefe, #d8d8d8), linear-gradient(to bottom, #f8f8f8, #e0e0e0);
+  -fx-border-radius: 2px;
+  -fx-background-radius: 2px;
 }
-
-.button:pressed, .toggle-button:selected {
-	-fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to top, #fefefe, #d8d8d8), linear-gradient(to top, #f8f8f8, #e0e0e0);
-
+.button:pressed, .button:selected, .toggle-button:pressed, .toggle-button:selected {
+  -fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to top, #fefefe, #d8d8d8), linear-gradient(to top, #f8f8f8, #e0e0e0);
 }
 
 .text-field:focused {
-    -fx-background-color: transparent, -fx-text-box-border, -fx-control-inner-background;
+  -fx-background-color: transparent, -fx-text-box-border, -fx-control-inner-background;
 }

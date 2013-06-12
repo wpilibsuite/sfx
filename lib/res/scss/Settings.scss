@@ -1,0 +1,14 @@
+@import "defs";
+
+.tab-pane {
+	*.tab-header-background {
+		-fx-background-color: white;
+		-fx-effect: null;
+		-fx-border-color: -fx-tab-border-color;
+		-fx-border-width: 0px 0px 1px 0px;
+	}
+	.tab-content-area {
+		-fx-border-color: -fx-tab-border-color;
+		-fx-border-width: 0 1px 1px 1px;
+	}
+}
