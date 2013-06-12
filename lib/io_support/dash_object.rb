@@ -29,7 +29,7 @@ module SD
       end
 
       def self.parse_object(elt)
-        self.new(elt.original_name, elt.pane? ? [:TODO_map_this] : nil, elt.export_props, elt.export_static_props)
+        self.new(elt.original_name, elt.pane? ? elt.child.children.map{|x|parse_object x} : [], elt.export_props, elt.export_static_props)
       end
     end
   end

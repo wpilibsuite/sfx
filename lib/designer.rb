@@ -13,6 +13,8 @@ require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
 require 'yaml'
+require 'zlib'
+require 'rubygems/package'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -560,7 +562,13 @@ class SD::Designer
     file = file.path
     file += ".fxsdash" unless file.end_with? ".fxsdash"
     File.open(file, "w") do |io|
-      io << YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@canvas))
+      io << "-fx:SD"
+      Gem::Package::TarWriter.new(io) do |tar|
+        tar.add_file("version", 0644) {|f|f.write("0.1")}
+        tar.add_file("data.yml", 0644) do |yml|
+          yml.write YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@canvas))
+        end
+      end
     end
     self.message = "Saved!"
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
@@ -572,27 +580,43 @@ class SD::Designer
     end
     file = dialog.show_open_dialog(@stage)
     return unless file
-    doc =  YAML.load_file(file.path)
+    data = {} # TODO: very memory inefficient
+    File.open(file.path, "r") do |io|
+      io.read(6)
+      Gem::Package::TarReader.new(io) do |tar|
+        tar.each do |entry|
+          data[entry.full_name] = entry.read
+        end
+      end
+    end
+    if data["version"].to_f != 0.1
+      self.message = "Unknown file version '#{data["version"]}'"
+      return
+    end
+    doc =  YAML.load(data['data.yml'])
     @canvas.children.clear
     self.root_canvas = doc.object.new
     std = find_toolbox_parts[:standard]
-    doc.children.each do |cdesc|
-      desc = std.find{|x|x['Name'] == cdesc.object}
-      obj = desc[:proc].call
-      obj.ui.setPrefWidth cdesc.sprops["Width"]
-      obj.ui.setPrefHeight cdesc.sprops["Height"]
-      add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], @canvas, cdesc.object)
-      cdesc.props.each do |prop, val|
-        nom = "set#{prop}"
-        if obj.respond_to? nom
-          obj
-        else
-          obj.ui
-        end.send(nom, val)
-      end
-    end
+    doc.children.each {|x| open_visitor(x, std, @canvas) }
     @stage.title = "SmartDashboard : #{File.basename(file.path, ".fxsdash")}"
     self.message = "File Load Successfull"
+  end
+
+  def open_visitor(cdesc, std, parent)
+    desc = std.find{|x|x['Name'] == cdesc.object}
+    obj = desc[:proc].call
+    obj.ui.setPrefWidth cdesc.sprops["Width"]
+    obj.ui.setPrefHeight cdesc.sprops["Height"]
+    add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], parent, cdesc.object)
+    cdesc.props.each do |prop, val|
+      nom = "set#{prop}"
+      if obj.respond_to? nom
+        obj
+      else
+        obj.ui
+      end.send(nom, val)
+    end
+    cdesc.children.each {|x| open_visitor(x, std, obj) }
   end
 
   def hide_properties
