@@ -1,0 +1,44 @@
+@import "defs";
+
+.tab-pane *.tab-header-background {
+	-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 90%, rgba(0,0,0,0.4));
+}
+.tab-pane.hidden *.tab-header-background {
+	-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 90%, rgba(0,0,0,0));
+}
+.titled-pane > .title, .titled-pane > .content, #left_gutter {
+	-fx-background-color: linear-gradient(to left, #666, $sfx-gray 2%, $sfx-gray 100%);
+}
+
+.titled-pane:focused, .titled-pane {
+	-fx-text-fill: $sfx-blue;
+	& > .title > .arrow-button .arrow {
+		-fx-background-color: $sfx-blue;
+	}
+}
+
+.toolbox-panes {
+	-fx-background-color: transparent;
+	-fx-border-width: 0;
+}
+
+.add-button {
+	-fx-background-color: $sfx-green;
+}
+.icon-only-button {
+	-fx-background-color: transparent;
+	-fx-margin: 0;
+	-fx-padding: 0;
+}
+#bottom_gutter {
+	-fx-background-color: linear-gradient(to bottom, #666, $sfx-gray 10%, $sfx-gray 100%);
+	.button {
+		@extend .icon-only-button;
+	}
+	.split-menu-button {
+		@extend .icon-only-button;
+		.arrow-button, .label {
+			@extend .icon-only-button;
+		}
+	}
+}

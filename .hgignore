@@ -10,3 +10,4 @@ nbproject/private/*
 gems/*
 *.zip
 *.fxsdash
+.sass-cache/*
