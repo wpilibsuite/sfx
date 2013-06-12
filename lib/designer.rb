@@ -96,50 +96,15 @@ class SD::Designer
       end
     end
     aa_hide_regex_panel() # it shows by default
-=begin
-    # When we hit the tabs, modify the selected index
-    (@toolbox.tabs.length - 1).times { |i|
-      tb = @toolbox.tabs[i+1] # don't want 1st tab
-      tb.set_on_selection_changed do |e|
-        if tb.selected
-          @savedSelection = i + 1
-        end
-      end }
-    # when we click the tab buttons, pop it out and select the above saved index
-    @toolbox.set_on_mouse_clicked do |e|
-      q = e.target
-      # find if the target chain includes a tab
-      while q
-        # TODO: this should actually be much simpler comparison
-        if q.to_s.include? "TabPaneSkin$TabHeaderSkin" and q.parent and not q.parent.to_s.include? "TabPaneSkin$TabHeaderSkin"
-          # TODO: clean this up a bit.
-          if q.id == "AddTab" or @toolbox.get_translate_x == 35.0
-            mode = :hide
-            if @toolbox.get_translate_x == 35.0
-              mode = :show
-              if q.id == "AddTab"
-                @toolbox.selection_model.clear_and_select @savedSelection
-              end
-            elsif q.id == "AddTab"
-              @toolbox.selection_model.select_first
-            end
-            if mode == :hide # TODO: clean this up
-              hide_toolbox
-            else
-              show_toolbox
-            end
-            break
-          end
-        end
-        q = q.parent
-      end
-    end
-=end
+
     # get all toolbox bits and add them to the ui toolbox
     parts = find_toolbox_parts
     parts.each do |key, data|
       data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
     end
+
+    #load recent files
+    build_open_menu
 
     # Set the auto add tree cells
     @aa_tree.set_cell_factory do |q|
@@ -572,6 +537,33 @@ class SD::Designer
     end
     self.message = "Saved!"
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
+    update_recent_opens(file)
+    build_open_menu
+  end
+
+  def update_recent_opens(new)
+    recently_open = YAML.load(@prefs.get "recently_open",  "--- []\n")
+    if recently_open.include? new
+      # remove it and put it at the front
+      recently_open -= [new]
+    end
+    recently_open = ([new] + recently_open).first(10)
+    @prefs.put("recently_open", YAML.dump(recently_open))
+  end
+
+  def build_open_menu
+    recently_open = YAML.load(@prefs.get "recently_open",  "--- []\n")
+    this = self
+    with(@open_btn) do
+      items.clear
+      menu_item("Open", style: "-fx-font-weight: bold").on_action {this.open}
+      separator_menu_item
+      recently_open.each do |i|
+        menu_item(File.basename(i, ".fxsdash")).on_action do
+          this.open_file(i)
+        end
+      end
+    end
   end
 
   def open
@@ -580,8 +572,13 @@ class SD::Designer
     end
     file = dialog.show_open_dialog(@stage)
     return unless file
+    open_file(file.path)
+  end
+  def open_file(file)
+    update_recent_opens(file)
+    build_open_menu
     data = {} # TODO: very memory inefficient
-    File.open(file.path, "r") do |io|
+    File.open(file, "r") do |io|
       io.read(6)
       Gem::Package::TarReader.new(io) do |tar|
         tar.each do |entry|
@@ -598,7 +595,7 @@ class SD::Designer
     self.root_canvas = doc.object.new
     std = find_toolbox_parts[:standard]
     doc.children.each {|x| open_visitor(x, std, @canvas) }
-    @stage.title = "SmartDashboard : #{File.basename(file.path, ".fxsdash")}"
+    @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
     self.message = "File Load Successfull"
   end
 

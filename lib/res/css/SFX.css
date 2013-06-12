@@ -37,3 +37,14 @@ orange: ?
 #left_gutter {
 	-fx-background-color: linear-gradient(to left, #666, #ccc 2%, #ccc 100%);
 }
+#bottom_gutter .button {
+	-fx-background-color: transparent;
+	-fx-margin: 0;
+	-fx-padding: 0;
+}
+
+#bottom_gutter .split-menu-button, #bottom_gutter .split-menu-button .arrow-button, #bottom_gutter .split-menu-button .label {
+    -fx-background-color: transparent;
+	-fx-margin: 0;
+	-fx-padding: 0;
+}

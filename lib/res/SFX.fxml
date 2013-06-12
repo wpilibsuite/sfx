@@ -49,17 +49,7 @@
               <Image url="@img/document-new.png" />
             </image>
           </ImageView>
-          <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#open" opacity="1.0" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0;" text="Open" visible="true">
-            <contextMenu>
-              <ContextMenu>
-                <items>
-                  <MenuItem mnemonicParsing="false" text="Open..." />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="~/recent/1.smdb" />
-                  <MenuItem mnemonicParsing="false" text="~/recent/2.smdb" />
-                </items>
-              </ContextMenu>
-            </contextMenu>
+          <SplitMenuButton fx:id="open_btn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#open" style="" text="Open">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -67,8 +57,17 @@
                 </image>
               </ImageView>
             </graphic>
-          </Button>
-          <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#save" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Save">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#open" style="-fx-font-weight: bold;" text="Open..." />
+              <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" text="recent1" />
+              <MenuItem mnemonicParsing="false" text="recent2" />
+            </items>
+            <tooltip>
+              <Tooltip text="Open" />
+            </tooltip>
+          </SplitMenuButton>
+          <SplitMenuButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#save" text="Save">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" opacity="1.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -76,7 +75,14 @@
                 </image>
               </ImageView>
             </graphic>
-          </Button>
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#save" style="-fx-font-weight: bold;" text="Save" />
+              <MenuItem mnemonicParsing="false" onAction="#save_as" text="Save As..." />
+            </items>
+            <tooltip>
+              <Tooltip text="Save" />
+            </tooltip>
+          </SplitMenuButton>
           <ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.42" pickOnBounds="true" preserveRatio="true">
             <image>
               <Image url="@img/edit-undo.png" />
@@ -94,7 +100,7 @@
               </HBox>
             </children>
           </HBox>
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="-Infinity" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="-1.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Settings" HBox.hgrow="NEVER">
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="-Infinity" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="-1.0" style="" text="Settings" HBox.hgrow="NEVER">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -109,7 +115,7 @@
               <Insets fx:id="x1" />
             </HBox.margin>
           </Button>
-          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#run" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Run" HBox.hgrow="NEVER">
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#run" prefHeight="32.0" prefWidth="32.0" style="" text="Run" HBox.hgrow="NEVER">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                 <image>
