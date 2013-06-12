@@ -8,6 +8,7 @@ require 'designer_support/pref_types'
 require 'designer_support/placement_map'
 require 'designer_support/aa_filter'
 require 'designer_support/plugin_manager'
+require 'designer_support/save_question'
 require 'io_support/dash_object'
 require 'playback'
 require 'data_source_selector'
@@ -117,8 +118,19 @@ class SD::Designer
       @stage.title += " : Untitled"
       SD::DesignerSupport::Overlay.preparse_new(3)
     end
-    @stage.set_on_close_request do
-      @canvas.dispose
+    @stage.on_close_request do |event|
+      stop_it = false
+      # TODO: I cant seem to prevent window from closing
+      if @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
+        answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
+        if answer == :cancel
+          event.consume
+          stop_it = true
+        elsif answer == :save
+          save
+        end
+      end
+      @canvas.dispose unless stop_it
     end
 
     # get the team number
@@ -519,24 +531,38 @@ class SD::Designer
   end
 
   def save
+    if @currently_open_file
+      save_file(@currently_open_file)
+    else
+      save_as
+    end
+  end
+
+  def save_as
     dialog = file_chooser(:title => "Save Layout...") do
       add_extension_filter("-fx:SmartDashboard save files (*.fxsdash)")
     end
     file = dialog.showSaveDialog(@stage)
     return unless file
-    file = file.path
+    save_file file.path
+  end
+
+  def save_file(file)
     file += ".fxsdash" unless file.end_with? ".fxsdash"
     File.open(file, "w") do |io|
       io << "-fx:SD"
       Gem::Package::TarWriter.new(io) do |tar|
         tar.add_file("version", 0644) {|f|f.write("0.1")}
         tar.add_file("data.yml", 0644) do |yml|
-          yml.write YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@canvas))
+          psg = SD::IOSupport::DashObject.parse_scene_graph(@canvas)
+          yml.write YAML.dump(psg)
+          @current_save_data = psg
         end
       end
     end
     self.message = "Saved!"
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
+    @currently_open_file = file
     update_recent_opens(file)
     build_open_menu
   end
@@ -574,6 +600,7 @@ class SD::Designer
     return unless file
     open_file(file.path)
   end
+
   def open_file(file)
     update_recent_opens(file)
     build_open_menu
@@ -591,10 +618,12 @@ class SD::Designer
       return
     end
     doc =  YAML.load(data['data.yml'])
+    @current_save_data = doc
     @canvas.children.clear
     self.root_canvas = doc.object.new
     std = find_toolbox_parts[:standard]
     doc.children.each {|x| open_visitor(x, std, @canvas) }
+    @currently_open_file = file
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
     self.message = "File Load Successfull"
   end

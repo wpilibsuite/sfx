@@ -24,6 +24,12 @@ module SD
         @sprops = sprops
       end
 
+      def ==(rhs)
+        if rhs.respond_to? :object and rhs.respond_to? :children and rhs.respond_to? :props and rhs.respond_to? :sprops
+          @object == rhs.object && @children.sort == rhs.children.sort && @props.sort == rhs.props.sort && @sprops.sort == rhs.sprops.sort\
+        end
+      end
+
       def self.parse_scene_graph(root)
         self.new(root.class, root.children.map{|x| self.parse_object x}, [], [])
       end
