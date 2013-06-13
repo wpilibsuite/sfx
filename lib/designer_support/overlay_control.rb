@@ -81,14 +81,16 @@ module SD::DesignerSupport
       # ahh! must get stuff....
       props = []
       jc = child.java_class
-      [jc, *jc.java_instance_methods].each do |src|
+      pc = @parent.java_class
+      [jc, *jc.java_instance_methods, pc, *pc.java_class_methods].each do |src|
         src.annotations.each do |annote|
-          if annote.is_a? Java::dashfx.lib.controls.Designable and src != jc
+          if annote.is_a? Java::dashfx.lib.controls.Designable and src != jc and src != pc
             q = src.invoke(child).to_java
             # TODO: proper types
+            # TODO: fake properties for PC
             type = jc.java_method("get" + src.name.gsub(/^(get|set)/, '').gsub(/Property$/, '').gsub(/^([a-z])/){|x|x.upcase}).return_type
             props << [q, annote, type] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
-          elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty
+          elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty and src != pc
             annote.value.length.times do |i|
               prop_name = annote.value[i] + "Property"
               meth = child.respond_to?(prop_name) ? child.method(prop_name) : child.ui.method(prop_name)
@@ -101,6 +103,17 @@ module SD::DesignerSupport
               end
               type = type.return_type
               props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i]), type]
+            end
+          elsif annote.is_a? Java::dashfx.lib.controls.DesignableChildProperty and src == pc
+            annote.property.length.times do |i|
+              # TODO: proper typing
+              q = simple_object_property()
+              q.value = @parent.class.send("get#{annote.property[i]}", self)
+              q.add_change_listener do |new|
+                @parent.class.send "set#{annote.property[i]}", self, new
+              end
+              type = pc.java_class_methods.find{|x|x.name == "get#{annote.property[i]}"}.return_type
+              props << [q, RDesignableProperty.new(annote.name[i], annote.description[i]), type]
             end
           end
         end
