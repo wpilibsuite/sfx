@@ -252,7 +252,7 @@ class SD::Designer
             fx.location = java.net.URL.new("file://#{plugin_yaml}#{x["Source"]}")
             fx.controller = SD::DesignerSupport::PlaceholderFixer.new(method(:find_toolbox_parts), [*x["Placeholders"]]) if x['Placeholders']
             fx.load.tap do |obj|
-              fx.controller.fix if x['Placeholders']
+              fx.controller.fix(obj) if x['Placeholders']
               [*x["Defaults"]].each do |k, v|
                 obj.send(k + "=", v)
               end

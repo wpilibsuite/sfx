@@ -22,11 +22,11 @@ module SD
         @replace = what_to_replace
       end
 
-      def fix
+      def fix(root)
         parts = @callback[][:standard]
         @replace.each do |itm|
           pholder = instance_variable_get("@#{itm}")
-          pholder.replace with(parts.find{|x|x["Name"] == pholder.control_path}[:proc][], YAML.load("{#{pholder.prop_list}}")).ui
+          pholder.replace with(parts.find{|x|x["Name"] == pholder.control_path}[:proc][], YAML.load("{#{pholder.prop_list}}")).tap{|x|root.add_control x}.ui
         end
       end
     end
