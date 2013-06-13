@@ -199,7 +199,7 @@ class SD::Designer
       end
 
       # fix up each thing in the data to be proper
-      xdesc["Data"].each do |x|
+      xdesc["Controls"].each do |x|
         oi = x["Image"]
         x["ImageStream"] = Proc.new do
           if oi and oi.length > 0
@@ -226,7 +226,7 @@ class SD::Designer
       }
       xdesc["Location"] = "built-in"
       pldesc = [xdesc]
-      desc = xdesc["Data"]
+      desc = xdesc["Controls"]
 
       # check for the plugins folder
       plugin_yaml = $PLUGIN_DIR
@@ -234,10 +234,10 @@ class SD::Designer
         xdesc = YAML::load_file(File.join(plugin_yaml, "manifest.yml"))
         if xdesc["API"] != 0.1
           puts("Built in external manifest version is wrong! expected 0.1 but got #{xdesc["Manifest API"]}")
-          xdesc["Data"] = []
+          xdesc["Controls"] = []
         end
         # process the built in yaml
-        xdesc["Data"].each do |x|
+        xdesc["Controls"].each do |x|
           oi = x["Image"]
           x["ImageStream"] = Proc.new do
             if oi and oi.length > 0
@@ -250,8 +250,10 @@ class SD::Designer
           x[:proc] = Proc.new {
             fx = FxmlLoader.new
             fx.location = java.net.URL.new("file://#{plugin_yaml}#{x["Source"]}")
+            fx.controller = SD::DesignerSupport::PlaceholderFixer.new(method(:find_toolbox_parts), [*x["Placeholders"]]) if x['Placeholders']
             fx.load.tap do |obj|
-              x["Defaults"].each do |k, v|
+              fx.controller.fix if x['Placeholders']
+              [*x["Defaults"]].each do |k, v|
                 obj.send(k + "=", v)
               end
             end
@@ -259,7 +261,7 @@ class SD::Designer
         end
 
         # add build in descriptors to all the descriptors
-        desc += xdesc["Data"]
+        desc += xdesc["Controls"]
         xdesc["Location"] = plugin_yaml
         pldesc << xdesc
       end
