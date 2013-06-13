@@ -25,9 +25,7 @@ module SD
       def fix
         parts = @callback[][:standard]
         @replace.each do |itm|
-          puts "about to get #{itm}"
           pholder = instance_variable_get("@#{itm}")
-          p pholder
           pholder.replace with(parts.find{|x|x["Name"] == pholder.control_path}[:proc][], YAML.load("{#{pholder.prop_list}}")).ui
         end
       end

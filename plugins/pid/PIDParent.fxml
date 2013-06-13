@@ -8,8 +8,8 @@
 <?import dashfx.lib.controls.*?>
 <?import dashfx.controls.*?>
 
-<DataGridPane  xmlns:fx="http://javafx.com/fxml">
-	<ui hgap="6.0" prefHeight="-1.0" vgap="6.0" style="">
+<DataGridPane dataMode="Nested" xmlns:fx="http://javafx.com/fxml">
+	<ui hgap="6.0" prefHeight="-1.0" vgap="6.0" style="/*Intentionally blank*/">
 		<children>
 			<Label text="P:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 			<Label text="I:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
