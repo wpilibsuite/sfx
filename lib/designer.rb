@@ -1,14 +1,5 @@
 require 'jrubyfx'
-require 'designer_support/toolbox_item'
-require 'designer_support/overlay_control'
-require 'designer_support/properties_popup'
-require 'designer_support/aa_tree_cell'
-require 'designer_support/toolbox_popup'
-require 'designer_support/pref_types'
-require 'designer_support/placement_map'
-require 'designer_support/aa_filter'
-require 'designer_support/plugin_manager'
-require 'designer_support/save_question'
+Dir[File.dirname(__FILE__) + '/designer_support/*.rb'].each {|file| require file }
 require 'io_support/dash_object'
 require 'playback'
 require 'data_source_selector'
@@ -115,7 +106,6 @@ class SD::Designer
     # On shown and on closing handlers
     @stage.set_on_shown do
       self.message = "Ready"
-      @stage.title += " : Untitled"
       SD::DesignerSupport::Overlay.preparse_new(3)
     end
     @stage.on_close_request do |event|
