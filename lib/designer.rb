@@ -1,6 +1,7 @@
 require 'jrubyfx'
-Dir[File.dirname(__FILE__) + '/designer_support/*.rb'].each {|file| require file }
-require 'io_support/dash_object'
+%W[designer_support io_support plugins].each do |x|
+  Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
+end
 require 'playback'
 require 'data_source_selector'
 require 'settings_dialog'
@@ -190,112 +191,16 @@ class SD::Designer
   # Scrounge around and find everything that should go in the toolbox. TODO: modularize this to use plugins
   def find_toolbox_parts
     unless @found_plugins # cache it as its expensive
-      xdesc = YAML::load_stream(ControlRegister.java_class.resource_as_stream("/manifest.yml").to_io)
-      #TODO: why is this doubled [[]] ???
-      xdesc = xdesc[0]
-      # process the built in yaml
-      if xdesc["API"] != 0.1
-        abort("Built in manifest version is wrong! Something went horrible! expected 0.1 but got #{xdesc["Manifest API"]}")
-      end
 
-      # fix up each thing in the data to be proper
-      xdesc["Controls"].each do |x|
-        oi = x["Image"]
-        x["ImageStream"] = Proc.new do
-          if oi and oi.length > 0
-            ControlRegister.java_class.resource_as_stream(oi)
-          else
-            nil
-          end
-        end
-        x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
-        x[:proc] = Proc.new {
-          fx = FxmlLoader.new
-          fx.location = ControlRegister.java_class.resource(x["Source"])
-          fx.load.tap do |obj|
-            x["Defaults"].each do |k, v|
-              obj.send(k + "=", v)
-            end if x["Defaults"]
-          end
-        }
-      end
-
-      # TODO: hack
-      xdesc["IconStream"] = Proc.new {
-        image(resource_url(:images, "32-fxicon.png").to_s)
-      }
-      xdesc["Location"] = "built-in"
-      pldesc = [xdesc]
-      desc = xdesc["Controls"]
+      SD::Plugins.load "built-in", lambda {|url|ControlRegister.java_class.resource url}
 
       # check for the plugins folder
       plugin_yaml = $PLUGIN_DIR
       if Dir.exist? plugin_yaml
-        xdesc = YAML::load_file(File.join(plugin_yaml, "manifest.yml"))
-        if xdesc["API"] != 0.1
-          puts("Built in external manifest version is wrong! expected 0.1 but got #{xdesc["Manifest API"]}")
-          xdesc["Controls"] = []
-        end
-        # process the built in yaml
-        xdesc["Controls"].each do |x|
-          oi = x["Image"]
-          x["ImageStream"] = Proc.new do
-            if oi and oi.length > 0
-              java.net.URL.new("file://#{plugin_yaml}#{oi}").open_stream
-            else
-              nil
-            end
-          end
-          x["Types"] = [x["Types"] || x["Supported Types"]].flatten.reject(&:nil?).map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
-          x[:proc] = Proc.new {
-            fx = FxmlLoader.new
-            fx.location = java.net.URL.new("file://#{plugin_yaml}#{x["Source"]}")
-            fx.controller = SD::DesignerSupport::PlaceholderFixer.new(method(:find_toolbox_parts), [*x["Placeholders"]]) if x['Placeholders']
-            fx.load.tap do |obj|
-              fx.controller.fix(obj) if x['Placeholders']
-              [*x["Defaults"]].each do |k, v|
-                obj.send(k + "=", v)
-              end
-            end
-          }
-        end
-
-        # add build in descriptors to all the descriptors
-        desc += xdesc["Controls"]
-        xdesc["Location"] = plugin_yaml
-        pldesc << xdesc
+        SD::Plugins.load plugin_yaml, lambda {|url| java.net.URL.new("file://#{plugin_yaml}/#{url}")}
       end
 
-      # Process the java classes with their annotations
-      ControlRegister.all.each do |jclass|
-        annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
-        oi = annote.image
-        cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
-        cat_annote = cat_annote.value if cat_annote
-        types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
-        types_annote =  if types_annote
-          types_annote.value.map{|x|x.mask}
-        else
-          []
-        end
-        desc << {
-          "Name" => annote.value,
-          "Description" => annote.description,
-          "Image" => annote.image,
-          "ImageStream" => Proc.new do
-            if oi and oi.length > 0
-              jclass.ruby_class.java_class.resource_as_stream(oi)
-            else
-              nil
-            end
-          end,
-          "Category" => cat_annote,
-          "Types" => types_annote,
-          proc: Proc.new { jclass.ruby_class.new }
-        }
-        @plugin_bits = pldesc
-      end
-      @toolbox_bits = {:standard => desc}
+      @toolbox_bits = {:standard => SD::Plugins.controls}
       @found_plugins = true
     end
     @toolbox_bits
@@ -384,12 +289,12 @@ class SD::Designer
   def drop_add(id,x, y, source)
     pare = source == @canvas.ui ? @canvas : source.child
     dnd_obj = @dnd_ids[id]
-    obj = dnd_obj[:proc].call # create the object that we are dragging on
+    obj = dnd_obj.new # create the object that we are dragging on
     if @dnd_opts[dnd_obj]
       # TODO: check for other options
       obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name
     end
-    add_designable_control obj, x, y, pare, @dnd_ids[id]["Name"]
+    add_designable_control obj, x, y, pare, @dnd_ids[id].id
     hide_toolbox
     @clickoff_fnc.call if @clickoff_fnc
     @on_mouse.call(nil) if @on_mouse
@@ -398,10 +303,10 @@ class SD::Designer
   def morph_child(overlay, event) #TODO: drip drip drip leakage
     tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
     find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-      data.reject{|x|x["Category"] == "Grouping"}.each do |i|
+      data.reject{|x|x.category == "Grouping"}.each do |i|
         ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))
         ti.set_on_mouse_clicked do
-          obj = i[:proc].call
+          obj = i.new
           yield(obj, i)
           @ui2pmap[obj.ui] = obj
           self.message = "Added new #{obj.java_class.name}"
@@ -611,16 +516,15 @@ class SD::Designer
     @current_save_data = doc
     @canvas.children.clear
     self.root_canvas = doc.object.new
-    std = find_toolbox_parts[:standard]
-    doc.children.each {|x| open_visitor(x, std, @canvas) }
+    doc.children.each {|x| open_visitor(x, @canvas) }
     @currently_open_file = file
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
     self.message = "File Load Successfull"
   end
 
-  def open_visitor(cdesc, std, parent)
-    desc = std.find{|x|x['Name'] == cdesc.object}
-    obj = desc[:proc].call
+  def open_visitor(cdesc, parent)
+    desc = SD::Plugins::ControlInfo.find(cdesc.object)
+    obj = desc.new
     obj.ui.setPrefWidth cdesc.sprops["Width"]
     obj.ui.setPrefHeight cdesc.sprops["Height"]
     add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], parent, cdesc.object)
@@ -632,7 +536,7 @@ class SD::Designer
         obj.ui
       end.send(nom, val)
     end
-    cdesc.children.each {|x| open_visitor(x, std, obj) }
+    cdesc.children.each {|x| open_visitor(x, obj) }
   end
 
   def new_document
@@ -642,7 +546,7 @@ class SD::Designer
     @current_save_data = nil
     @currently_open_file = nil
     @stage.title = "SmartDashboard : Untitled"
-    self.root_canvas = find_toolbox_parts[:standard].find{|x|x["Name"] == root}[:proc].call
+    self.root_canvas = SD::Plugins::ControlInfo.find(root).new
   end
 
   def hide_properties
@@ -844,10 +748,10 @@ class SD::Designer
     objs = names.map do |ctrl_name|
       ctrl = @data_core.get_observable(ctrl_name)
       new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
-      new_obj = new_objd[:proc].call
+      new_obj = new_objd.new
       if new_obj
         x = y = @canvas.appendable? ? nil : 0.0
-        add_designable_control with(new_obj, name: ctrl.name), x, y, @canvas, new_objd["Name"]
+        add_designable_control with(new_obj, name: ctrl.name), x, y, @canvas, new_objd.name
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
         nil

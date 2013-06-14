@@ -7,8 +7,8 @@ module SD::DesignerSupport
     def initialize(obj, dnd_get_id, opts={})
       @obj = obj
       @dnd_get_id = dnd_get_id
-      Tooltip.install self, tooltip(graphic: vbox!{label(obj["Name"]); label(obj["Description"])})
-      im_is = obj["ImageStream"].call
+      Tooltip.install self, tooltip(graphic: vbox!{label(obj.name); label(obj.description)})
+      im_is = obj.image_stream
       if im_is
         @img.image = Image.new(im_is)
       end

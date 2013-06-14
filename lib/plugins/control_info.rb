@@ -1,0 +1,102 @@
+# Copyright (C) 2013 patrick
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+module SD
+  module Plugins
+    class ControlInfo
+      attr_reader :name, :description, :category, :group_types, :types
+      def initialize(url_resolver, info)
+        info = Hash[info.map{|k,v| [k.to_s, v]}]
+        if info['From Package'] || info['From Class'] || info['From Jar']
+          # TODO: ?
+        end
+        @name = info['Name']
+        @description = info['Description']
+        @category = info['Category']
+        oi = info['Image']
+        @image_proc = lambda do
+          if oi and oi.length > 0
+            url_resolver.(oi).open_stream
+          else
+            nil
+          end
+        end
+        @types = [*info["Types"], *info["Supported Types"]].map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
+        @group_types = info["Group Type"]
+        @new = lambda { |source, placeholders, defaults|
+          lambda {
+            fx = FxmlLoader.new
+            fx.location = url_resolver.(source)
+            fx.controller = SD::DesignerSupport::PlaceholderFixer.new(*placeholders) if placeholders
+            fx.load.tap do |obj|
+              fx.controller.fix(obj) if placeholders
+              [*defaults].each do |k, v|
+                obj.send(k + "=", v)
+              end
+            end
+          }
+        }.(info["Source"],info["Placeholders"],info["Defaults"])
+      end
+
+      def new
+        @new.call
+      end
+
+      def image_stream
+        @image_proc.call
+      end
+
+      def self.find(desc)
+        SD::Plugins.control(desc)
+      end
+
+      def id
+        @name
+      end
+
+      def to_s
+        @name
+      end
+
+      protected
+      attr_writer :name, :description, :category, :group_types, :types, :new, :image_proc
+    end
+
+    class JavaControlInfo < ControlInfo
+      def initialize(jclass)
+        annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
+        cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
+        types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
+        oi = annote.image
+        self.name = annote.value
+        self.description = annote.description
+        self.image_proc = Proc.new do
+          if oi and oi.length > 0
+            jclass.ruby_class.java_class.resource_as_stream(oi)
+          else
+            nil
+          end
+        end
+        self.category = cat_annote.value if cat_annote
+        self.types = if types_annote
+          types_annote.value.map{|x|x.mask}
+        else
+          []
+        end
+        self.new = lambda { jclass.ruby_class.new }
+      end
+    end
+  end
+end
