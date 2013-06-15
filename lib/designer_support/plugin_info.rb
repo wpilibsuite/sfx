@@ -52,9 +52,9 @@ module SD
       def updateItem(strtext, empty)
         super
         if !empty && !editing?
-          @info.name = item["Name"]
-          @info.description = item["Description"]
-          icon_url = item["IconStream"]
+          @info.name = item.name
+          @info.description = item.description
+          icon_url = item.icon_stream
           icon = icon_url.call if icon_url
           @info.image = (icon || image(resource_url(:images, "plugin.png").to_s))
         end

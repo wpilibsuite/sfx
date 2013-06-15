@@ -41,7 +41,7 @@ module SD
           ControlInfo.new(loader, cdesc)
         end
       end.flatten
-      plug = PluginInfo.new(location, yml)
+      plug = PluginInfo.new(loader, location, yml)
       @@plugins[plug.plugin_id] = plug
       plug.controls.each{|x|@@controls[x.name]= x}
     end

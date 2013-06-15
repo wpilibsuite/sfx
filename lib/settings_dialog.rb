@@ -19,14 +19,13 @@ class SD::SettingsDialog
   include JRubyFX::Controller
   fxml "Settings.fxml"
 
-  def initialize(prefs, main, plbits)
+  def initialize(prefs, main)
     # can't do this above or @aa_never and friends are still nil
     @auto_add_options = {
       "never" => @aa_never,
       "regex" => @aa_match_regex,
       "code" => @aa_code
     }
-    @plugin_bits = plbits
     @prefs = prefs
     @main = main
     @diffs = {}
@@ -38,22 +37,22 @@ class SD::SettingsDialog
     end
     prep_diff(@team_number, "team_number", :int_1)
 
-    std_parts = main.find_toolbox_parts[:standard]
+    std_parts = SD::Plugins.controls
     # TODO: no magic numbers
-    number_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 3) != 0}.empty?}
-    string_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 4) != 0}.empty?}
-    bool_types = std_parts.find_all{|x|!x["Types"].find_all{|x|(x & 0x40) != 0}.empty?}
-    root_types = std_parts.find_all{|x|x["Category"] == "Grouping"}
+    number_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 3) != 0}.empty?}
+    string_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 4) != 0}.empty?}
+    bool_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 0x40) != 0}.empty?}
+    root_types = std_parts.find_all{|x|x.category == "Grouping"}
 
     prep_diff(@default_number, "defaults_type_number", :combo, "Bad Slider",
-      number_types, SD::SSListCell, Proc.new{|x|x["Name"]})
+      number_types, SD::SSListCell)
     prep_diff(@default_string, "defaults_type_string", :combo, "Label",
-      string_types, SD::SSListCell, Proc.new{|x|x["Name"]})
+      string_types, SD::SSListCell)
     prep_diff(@default_bool, "defaults_type_bool", :combo, "xBadx",
-      bool_types, SD::SSListCell, Proc.new{|x|x["Name"]})
+      bool_types, SD::SSListCell)
     prep_diff(@root_layout_pane, "root_canvas", :combo, "Canvas",
-      root_types, SD::SSListCell, Proc.new{|x|x["Name"]}, Proc.new{|dat|
-        @main.root_canvas = dat[:raw_value][:proc].call})
+      root_types, SD::SSListCell, Proc.new{|dat|
+        @main.root_canvas = dat[:raw_value].new})
 
     @aa_regex.text = @prefs.get("aa_regex", "SmartDashboard")
     @aa_code_code = @prefs.get("aa_code", "return false;")
@@ -67,7 +66,7 @@ class SD::SettingsDialog
   end
 
   # prepare each type of item
-  def prep_diff(obj, prop_name, type, default=nil, combo_range=nil, cell_class=nil, combo_map=nil, on_save=nil, &block)
+  def prep_diff(obj, prop_name, type, default=nil, combo_range=nil, cell_class=nil, on_save=nil, &block)
     case type
     when :bool
       obj.selected = @prefs.get_boolean(prop_name, default)
@@ -90,9 +89,9 @@ class SD::SettingsDialog
       obj.items.add_all combo_range
       obj.cell_factory = Proc.new{cell_class.new}
       obj.button_cell = cell_class.new
-      obj.value = combo_range.find{|x| combo_map.call(x) == @prefs.get(prop_name, default)}
+      obj.value = combo_range.find{|x| x.name == @prefs.get(prop_name, default)}
       obj.selection_model.selected_item_property.add_change_listener do |ov, old, new|
-        @diffs[prop_name] = {type: type, value: combo_map.call(new), raw_value: new, on_save: on_save}
+        @diffs[prop_name] = {type: type, value: new.name, raw_value: new, on_save: on_save}
         if block
           block.call(new)
         end
@@ -144,10 +143,9 @@ class SD::SettingsDialog
 
   def plugin_manager
     stg = @stage
-    pldesc = @plugin_bits
     stage(init_style: :utility, init_modality: :app, title: "Plugin Manager") do
       init_owner stg
-      fxml SD::DesignerSupport::PluginManager, :initialize => [pldesc]
+      fxml SD::DesignerSupport::PluginManager
       show_and_wait
     end
   end
@@ -159,7 +157,7 @@ class SD::SSListCell < Java::javafx.scene.control.ListCell
   def updateItem(item, empty)
     super
     if (item != nil)
-      self.text = item["Name"]
+      self.text = item.name
     else
       self.text = nil
     end

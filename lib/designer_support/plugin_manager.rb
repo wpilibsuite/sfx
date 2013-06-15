@@ -19,11 +19,11 @@ class SD::DesignerSupport::PluginManager
   include JRubyFX::Controller
   fxml "PluginManager.fxml"
 
-  def initialize(items)
+  def initialize
     @list.set_cell_factory do
       SD::DesignerSupport::PluginInfoCell.new
     end
-    @list.items.add_all items
+    @list.items.add_all SD::Plugins.plugins
     @list.selection_model.selected_item_property.add_change_listener do |v, o, new|
       disp(new)
     end
@@ -31,12 +31,12 @@ class SD::DesignerSupport::PluginManager
   end
 
   def disp(obj)
-    @name.text = obj["Name"]
-    @desc.text = obj["Description"]
-    @uuid.text = obj["Plugin ID"]
-    @version.text = obj["Version"]
-    @api_version.text = obj["API"].to_s
-    @llocation.text = obj["Location"] || "Unknown"
-    @contents.text = obj["Data"].map{|x|x["Name"]}.join("\n")
+    @name.text = obj.name
+    @desc.text = obj.description
+    @uuid.text = obj.plugin_id
+    @version.text = obj.version
+    @api_version.text = obj.api.to_s
+    @llocation.text = obj.location || "Unknown"
+    @contents.text = obj.controls.map(&:name).join("\n")
   end
 end

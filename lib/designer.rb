@@ -91,8 +91,7 @@ class SD::Designer
     aa_hide_regex_panel() # it shows by default
 
     # get all toolbox bits and add them to the ui toolbox
-    parts = find_toolbox_parts
-    parts.each do |key, data|
+    find_toolbox_parts.each do |key, data|
       data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
     end
 
@@ -144,7 +143,7 @@ class SD::Designer
     new_document
 
     # set up preferred types
-    SD::DesignerSupport::PrefTypes.create_toolbox(parts, @prefs)
+    SD::DesignerSupport::PrefTypes.create_toolbox(@prefs)
 
     #TODO: use preferences for this. DEMO
     @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
@@ -191,7 +190,7 @@ class SD::Designer
   # Scrounge around and find everything that should go in the toolbox. TODO: modularize this to use plugins
   def find_toolbox_parts
     unless @found_plugins # cache it as its expensive
-
+      # TODO: exceptions
       SD::Plugins.load "built-in", lambda {|url|ControlRegister.java_class.resource url}
 
       # check for the plugins folder
@@ -256,7 +255,7 @@ class SD::Designer
           #open a popup and populate it
           tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
           find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-            data.reject{|x|x["Category"] == "Grouping"}.each do |i|
+            data.reject{|x|x.category == "Grouping"}.each do |i|
               ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
               ti.set_on_mouse_clicked do
                 drop_add associate_dnd_id(i, :assign_name => id), event.x, event.y, event.source
@@ -813,11 +812,10 @@ class SD::Designer
     hide_properties
     stg = @stage
     prefs = @prefs
-    plbits = @plugin_bits
     this = self
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
       init_owner stg
-      fxml SD::SettingsDialog, :initialize => [prefs, this, plbits]
+      fxml SD::SettingsDialog, :initialize => [prefs, this]
       show_and_wait
     end
   end

@@ -229,7 +229,7 @@ module SD::DesignerSupport
         end
         @child = new
         @childContainer.center = new.get_ui
-        @original_name = i["Name"]
+        @original_name = i.name
       end
     end
 

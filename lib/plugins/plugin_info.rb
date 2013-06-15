@@ -22,7 +22,7 @@ module SD
         "Controls" => [],
       }
       attr_reader :location, *((REQUIRED_FIELDS + OPTIONAL_FIELDS.keys).map {|name| name.downcase.gsub(" ", "_")})
-      def initialize(location, info)
+      def initialize(url_resolver, location, info)
         @location = location
         info = Hash[info.map{|k,v| [k.to_s, v]}]
         REQUIRED_FIELDS.each do |rf|
@@ -32,6 +32,17 @@ module SD
         OPTIONAL_FIELDS.each do |of, default|
           instance_variable_set("@#{of.downcase.gsub(" ", "_")}", info[of] || default)
         end
+        oi = info['Image']
+        @icon_proc = lambda do
+          if oi and oi.length > 0
+            url_resolver.(oi).open_stream
+          else
+            nil
+          end
+        end
+      end
+      def icon_stream
+        @icon_proc.call
       end
     end
   end

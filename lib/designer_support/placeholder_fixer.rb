@@ -15,18 +15,18 @@
 
 module SD
   module DesignerSupport
+    ##
+    # PlaceholderFixer is used to close holes in nested FXML controls by replacing the Placeholder class with the needed control
     class PlaceholderFixer
       include JRubyFX
-      def initialize(toolbox_callback=nil, what_to_replace=nil)
-        @callback = toolbox_callback
+      def initialize(*what_to_replace)
         @replace = what_to_replace
       end
 
       def fix(root)
-        parts = @callback[][:standard]
         @replace.each do |itm|
           pholder = instance_variable_get("@#{itm}")
-          pholder.replace with(parts.find{|x|x["Name"] == pholder.control_path}[:proc][], YAML.load("{#{pholder.prop_list}}")).tap{|x|root.add_control x}.ui
+          pholder.replace with(SD::Plugins::ControlInfo.find(pholder.control_path).new, YAML.load("{#{pholder.prop_list}}")).tap{|x|root.add_control x}.ui
         end
       end
     end
