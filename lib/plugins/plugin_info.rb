@@ -32,7 +32,7 @@ module SD
         OPTIONAL_FIELDS.each do |of, default|
           instance_variable_set("@#{of.downcase.gsub(" ", "_")}", info[of] || default)
         end
-        oi = info['Image']
+        oi = info['Icon']
         @icon_proc = lambda do
           if oi and oi.length > 0
             url_resolver.(oi).open_stream

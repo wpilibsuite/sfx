@@ -54,9 +54,7 @@ module SD
         if !empty && !editing?
           @info.name = item.name
           @info.description = item.description
-          icon_url = item.icon_stream
-          icon = icon_url.call if icon_url
-          @info.image = (icon || image(resource_url(:images, "plugin.png").to_s))
+          @info.image = image(item.icon_stream || resource_url(:images, "plugin.png").to_s)
         end
       end
     end
