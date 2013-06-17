@@ -34,7 +34,7 @@ module SD
             end
           else
             @root.children.add_all children_map.keys
-            @has_nils ||= children_map.values.include?(nil)
+            @has_nils ||= children_map.values.include?([nil,nil])
             unless @thread
               @thread = Thread.new &method(:thread_run)
             end
@@ -59,8 +59,7 @@ module SD
             end
             @children.each do |itm, (x, y)|
               next unless itm
-              # TODO: is this needed?
-              # @root.ui.layout
+              @root.ui.layout
               x, y = unless x or y
                 # do a brute force search on spaces that fit
                 catch :done do
@@ -80,7 +79,7 @@ module SD
               itm.layout_y = y
               if fmap
                 bip = itm.bounds_in_parent
-                fmap.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
+                fmap.occupy_rectangle(x, bip.width + x, y, y + bip.height)
               end
             end
           end

@@ -206,7 +206,7 @@ class SD::Designer
   end
 
   # called to wrap the control in an overlay and to place in a control
-  def add_designable_control(control, x=0, y=0, parent=@canvas, oobj=nil)
+  def add_designable_control(control, x=nil, y=nil, parent=@canvas, oobj=nil)
     designer = SD::DesignerSupport::Overlay.new(control, self, parent, oobj)
 
     # if its designable, add hooks for nested editing to work
@@ -727,8 +727,7 @@ class SD::Designer
       new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
       new_obj = new_objd.new
       if new_obj
-        x = y = @canvas.appendable? ? nil : 0.0
-        add_designable_control with(new_obj, name: ctrl.name), x, y, @canvas, new_objd
+        add_designable_control with(new_obj, name: ctrl.name), nil, nil, @canvas, new_objd
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
         nil
