@@ -73,7 +73,7 @@ module SD
               else
                 # just center it
                 bip = itm.bounds_in_parent
-                [x - (bip.width / 2), y - (bip.height / 2)]
+                [x - (bip.width / 2).to_i, y - (bip.height / 2).to_i]
               end
               # once we find a location, place the control at that location and mask it off in the map
               itm.layout_x = x
