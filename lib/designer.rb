@@ -691,6 +691,7 @@ class SD::Designer
         x.exit_nesting
       end
     end
+    select(octrl)
   end
 
   # helper function for traversing parents when nesting editing
