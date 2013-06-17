@@ -30,12 +30,13 @@ module SD
         end
       end
 
+      # TODO: I don't like this special casing
       def self.parse_scene_graph(root)
         self.new(root.class, root.children.map{|x| self.parse_object x}, [], [])
       end
 
       def self.parse_object(elt)
-        self.new(elt.original_name, elt.pane? ? elt.child.children.map{|x|parse_object x} : [], elt.export_props, elt.export_static_props)
+        self.new(elt.original_name, elt.save_children? ? elt.child.children.map{|x|parse_object x} : [], elt.export_props, elt.export_static_props)
       end
     end
   end

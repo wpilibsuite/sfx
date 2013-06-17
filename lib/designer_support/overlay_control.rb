@@ -30,7 +30,7 @@ module SD::DesignerSupport
       ResizeDirections::NorthEastSouthWest => [:neResizeRegion, :swResizeRegion],
     }
 
-    def initialize(child, parent_designer, parent, original_name=nil)
+    def initialize(child, parent_designer, parent, ctrl_info)
       @child = child
       @childContainer.setCenter(child.getUi);
       @parent_designer = parent_designer
@@ -44,7 +44,8 @@ module SD::DesignerSupport
       # TODO: intercept events
       @selected_ui.visibleProperty.bind(@running.or(@disabled).not)
       @editing_nested = false
-      @original_name = original_name
+      @ctrl_info = ctrl_info
+      @original_name = ctrl_info.id
     end
 
     def registered(prov)
@@ -145,7 +146,12 @@ module SD::DesignerSupport
     # Used for YAML export
     def export_props
       # TODO: COlors and complex classes won't work like this
-      Hash[prop_names.map{|x|[x[1].gsub(/^set/, ""), x[0].value]}]
+      Hash[prop_names.map{|x|[x[1].gsub(/^set/, ""),
+            if x[0].value.is_a? java.lang.Enum
+              SD::IOSupport::EnumObject.new(x[0].value)
+            else
+              x[0].value
+            end]}]
     end
     def export_static_props
       Hash[%w{LayoutX LayoutY}.map {|prop| [prop, send("get#{prop}")] } +
@@ -185,6 +191,10 @@ module SD::DesignerSupport
 
     def pane?
       child.is_a?(Java::dashfx.lib.controls.DesignablePane)
+    end
+
+    def save_children?
+      pane? and @ctrl_info.save_children
     end
 
     def checkDblClick(e)
@@ -229,6 +239,7 @@ module SD::DesignerSupport
         end
         @child = new
         @childContainer.center = new.get_ui
+        @ctrl_info = i
         @original_name = i.name
       end
     end

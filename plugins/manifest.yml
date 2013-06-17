@@ -4,7 +4,7 @@ Description: Built in -fx:smartdashboard controls from sfx.jar
 Version: 0.0.1a1
 Plugin ID: 611C21A7-6D24-4F51-81D6-E5615F59DADA
 Controls:
-- 
+-
   Name: xBadx
   Description: Horriffic non-scalable boolean from built-insx
   Image: /bool/icon.png
@@ -12,10 +12,11 @@ Controls:
   Types: Boolean
   Defaults:
     value: false
-- 
+-
   Name: PID Editor
   Description: Default testing PID editor/viewer
   Source: /pid/PIDParent.fxml
   Group Type: PIDEditor
+  Save Children: false
   Placeholders: [p, i, d, disabled]
 

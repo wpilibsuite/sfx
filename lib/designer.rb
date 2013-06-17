@@ -205,8 +205,8 @@ class SD::Designer
   end
 
   # called to wrap the control in an overlay and to place in a control
-  def add_designable_control(control, x=0, y=0, parent=@canvas, oname=nil)
-    designer = SD::DesignerSupport::Overlay.new(control, self, parent, oname)
+  def add_designable_control(control, x=0, y=0, parent=@canvas, oobj=nil)
+    designer = SD::DesignerSupport::Overlay.new(control, self, parent, oobj)
 
     # if its designable, add hooks for nested editing to work
     if control.is_a? Java::dashfx.lib.controls.DesignablePane
@@ -292,7 +292,7 @@ class SD::Designer
       # TODO: check for other options
       obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name
     end
-    add_designable_control obj, x, y, pare, @dnd_ids[id].id
+    add_designable_control obj, x, y, pare, @dnd_ids[id]
     hide_toolbox
     @clickoff_fnc.call if @clickoff_fnc
     @on_mouse.call(nil) if @on_mouse
@@ -443,7 +443,6 @@ class SD::Designer
   def save_file(file)
     file += ".fxsdash" unless file.end_with? ".fxsdash"
     File.open(file, "w") do |io|
-      io << "-fx:SD"
       Gem::Package::TarWriter.new(io) do |tar|
         tar.add_file("version", 0644) {|f|f.write("0.1")}
         tar.add_file("data.yml", 0644) do |yml|
@@ -499,7 +498,6 @@ class SD::Designer
     build_open_menu
     data = {} # TODO: very memory inefficient
     File.open(file, "r") do |io|
-      io.read(6)
       Gem::Package::TarReader.new(io) do |tar|
         tar.each do |entry|
           data[entry.full_name] = entry.read
@@ -525,14 +523,14 @@ class SD::Designer
     obj = desc.new
     obj.ui.setPrefWidth cdesc.sprops["Width"]
     obj.ui.setPrefHeight cdesc.sprops["Height"]
-    add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], parent, cdesc.object)
+    add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], parent, desc)
     cdesc.props.each do |prop, val|
       nom = "set#{prop}"
       if obj.respond_to? nom
         obj
       else
         obj.ui
-      end.send(nom, val)
+      end.send(nom, (val.kind_of?(SD::IOSupport::ComplexObject) ? val.to_value : val))
     end
     cdesc.children.each {|x| open_visitor(x, obj) }
   end
@@ -749,7 +747,7 @@ class SD::Designer
       new_obj = new_objd.new
       if new_obj
         x = y = @canvas.appendable? ? nil : 0.0
-        add_designable_control with(new_obj, name: ctrl.name), x, y, @canvas, new_objd.name
+        add_designable_control with(new_obj, name: ctrl.name), x, y, @canvas, new_objd
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
         nil
