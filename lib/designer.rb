@@ -214,7 +214,7 @@ class SD::Designer
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
     end
-    @layout_managers[parent].layout_controls(designer => [x, y])
+    @layout_managers[parent].layout_controls({designer => [x, y]})
     # Add it to the map so we can get the controller later if needed from UI tree
     @ui2pmap[control.ui] = control
     self.message = "Added new #{control.java_class.name}"

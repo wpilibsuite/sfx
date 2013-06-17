@@ -85,7 +85,7 @@ module SD
             end
           end
           @thread = false
-          @children = []
+          @children = {}
           @has_nils = false
         end
       end
