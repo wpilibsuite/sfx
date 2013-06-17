@@ -1,5 +1,5 @@
 require 'jrubyfx'
-%W[designer_support io_support plugins].each do |x|
+%W[designer_support io_support plugins windowing].each do |x|
   Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
 end
 require 'playback'
@@ -36,6 +36,7 @@ class SD::Designer
     @data_core_sublist = []
     @aa_tree_list = []
     @aa_tree.root = tree_item("/")
+    @layout_managers = {}
 
     # Load preferences
     @prefs = java.util.prefs.Preferences.user_node_for_package(InitInfo.java_class)
@@ -213,14 +214,7 @@ class SD::Designer
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
     end
-    if x == y && y == nil && parent.appendable?
-      parent.children.add(designer)
-    else
-      # offset to look like its placed correctly at the mouse point. TODO: do we want to place at center?
-      x -= 10 if x
-      y -= 10 if y
-      parent.add_child_at designer,x,y
-    end
+    @layout_managers[parent].layout_controls(designer => [x, y])
     # Add it to the map so we can get the controller later if needed from UI tree
     @ui2pmap[control.ui] = control
     self.message = "Added new #{control.java_class.name}"
@@ -728,20 +722,7 @@ class SD::Designer
   end
 
   def aa_add_some(*names)
-    # get a placement map if we need one (Aka we cant just append the item)
-    fmap = if @canvas.appendable?
-      nil
-    else
-      SD::DesignerSupport::PlacementMap.new(10, @canvas.ui.width, @canvas.ui.height).tap do |pm|
-        # add all the current children to the occupancy map
-        @canvas.children.each do |child|
-          bip = child.bounds_in_parent
-          pm.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
-        end
-      end
-    end
-
-    objs = names.map do |ctrl_name|
+    names.map do |ctrl_name|
       ctrl = @data_core.get_observable(ctrl_name)
       new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
       new_obj = new_objd.new
@@ -754,33 +735,8 @@ class SD::Designer
       end
     end
     hide_toolbox
-    # if we need to position stuff ourselves, wait a bit so layout passes happen
-    unless @canvas.appendable?
-      Thread.new do
-        sleep 0.05
-        run_later do
-          objs.each do |itm|
-            next unless itm
-            @canvas.ui.layout
-            # do a brute force search on spaces that fit
-            x, y = catch :done do
-              0.step(@canvas.ui.width, 10) do |x|
-                0.step(@canvas.ui.height, 10) do |y|
-                  throw(:done, [x,y]) unless fmap.rect_occupied?(x, x+itm.width, y, y+itm.height)
-                end
-              end
-            end
-            # once we find a location, place the control at that location and mask it off in the map
-            itm.layout_x = x
-            itm.layout_y = y
-            bip = itm.bounds_in_parent
-            fmap.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y)
-          end
-        end
-      end
-    end
   end
-
+  # TODO: next few lines can be cleaned up im sure
   def aa_add_new
     @aa_filter.always_add = !@aa_filter.always_add
   end
@@ -827,6 +783,7 @@ class SD::Designer
     cvs.registered(@data_core)
     @BorderPane.center = cvs.ui
     @canvas = cvs
+    @layout_managers[cvs] = SD::Windowing::LayoutManager.new(cvs)
     @ui2pmap[cvs.ui] = cvs
     cvs.ui.style = "" # TODO: hack
     cvs.ui.setOnDragDropped &method(:drag_drop)
