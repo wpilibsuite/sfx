@@ -50,6 +50,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<arg line="-S rake patch single-jar"/>
 		</java>
 	</target>
+	<target name="fast">
+		<delete dir="gems" />
+		<mkdir dir="${user.home}/.jruby-jar" />
+		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.4/jruby-complete-1.7.4.jar"
+			 dest="${jruby.dest}"
+			 verbose="false"
+			 skipexisting="true" />
+		<java jar="${jruby.dest}" fork="true">
+			<env key="jrubyfx" value="gems/jrubyfx/lib" />
+			<env key="fxmlloader" value="gems/jrubyfx-fxmlloader/lib" />
+			<arg line="-S rake patch single-jar"/>
+		</java>
+	</target>
 
 	<target name="single-jar">
 		<exec executable="rake">

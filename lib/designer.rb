@@ -26,7 +26,6 @@ class SD::Designer
     @add_tab = @AddTab
     @toolbox_group = {:standard => @STDToolboxFlow}
     @root = @GridPane
-    @canvas = @canvas
     @savedSelection = 1
     @preparsed = 0
     @ui2pmap = {}
