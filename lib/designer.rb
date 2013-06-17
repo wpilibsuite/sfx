@@ -213,6 +213,7 @@ class SD::Designer
     if control.is_a? Java::dashfx.lib.controls.DesignablePane
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
+      @layout_managers[control] = SD::Windowing::LayoutManager.new(control)
     end
     @layout_managers[parent].layout_controls({designer => [x, y]})
     # Add it to the map so we can get the controller later if needed from UI tree
