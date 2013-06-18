@@ -106,7 +106,7 @@ class SD::SettingsDialog
         @prefs.send(prop + "=", dat[:value])
       when :int_1
         if dat[:value] == ""
-          @prefs.delete(prop)
+          @prefs.delete!(prop)
         else
           @prefs.send(prop + "=", dat[:value].to_i)
         end
