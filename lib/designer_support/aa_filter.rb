@@ -18,15 +18,16 @@ module SD
     class AAFilter
       @smart_value = nil
 
-      def self.parse(props)
-        tmp = props.get("aa_policy", "regex")
+      def self.parse_prefs
+        props = SD::DesignerSupport::Preferences
+        tmp = props.aa_policy
         # TODO: exceptions in parsing
 
         @regex, @code = case tmp
         when "never"
           [nil, nil]
         when "regex"
-          regex = props.get("aa_regex", "SmartDashboard")
+          regex = props.aa_regex
           if regex == ""
             puts "Warning: Empty AutoAdd regex, disabling regex matching. Go to settings and enter a non-empty regex under AutoAdd"
             [nil, nil]
@@ -34,7 +35,7 @@ module SD
             [Regexp.new(regex), nil]
           end
         when "code"
-          [nil, SD::DesignerSupport::AACodeFilter.init(props.get("aa_code", "false"))]
+          [nil, SD::DesignerSupport::AACodeFilter.init(props.aa_code)]
         end
       end
 

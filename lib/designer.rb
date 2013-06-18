@@ -39,10 +39,10 @@ class SD::Designer
     @layout_managers = {}
 
     # Load preferences
-    @prefs = java.util.prefs.Preferences.user_node_for_package(InitInfo.java_class)
+    @prefs = SD::DesignerSupport::Preferences
     # get the AutoAdd Filter
     @aa_filter = SD::DesignerSupport::AAFilter
-    @aa_filter.parse(@prefs)
+    @aa_filter.parse_prefs
 
     # Create our data core. TODO: use preferences to configure it.
     @data_core = Java::dashfx.lib.data.DataCore.new()
@@ -125,13 +125,13 @@ class SD::Designer
 
     # get the team number
     # if the team number is set in prefs, use it
-    ip = if !@prefs.get_boolean("team_number_auto", true) and (1..9001).include? @prefs.get_int("team_number", 0)
-      @prefs.get_int("team_number", 0)
+    ip = if !@prefs.team_number_auto and (1..9001).include? @prefs.team_number
+      @prefs.team_number || 0
     else # otherwise, snag from nics and if we have not set any preferences, save it.
       snag_ip.tap do |x|
-        if x && (1..9001).include?(x) && !@prefs.get_boolean("team_number_auto", false) && @prefs.get_boolean("team_number_auto", true) # nothing set
-          @prefs.put_boolean("team_number_auto", false)
-          @prefs.put_int("team_number", x)
+        if x and (1..9001).include? x and not @prefs.has_key? :team_number_auto
+          @prefs.team_number_auto = false
+          @prefs.team_number = x
         end
       end
     end
@@ -141,9 +141,6 @@ class SD::Designer
     end
 
     new_document
-
-    # set up preferred types
-    SD::DesignerSupport::PrefTypes.create_toolbox(@prefs)
 
     #TODO: use preferences for this. DEMO
     @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
@@ -455,17 +452,17 @@ class SD::Designer
   end
 
   def update_recent_opens(new)
-    recently_open = YAML.load(@prefs.get "recently_open",  "--- []\n")
+    recently_open = @prefs.recently_open
     if recently_open.include? new
       # remove it and put it at the front
       recently_open -= [new]
     end
     recently_open = ([new] + recently_open).first(10)
-    @prefs.put("recently_open", YAML.dump(recently_open))
+    @prefs.recently_open = recently_open
   end
 
   def build_open_menu
-    recently_open = YAML.load(@prefs.get "recently_open",  "--- []\n")
+    recently_open = @prefs.recently_open
     this = self
     with(@open_btn) do
       items.clear
@@ -531,13 +528,11 @@ class SD::Designer
   end
 
   def new_document
+    # TODO: check for unsaved changes
     # assign the root canvas node from preferences
-    root = @prefs.get("root_canvas", "Canvas")
-    @canvas = nil
-    @current_save_data = nil
-    @currently_open_file = nil
+    @canvas = @current_save_data = @currently_open_file = nil
     @stage.title = "SmartDashboard : Untitled"
-    self.root_canvas = SD::Plugins::ControlInfo.find(root).new
+    self.root_canvas = @prefs.root_canvas.new
   end
 
   def hide_properties
@@ -765,11 +760,10 @@ class SD::Designer
   def edit_settings
     hide_properties
     stg = @stage
-    prefs = @prefs
     this = self
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
       init_owner stg
-      fxml SD::SettingsDialog, :initialize => [prefs, this]
+      fxml SD::SettingsDialog, :initialize => [this]
       show_and_wait
     end
   end

@@ -19,17 +19,17 @@ class SD::SettingsDialog
   include JRubyFX::Controller
   fxml "Settings.fxml"
 
-  def initialize(prefs, main)
+  def initialize(main)
     # can't do this above or @aa_never and friends are still nil
     @auto_add_options = {
       "never" => @aa_never,
       "regex" => @aa_match_regex,
       "code" => @aa_code
     }
-    @prefs = prefs
+    @prefs = SD::DesignerSupport::Preferences
     @main = main
     @diffs = {}
-    prep_diff(@auto_detect_team, "team_number_auto", :bool, true) do |value|
+    prep_diff(@auto_detect_team, "team_number_auto", :bool) do |value|
       if value
         @team_number.text = ""
       end
@@ -44,20 +44,20 @@ class SD::SettingsDialog
     bool_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 0x40) != 0}.empty?}
     root_types = std_parts.find_all{|x|x.category == "Grouping"}
 
-    prep_diff(@default_number, "defaults_type_number", :combo, "Bad Slider",
+    prep_diff(@default_number, "defaults_type_number", :combo,
       number_types, SD::SSListCell)
-    prep_diff(@default_string, "defaults_type_string", :combo, "Label",
+    prep_diff(@default_string, "defaults_type_string", :combo,
       string_types, SD::SSListCell)
-    prep_diff(@default_bool, "defaults_type_bool", :combo, "xBadx",
+    prep_diff(@default_bool, "defaults_type_bool", :combo,
       bool_types, SD::SSListCell)
-    prep_diff(@root_layout_pane, "root_canvas", :combo, "Canvas",
+    prep_diff(@root_layout_pane, "root_canvas", :combo,
       root_types, SD::SSListCell, Proc.new{|dat|
         @main.root_canvas = dat[:raw_value].new})
 
-    @aa_regex.text = @prefs.get("aa_regex", "SmartDashboard")
-    @aa_code_code = @prefs.get("aa_code", "return false;")
+    @aa_regex.text = @prefs.aa_regex
+    @aa_code_code = @prefs.aa_code
 
-    (@auto_add_options[@prefs.get("aa_policy", "regex")] || @aa_never).tap do |si|
+    (@auto_add_options[@prefs.aa_policy] || @aa_never).tap do |si|
       si.selected = true
       @aa_regex.disable = si != @aa_match_regex
     end
@@ -66,10 +66,10 @@ class SD::SettingsDialog
   end
 
   # prepare each type of item
-  def prep_diff(obj, prop_name, type, default=nil, combo_range=nil, cell_class=nil, on_save=nil, &block)
+  def prep_diff(obj, prop_name, type, combo_range=nil, cell_class=nil, on_save=nil, &block)
     case type
     when :bool
-      obj.selected = @prefs.get_boolean(prop_name, default)
+      obj.selected = @prefs.send(prop_name)
       obj.selected_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new}
         if block
@@ -77,7 +77,7 @@ class SD::SettingsDialog
         end
       end
     when :int_1
-      @prefs.get_int(prop_name, -1).tap {|x|obj.text =  x == -1 ? "" : x.to_s }
+      obj.text = @prefs.has_key?(prop_name) ? @prefs.send(prop_name).to_s : ""
       obj.text_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new}
         if block
@@ -89,7 +89,7 @@ class SD::SettingsDialog
       obj.items.add_all combo_range
       obj.cell_factory = Proc.new{cell_class.new}
       obj.button_cell = cell_class.new
-      obj.value = combo_range.find{|x| x.name == @prefs.get(prop_name, default)}
+      obj.value = combo_range.find{|x| x.id == @prefs.send(prop_name).id}
       obj.selection_model.selected_item_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new.name, raw_value: new, on_save: on_save}
         if block
@@ -103,21 +103,21 @@ class SD::SettingsDialog
     @diffs.each do |prop, dat|
       case dat[:type]
       when :bool
-        @prefs.put_boolean(prop, dat[:value])
+        @prefs.send(prop + "=", dat[:value])
       when :int_1
         if dat[:value] == ""
-          @prefs.remove(prop)
+          @prefs.delete(prop)
         else
-          @prefs.put_int(prop, dat[:value].to_i)
+          @prefs.send(prop + "=", dat[:value].to_i)
         end
       when :combo
-        @prefs.put(prop, dat[:value])
+        @prefs.send(prop + "=", dat[:value])
         dat[:on_save].call(dat) if dat[:on_save]
       when :aa_radio
-        @prefs.put(prop, dat[:value])
-        @prefs.put("aa_regex", @aa_regex.text)
-        @prefs.put("aa_code", @aa_code_code) if @aa_code_code != "return false;"
-        SD::DesignerSupport::AAFilter.parse(@prefs)
+        @prefs.send(prop + "=", dat[:value])
+        @prefs.send("aa_regex=", @aa_regex.text)
+        @prefs.send("aa_code=", @aa_code_code) if @aa_code_code != "return false;"
+        SD::DesignerSupport::AAFilter.parse_prefs
       end
     end
   end

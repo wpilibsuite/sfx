@@ -14,14 +14,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class SD::DesignerSupport::PrefTypes
-  def self.create_toolbox(prefs)
-    @prefs = prefs
-  end
   def self.for(enum)
     svt = Java::dashfx.lib.data.SmartValueTypes
-    floats = ints = nums = SD::Plugins::ControlInfo.find(@prefs.get("defaults_type_number", "Bad Slider"))
-    strings = SD::Plugins::ControlInfo.find(@prefs.get("defaults_type_string", "Label"))
-    bools = SD::Plugins::ControlInfo.find(@prefs.get("defaults_type_bool", "xBadx"))
+    floats = ints = nums = SD::DesignerSupport::Preferences.defaults_type_number
+    strings = SD::DesignerSupport::Preferences.defaults_type_string
+    bools = SD::DesignerSupport::Preferences.defaults_type_bool
     map = {
       svt::Double.mask => floats,
       svt::Float.mask => floats,
