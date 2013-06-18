@@ -16,8 +16,30 @@
 module SD
   module Windowing
     class DefaultViewController
+      attr_accessor :tab
+      attr_reader :name, :layout_manager
       def initialize
-        @ui = "drat"
+        @name = "general"
+        self.root_canvas = SD::DesignerSupport::Preferences.root_canvas.new
+      end
+
+      def pane
+        @canvas
+      end
+
+      def ui
+        @canvas.ui
+      end
+
+      def root_canvas=(cvs)
+        if @canvas
+          childs = @canvas.children.to_a
+          @canvas.children.clear
+          cvs.children.add_all(childs)
+        end
+        @canvas = cvs
+        @layout_manager = SD::Windowing::LayoutManager.new(cvs)
+        cvs.ui.style = "" # TODO: hack
       end
     end
   end

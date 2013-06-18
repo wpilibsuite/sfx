@@ -37,6 +37,7 @@ class SD::Designer
     @aa_tree_list = []
     @aa_tree.root = tree_item("/")
     @layout_managers = {}
+    @view_controllers = []
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -110,8 +111,9 @@ class SD::Designer
     end
     @stage.on_close_request do |event|
       stop_it = false
+      # TODO: multi-windows
       # TODO: I cant seem to prevent window from closing
-      if @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
+      if false && @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
         answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
         if answer == :cancel_oh_so_broken
           event.consume
@@ -120,7 +122,7 @@ class SD::Designer
           save
         end
       end
-      @canvas.dispose unless stop_it
+      @canvas.dispose unless true # stop_it
     end
 
     # get the team number
@@ -140,10 +142,10 @@ class SD::Designer
       InitInfo.team_number = ip
     end
 
-    new_document
+    add_tab(SD::Windowing::DefaultViewController.new)
 
-    #TODO: use preferences for this. DEMO
-    @canvas.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
+    #TODO: use preferences for this. DEMO.
+    @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
     #TODO: use standard plugin arch for this
     @playback = SD::Playback.new(@data_core, @stage)
 
@@ -277,7 +279,7 @@ class SD::Designer
 
   # called to add a namable control to the items
   def drop_add(id,x, y, source)
-    pare = source == @canvas.ui ? @canvas : source.child
+    pare = source == current_vc.ui ? current_vc.pane : source.child
     dnd_obj = @dnd_ids[id]
     obj = dnd_obj.new # create the object that we are dragging on
     if @dnd_opts[dnd_obj]
@@ -756,6 +758,23 @@ class SD::Designer
     end
   end
 
+  def current_vc
+    @view_controllers[@vc_index]
+  end
+
+  def add_tab(vc)
+    vc.tab = button(vc.name)
+    vc.tab.set_on_action &method(:tab_clicked)
+    @view_controllers.each do |lm|
+      lm.tab.style_class.remove("active")
+    end
+    @view_controllers << vc
+    vc.tab.style_class.add("active")
+    @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
+    self.root_canvas = vc
+    @vc_index = @view_controllers.length - 1
+  end
+
   def tab_clicked(e)
     @tab_box.children.each {|x| x.style_class.remove("active")}
     e.target.style_class.add("active")
@@ -775,17 +794,11 @@ class SD::Designer
 
   # Assign the designer surface and set up handlers
   def root_canvas=(cvs)
-    if @canvas
-      childs = @canvas.children.to_a
-      @canvas.children.clear
-      cvs.children.add_all(childs)
-    end
-    cvs.registered(@data_core)
+    cvs.pane.registered(@data_core)
     @BorderPane.center = cvs.ui
-    @canvas = cvs
-    @layout_managers[cvs] = SD::Windowing::LayoutManager.new(cvs)
+    @cur_canvas = cvs
+    @layout_managers[cvs.pane] = cvs.layout_manager
     @ui2pmap[cvs.ui] = cvs
-    cvs.ui.style = "" # TODO: hack
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
