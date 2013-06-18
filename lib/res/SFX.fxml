@@ -94,8 +94,6 @@
           </ImageView>
           <HBox fx:id="tab_box" prefHeight="-1.0" prefWidth="-1.0" spacing="2.0">
             <children>
-              <Button mnemonicParsing="false" onAction="#tab_clicked" styleClass="active" text="General" />
-              <Button mnemonicParsing="false" onAction="#tab_clicked" text="LiveWindow" />
               <Button mnemonicParsing="false" onAction="#tab_clicked" text="+" />
             </children>
           </HBox>

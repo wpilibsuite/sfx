@@ -16,8 +16,8 @@
 module SD
   module Windowing
     class DefaultViewController
-      attr_accessor :tab
-      attr_reader :name, :layout_manager
+      attr_accessor :tab, :name
+      attr_reader :layout_manager
       def initialize
         @name = "general"
         self.root_canvas = SD::DesignerSupport::Preferences.root_canvas.new

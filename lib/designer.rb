@@ -143,6 +143,7 @@ class SD::Designer
     end
 
     add_tab(SD::Windowing::DefaultViewController.new)
+    add_tab(SD::Windowing::DefaultViewController.new.tap{|x|x.name="Second"})
 
     #TODO: use preferences for this. DEMO.
     @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
@@ -363,8 +364,10 @@ class SD::Designer
 
   def run
     @mode = :run
-    @canvas.children.each do |c|
-      c.running = true
+    @view_controllers.each do |vc|
+      vc.pane.children.each do |c|
+        c.running = true
+      end
     end
     hide_controls
     hide_toolbox
@@ -373,8 +376,10 @@ class SD::Designer
 
   def design
     @mode = :design
-    @canvas.children.each do |c|
-      c.running = false
+    @view_controllers.each do |vc|
+      vc.pane.children.each do |c|
+        c.running = false
+      end
     end
     show_controls
   end
@@ -658,7 +663,7 @@ class SD::Designer
 
   def delete_selected
     @selected_items.each do |si|
-      @canvas.children.remove(si)
+      current_vc.pane.children.remove(si)
     end
     @selected_items = []
     hide_properties
@@ -726,7 +731,7 @@ class SD::Designer
       new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
       new_obj = new_objd.new
       if new_obj
-        add_designable_control with(new_obj, name: ctrl.name), nil, nil, @canvas, new_objd
+        add_designable_control with(new_obj, name: ctrl.name), nil, nil, current_vc.pane, new_objd
       else
         puts "Warning: no default control for #{ctrl.type.mask}"
         nil
@@ -765,19 +770,23 @@ class SD::Designer
   def add_tab(vc)
     vc.tab = button(vc.name)
     vc.tab.set_on_action &method(:tab_clicked)
+    @view_controllers << vc
+    @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
+    tab_select(vc.tab)
+  end
+
+  def tab_select(tab)
+    vc = @view_controllers.find{|x|x.tab == tab}
     @view_controllers.each do |lm|
       lm.tab.style_class.remove("active")
     end
-    @view_controllers << vc
     vc.tab.style_class.add("active")
-    @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
     self.root_canvas = vc
-    @vc_index = @view_controllers.length - 1
+    @vc_index = @view_controllers.index(vc)
   end
 
   def tab_clicked(e)
-    @tab_box.children.each {|x| x.style_class.remove("active")}
-    e.target.style_class.add("active")
+    tab_select(e.target)
   end
 
   # edit the smart dashboard settings
