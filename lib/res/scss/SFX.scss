@@ -30,6 +30,7 @@
 	-fx-margin: 0;
 	-fx-padding: 0;
 }
+$bottom_size: 32px;
 #bottom_gutter {
 	-fx-background-color: linear-gradient(to bottom, #666, $sfx-gray 10%, $sfx-gray 100%);
 	.button {
@@ -39,6 +40,20 @@
 		@extend .icon-only-button;
 		.arrow-button, .label {
 			@extend .icon-only-button;
+		}
+	}
+	#tab_box .button {
+		-fx-background-color: transparent, linear-gradient(to bottom, #666, lighten($sfx-blue, 30%) 10%, lighten($sfx-blue, 40%) 100%);
+		-fx-padding: 6px 8px;
+		-fx-background-radius: 0 0 5px 5px;
+		-fx-border-radius: 0 0 5px 5px;
+		-fx-border-color: transparent  $sfx-dark-gray $sfx-dark-gray $sfx-dark-gray;
+		-fx-border-width: 0 1 1 1;
+		-fx-font-weight: normal;
+		&.active {
+			-fx-background-color: transparent, linear-gradient(to bottom, white, white 10%, lighten($sfx-green, 20%) 100%);
+			-fx-text-fill: black;
+			-fx-font-weight: normal;
 		}
 	}
 }

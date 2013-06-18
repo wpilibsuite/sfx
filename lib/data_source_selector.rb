@@ -152,6 +152,7 @@ module SD
     end
 
     def save_it
+      # FIXME: BUG: can't hit save on same items
       @core.clear_all_data_endpoints
       @root_source.value.mount_point = @root_url.text
       @core.mount_data_endpoint @root_source.value

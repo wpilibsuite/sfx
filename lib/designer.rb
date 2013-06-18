@@ -756,6 +756,11 @@ class SD::Designer
     end
   end
 
+  def tab_clicked(e)
+    @tab_box.children.each {|x| x.style_class.remove("active")}
+    e.target.style_class.add("active")
+  end
+
   # edit the smart dashboard settings
   def edit_settings
     hide_properties

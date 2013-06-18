@@ -92,6 +92,13 @@
               <Image url="@img/edit-undo.png" />
             </image>
           </ImageView>
+          <HBox fx:id="tab_box" prefHeight="-1.0" prefWidth="-1.0" spacing="2.0">
+            <children>
+              <Button mnemonicParsing="false" onAction="#tab_clicked" styleClass="active" text="General" />
+              <Button mnemonicParsing="false" onAction="#tab_clicked" text="LiveWindow" />
+              <Button mnemonicParsing="false" onAction="#tab_clicked" text="+" />
+            </children>
+          </HBox>
           <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
             <children>
               <HBox fx:id="msg_carrier" alignment="CENTER" maxHeight="28.0" minWidth="200.0" prefHeight="28.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(limegreen, #55ff55);&#10;-fx-border-color: green;&#10;-fx-border-width: 1 1 0 1;&#10;-fx-border-radius:10 10 0 0;&#10;-fx-background-radius:10 10 0 0;" translateY="30.0">
