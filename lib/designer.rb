@@ -41,35 +41,6 @@ class SD::Designer
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
-    # get the AutoAdd Filter
-    @aa_filter = SD::DesignerSupport::AAFilter
-    @aa_filter.parse_prefs
-
-    # Create our data core. TODO: use preferences to configure it.
-    @data_core = Java::dashfx.lib.data.DataCore.new()
-    # when the data core finds about new names, let us know!
-    @data_core.known_names.add_change_listener do |change|
-      change.next # change is an "iterator" of stuff, so use next to get the added list
-      sublist = []
-      change.added_sub_list.each do |new_name|
-        add_known new_name
-        # check to see if we should auto-add this
-        if @aa_filter.filter(new_name, @data_core.known_names.get)
-          sublist << new_name
-          @data_core_sublist << new_name
-        end
-      end
-      # TODO: total race condition
-      if sublist.length > 0 && @data_core_sublist.length == sublist.length
-        Thread.new do
-          sleep 0.07
-          run_later do
-            aa_add_some(*@data_core_sublist)
-            @data_core_sublist = []
-          end
-        end
-      end
-    end
 
     # load the custom regexer
     @aa_regexer.text_property.add_change_listener do |ov, ol, new|
@@ -106,6 +77,27 @@ class SD::Designer
 
     # On shown and on closing handlers
     @stage.set_on_shown do
+
+      # Create our data core. TODO: use preferences to configure it.
+      @data_core = Java::dashfx.lib.data.DataCore.new()
+      # when the data core finds about new names, let us know!
+      @data_core.known_names.add_change_listener do |change|
+        change.next # change is an "iterator" of stuff, so use next to get the added list
+        change.added_sub_list.each do |new_name|
+          add_known new_name
+          @view_controllers.each do |vc|
+            if vc.should_add?(new_name, @data_core.known_names.get)
+              aa_add_some(vc.pane, new_name)
+            end
+          end
+        end
+      end
+
+      #TODO: use preferences for this. DEMO.
+      @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
+      #TODO: use standard plugin arch for this
+      @playback = SD::Playback.new(@data_core, @stage)
+      
       self.message = "Ready"
       SD::DesignerSupport::Overlay.preparse_new(3)
     end
@@ -144,11 +136,6 @@ class SD::Designer
 
     add_tab(SD::Windowing::DefaultViewController.new)
     add_tab(SD::Windowing::DefaultViewController.new.tap{|x|x.name="Second"})
-
-    #TODO: use preferences for this. DEMO.
-    @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
-    #TODO: use standard plugin arch for this
-    @playback = SD::Playback.new(@data_core, @stage)
 
     # pre-parse one item for speedy adding
     SD::DesignerSupport::Overlay.preparse_new(1)
@@ -206,7 +193,7 @@ class SD::Designer
   end
 
   # called to wrap the control in an overlay and to place in a control
-  def add_designable_control(control, x=nil, y=nil, parent=@canvas, oobj=nil)
+  def add_designable_control(control, x, y, parent, oobj)
     designer = SD::DesignerSupport::Overlay.new(control, self, parent, oobj)
 
     # if its designable, add hooks for nested editing to work
@@ -445,7 +432,7 @@ class SD::Designer
       Gem::Package::TarWriter.new(io) do |tar|
         tar.add_file("version", 0644) {|f|f.write("0.1")}
         tar.add_file("data.yml", 0644) do |yml|
-          psg = SD::IOSupport::DashObject.parse_scene_graph(@canvas)
+          psg = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers)
           yml.write YAML.dump(psg)
           @current_save_data = psg
         end
@@ -509,6 +496,7 @@ class SD::Designer
     end
     doc =  YAML.load(data['data.yml'])
     @current_save_data = doc
+    # TODO: tab support
     @canvas.children.clear
     self.root_canvas = doc.object.new
     doc.children.each {|x| open_visitor(x, @canvas) }
@@ -643,7 +631,7 @@ class SD::Designer
         end
         break
       end
-    end while (q = q.parent) && q != @canvas
+    end while (q = q.parent) && q != current_vc.pane
     select(*new_selections)
   end
 
@@ -698,14 +686,14 @@ class SD::Designer
 
   # helper function for traversing parents when nesting editing
   def nested_traverse(octrl, after, &eachblock)
-    return if octrl == @canvas.ui
+    return if octrl == current_vc.ui
     ctrl = octrl
     begin
       saved = (ctrl.parent.children.to_a.find_all{|i| i != ctrl})
       saved.each &eachblock
       after.call(ctrl)
       ctrl = ctrl.parent
-    end while ctrl != @canvas.ui
+    end while ctrl != current_vc.ui
   end
 
   # Settings for the canvas TODO: add other canvas properties
@@ -722,19 +710,22 @@ class SD::Designer
   # Add all known controls
   def aa_add_all
     # for each of the items in the tree view (TODO: NOT A TREE VIEW), add it as the pref type
-    aa_add_some(*@aa_tree.root.children.map{|x| x.value[:value]}.find_all{|x| !@aa_regex_showing || x.match(@aa_filter.regex)})
+    aa_add_some(current_vc.pane, *@aa_tree.root.children.map{|x| x.value[:value]}.find_all{|x| !@aa_regex_showing || x.match(@aa_filter.regex)})
   end
 
-  def aa_add_some(*names)
-    names.map do |ctrl_name|
+  def aa_add_some(pane, *names)
+    names.each do |ctrl_name|
       ctrl = @data_core.get_observable(ctrl_name)
-      new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
-      new_obj = new_objd.new
-      if new_obj
-        add_designable_control with(new_obj, name: ctrl.name), nil, nil, current_vc.pane, new_objd
-      else
-        puts "Warning: no default control for #{ctrl.type.mask}"
-        nil
+      begin
+        new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
+        new_obj = new_objd.new
+        if new_obj
+          add_designable_control with(new_obj, name: ctrl.name), nil, nil, pane, new_objd
+        else
+          puts "Warning: no default control for #{ctrl.type.mask}"
+        end
+      rescue
+        puts "Warning: error finding default control for #{ctrl.inspect}"
       end
     end
     hide_toolbox

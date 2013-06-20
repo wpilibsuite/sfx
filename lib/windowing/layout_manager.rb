@@ -34,6 +34,7 @@ module SD
             end
           else
             @root.children.add_all children_map.keys
+            children_map.keys.each {|c| @root.add_control c} #TODO: should not need to do this
             @has_nils ||= children_map.values.include?([nil,nil])
             unless @thread
               @thread = Thread.new &method(:thread_run)
@@ -43,7 +44,9 @@ module SD
       end
 
       def thread_run
-        sleep(0.05) # wait for layout passes
+        begin
+          sleep(0.05) # wait for layout passes
+        end while @root.ui.height < 1
         run_later do
           @root.synchronized do
             # get a placement map if we need one (Aka we cant just append the item)
