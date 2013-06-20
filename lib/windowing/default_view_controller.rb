@@ -22,7 +22,8 @@ module SD
         @name = "general"
         self.root_canvas = SD::DesignerSupport::Preferences.root_canvas.new
         # load default prefs
-        SD::DesignerSupport::AAFilter.parse_prefs
+        @filter = SD::DesignerSupport::AAFilter.new
+        @filter.parse_prefs
       end
 
       def pane
@@ -33,6 +34,11 @@ module SD
         @canvas.ui
       end
 
+      def should_add?(name, all)
+        @filter.filter(name, all)
+      end
+
+      private
       def root_canvas=(cvs)
         if @canvas
           childs = @canvas.children.to_a
@@ -42,10 +48,6 @@ module SD
         @canvas = cvs
         @layout_manager = SD::Windowing::LayoutManager.new(cvs)
         cvs.ui.style = "" # TODO: hack
-      end
-
-      def should_add?(name, all)
-        SD::DesignerSupport::AAFilter.filter(name, all)
       end
     end
   end

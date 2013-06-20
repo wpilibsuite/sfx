@@ -86,7 +86,7 @@ class SD::Designer
         change.added_sub_list.each do |new_name|
           add_known new_name
           @view_controllers.each do |vc|
-            if vc.should_add?(new_name, @data_core.known_names.get)
+            if vc.should_add?(new_name, @data_core.known_names.get, &proc{|x="/"|@data_core.get_observable x})
               aa_add_some(vc.pane, new_name)
             end
           end

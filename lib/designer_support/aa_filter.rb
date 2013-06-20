@@ -16,9 +16,8 @@
 module SD
   module DesignerSupport
     class AAFilter
-      @smart_value = nil
 
-      def self.parse_prefs
+      def parse_prefs
         props = SD::DesignerSupport::Preferences
         tmp = props.aa_policy
         # TODO: exceptions in parsing
@@ -39,23 +38,23 @@ module SD
         end
       end
 
-      def self.have_code?
+      def have_code?
         @code != nil
       end
 
-      def self.have_regex?
+      def have_regex?
         @regex != nil
       end
 
-      def self.regex=(regex)
+      def regex=(regex)
         @regex = regex
       end
 
-      def self.regex
+      def regex
         @regex
       end
 
-      def self.filter(name, all_names)
+      def filter(name, all_names)
         return true if @always_add
         if have_regex?
           return name.match(@regex) != nil
@@ -65,19 +64,19 @@ module SD
         return false
       end
 
-      def self.always_add=(value)
+      def always_add=(value)
         @always_add = value
       end
 
-      def self.always_add
+      def always_add
         @always_add == true
       end
 
-      def self.smart_value(name)
+      def smart_value(name)
         @smart_value.call(name)
       end
 
-      def self.on_smart_value(&block)
+      def on_smart_value(&block)
         @smart_value = block
       end
     end
