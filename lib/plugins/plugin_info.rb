@@ -20,6 +20,7 @@ module SD
       OPTIONAL_FIELDS = {
         "Description" => "", # name,  default value
         "Controls" => [],
+        "View Controllers" => [],
       }
       attr_reader :location, *((REQUIRED_FIELDS + OPTIONAL_FIELDS.keys).map {|name| name.downcase.gsub(" ", "_")})
       def initialize(url_resolver, location, info)

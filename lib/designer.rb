@@ -97,7 +97,7 @@ class SD::Designer
       @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
       #TODO: use standard plugin arch for this
       @playback = SD::Playback.new(@data_core, @stage)
-      
+
       self.message = "Ready"
       SD::DesignerSupport::Overlay.preparse_new(3)
     end
@@ -134,8 +134,11 @@ class SD::Designer
       InitInfo.team_number = ip
     end
 
+    # Add known tab and any plugin tabs
     add_tab(SD::Windowing::DefaultViewController.new)
-    add_tab(SD::Windowing::DefaultViewController.new.tap{|x|x.name="Second"})
+    SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
+      add_tab(x.new)
+    end
 
     # pre-parse one item for speedy adding
     SD::DesignerSupport::Overlay.preparse_new(1)
@@ -183,7 +186,15 @@ class SD::Designer
       # check for the plugins folder
       plugin_yaml = $PLUGIN_DIR
       if Dir.exist? plugin_yaml
-        SD::Plugins.load plugin_yaml, lambda {|url| java.net.URL.new("file://#{plugin_yaml}/#{url}")}
+        Dir["#{plugin_yaml}/*"].each do |plugin_path|
+          SD::Plugins.load(plugin_path, if plugin_path.end_with? ".jar"
+              require plugin_path
+              class_loader = java.net.URLClassLoader.new([java.net.URL.new("file:#{plugin_path}")].to_java(java.net.URL))
+              lambda {|url| class_loader.find_resource url.gsub(%r{^/}, '')}
+            else
+              lambda {|url| java.net.URL.new("file://#{plugin_path}/#{url}")}
+            end)
+        end
       end
 
       @toolbox_bits = {:standard => SD::Plugins.controls}

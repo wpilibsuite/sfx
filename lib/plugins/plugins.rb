@@ -22,6 +22,7 @@ module SD
     SUPPORTED_API = [0.1]
     @@plugins = {}
     @@controls = {}
+    @@view_ctrls = []
 
     module_function
     def load(location, loader)
@@ -30,7 +31,7 @@ module SD
       unless SUPPORTED_API.include? yml['API']
         raise VersionError, "Manifest API is not compatible with this version. Expecting #{SUPPORTED_API} but got #{yml['API']}", caller
       end
-      yml["Controls"] = yml['Controls'].map do |cdesc|
+      yml["Controls"] = (yml['Controls'] || []).map do |cdesc|
         if cdesc.keys.include? "List Class"
           JavaUtilities.get_proxy_class(cdesc["List Class"]).all.map{|x|JavaControlInfo.new x}
         elsif cdesc.keys.include? "Package"
@@ -41,9 +42,13 @@ module SD
           ControlInfo.new(loader, cdesc)
         end
       end.flatten
+
+      yml["View Controllers"] = (yml['View Controllers'] || []).map { |cdesc| ViewControllerInfo.new(cdesc) }
+
       plug = PluginInfo.new(loader, location, yml)
       @@plugins[plug.plugin_id] = plug
       plug.controls.each{|x|@@controls[x.name]= x}
+      @@view_ctrls += plug.view_controllers
     end
 
     def plugin(uuid)
@@ -60,6 +65,10 @@ module SD
 
     def controls
       @@controls.values
+    end
+
+    def view_controllers
+      @@view_ctrls
     end
   end
 end
