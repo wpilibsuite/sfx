@@ -86,7 +86,7 @@ class SD::Designer
         change.added_sub_list.each do |new_name|
           add_known new_name
           @view_controllers.each do |vc|
-            if vc.should_add?(new_name, @data_core.known_names.get, &proc{|x="/"|@data_core.get_observable x})
+            if vc.should_add?(new_name, @data_core.known_names.get)
               aa_add_some(vc.pane, new_name)
             end
           end
@@ -728,7 +728,12 @@ class SD::Designer
     names.each do |ctrl_name|
       ctrl = @data_core.get_observable(ctrl_name)
       begin
-        new_objd = SD::DesignerSupport::PrefTypes.for(ctrl.type)
+        new_objd = if !ctrl.type || ctrl.type == 64
+          SD::Plugins.controls.find{|x| p x.group_types; x.group_types == ctrl.group_name}
+        else
+          p ctrl.type
+          SD::DesignerSupport::PrefTypes.for(ctrl.type)
+        end
         new_obj = new_objd.new
         if new_obj
           add_designable_control with(new_obj, name: ctrl.name), nil, nil, pane, new_objd
@@ -736,7 +741,8 @@ class SD::Designer
           puts "Warning: no default control for #{ctrl.type.mask}"
         end
       rescue
-        puts "Warning: error finding default control for #{ctrl.inspect}"
+        p $!
+        puts "Warning: error finding default control for #{ctrl}"
       end
     end
     hide_toolbox

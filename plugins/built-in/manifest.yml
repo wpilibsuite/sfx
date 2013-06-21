@@ -16,7 +16,7 @@ Controls:
   Name: PID Editor
   Description: Default testing PID editor/viewer
   Source: /pid/PIDParent.fxml
-  Group Type: PIDEditor
+  Group Type: PIDController
   Save Children: false
   Placeholders: [p, i, d, disabled]
 
