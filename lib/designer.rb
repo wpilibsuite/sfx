@@ -98,6 +98,13 @@ class SD::Designer
       #TODO: use standard plugin arch for this
       @playback = SD::Playback.new(@data_core, @stage)
 
+      # Add known tab and any plugin tabs
+      main_tab = add_tab(SD::Windowing::DefaultViewController.new)
+      SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
+        add_tab(x.new)
+      end
+      tab_select(main_tab)
+
       self.message = "Ready"
       SD::DesignerSupport::Overlay.preparse_new(3)
     end
@@ -132,12 +139,6 @@ class SD::Designer
     if ip
       self.message = "Using #{ip == 0 ? "localhost" : ip } as team number"
       InitInfo.team_number = ip
-    end
-
-    # Add known tab and any plugin tabs
-    add_tab(SD::Windowing::DefaultViewController.new)
-    SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
-      add_tab(x.new)
     end
 
     # pre-parse one item for speedy adding
@@ -729,9 +730,8 @@ class SD::Designer
       ctrl = @data_core.get_observable(ctrl_name)
       begin
         new_objd = if !ctrl.type || ctrl.type == 64
-          SD::Plugins.controls.find{|x| p x.group_types; x.group_types == ctrl.group_name}
+          SD::Plugins.controls.find{|x| x.group_types == ctrl.group_name}
         else
-          p ctrl.type
           SD::DesignerSupport::PrefTypes.for(ctrl.type)
         end
         new_obj = new_objd.new
@@ -741,7 +741,6 @@ class SD::Designer
           puts "Warning: no default control for #{ctrl.type.mask}"
         end
       rescue
-        p $!
         puts "Warning: error finding default control for #{ctrl}"
       end
     end
@@ -781,6 +780,7 @@ class SD::Designer
     @view_controllers << vc
     @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
     tab_select(vc.tab)
+    return vc.tab
   end
 
   def tab_select(tab)
