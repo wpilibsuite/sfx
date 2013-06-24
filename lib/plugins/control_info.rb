@@ -16,7 +16,7 @@
 module SD
   module Plugins
     class ControlInfo
-      attr_reader :name, :description, :category, :group_types, :types, :save_children
+      attr_reader :name, :description, :category, :group_types, :types, :save_children, :sealed
       def initialize(url_resolver, info)
         info = Hash[info.map{|k,v| [k.to_s, v]}]
         if info['From Package'] || info['From Class'] || info['From Jar']
@@ -25,6 +25,7 @@ module SD
         @name = info['Name']
         @description = info['Description']
         @category = info['Category']
+        @sealed = info['Sealed'] || false
         oi = info['Image']
         @save_children = info['Save Children']
         @image_proc = lambda do

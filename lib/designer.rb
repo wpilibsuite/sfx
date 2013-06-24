@@ -38,6 +38,8 @@ class SD::Designer
     @aa_tree.root = tree_item("/")
     @layout_managers = {}
     @view_controllers = []
+    @aa_name_trees = {}
+    @aa_name_trees_threads = {}
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -75,6 +77,8 @@ class SD::Designer
       SD::DesignerSupport::AATreeCell.new
     end
 
+    SD::DesignerSupport::AANameTree.observable = ->(name){@data_core.get_observable name}
+
     # On shown and on closing handlers
     @stage.set_on_shown do
 
@@ -86,10 +90,31 @@ class SD::Designer
         change.added_sub_list.each do |new_name|
           add_known new_name
           @view_controllers.each do |vc|
-            if vc.should_add?(new_name, @data_core.known_names.get)
-              aa_add_some(vc.pane, new_name)
+            if tmp = vc.should_add?(new_name, @data_core.known_names.get)
+              bits = new_name.split('/').reject(&:empty?)
+              root = @aa_name_trees[vc]
+              namepart = ""
+              bits.each do |namebit|
+                namepart << "/"
+                namepart << namebit
+                child = root.children[namebit]
+                unless child
+                  child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root)
+                end
+                root = child
+              end
+              #aa_add_some(vc.pane, new_name)
+              @aa_name_trees[vc].process method(:add_designable_control)
             end
           end
+        end
+      end
+
+      #TODO: hack
+      Thread.new do
+        sleep 5
+        run_later do
+          @aa_name_trees.each {|k, v|v.process method(:add_designable_control)}
         end
       end
 
@@ -779,6 +804,7 @@ class SD::Designer
     vc.tab.set_on_action &method(:tab_clicked)
     @view_controllers << vc
     @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
+    @aa_name_trees[vc] = SD::DesignerSupport::AANameTree.new("", SD::DesignerSupport::AANameTree.new("", vc.pane).tap{|x|x.data[:descriptor] = vc.pane})
     tab_select(vc.tab)
     return vc.tab
   end

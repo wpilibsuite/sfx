@@ -197,6 +197,10 @@ module SD::DesignerSupport
       pane? and @ctrl_info.save_children
     end
 
+    def can_nest?
+      pane? and !@ctrl_info.sealed
+    end
+
     def checkDblClick(e)
       if e.click_count > 1 && pane?
         @parent_designer.nested_edit(self)
