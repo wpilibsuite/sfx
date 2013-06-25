@@ -88,7 +88,6 @@ class SD::Designer
       @data_core.known_names.add_change_listener do |change|
         change.next # change is an "iterator" of stuff, so use next to get the added list
         change.added_sub_list.each do |new_name|
-          puts "found #{new_name}"
           add_known new_name
           @view_controllers.each do |vc|
             if tmp = vc.should_add?(new_name, @data_core.known_names.get)
@@ -107,8 +106,6 @@ class SD::Designer
                   root = child
                 end
                 @aa_name_trees[vc].process method(:add_designable_control)
-                puts "it is:  --------------"
-                puts @aa_name_trees[vc].to_s
               end
               thread.run
             end
@@ -231,21 +228,23 @@ class SD::Designer
 
   # called to wrap the control in an overlay and to place in a control
   def add_designable_control(control, x, y, parent, oobj)
-    designer = SD::DesignerSupport::Overlay.new(control, self, parent, oobj)
+    ovl = SD::DesignerSupport::Overlay
+    designer = if control.is_a? ovl then
+      # control.parent TODO: re-register
+      control
+    else
+      ovl.new(control, self, parent, oobj)
+    end
 
     # if its designable, add hooks for nested editing to work
     if control.is_a? Java::dashfx.lib.controls.DesignablePane
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
-      puts "adidng control"
       @layout_managers[control] = SD::Windowing::LayoutManager.new(control)
     end
-    p @layout_managers
-    p parent
     @layout_managers[parent].layout_controls({designer => [x, y]})
-    puts "layout good"
     # Add it to the map so we can get the controller later if needed from UI tree
-    @ui2pmap[control.ui] = control
+    @ui2pmap[control.ui] = control if designer != control # don't add if it exists
     self.message = "Added new #{control.java_class.name}"
     designer
   end

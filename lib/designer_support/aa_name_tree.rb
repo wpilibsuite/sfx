@@ -27,7 +27,6 @@ module SD
         unless data[:in_ui]
           if !data[:control] and (!(data[:object].group_name.nil? or data[:object].group_name.empty?) or data[:object].type)
             begin
-              puts data[:object]
               data[:cinfo] = if !(data[:object].group_name.nil? or data[:object].group_name.empty?)
                 SD::Plugins.controls.find{|x| x.group_types == data[:object].group_name}
               else
@@ -39,34 +38,35 @@ module SD
               # just let it be null
             end
             if data[:cinfo]
-              puts "maky maky"
-              p data[:cinfo]
               data[:control] = data[:cinfo].new
               data[:control].name = @name
               data[:time] = Time.now
             end
           end
-
-            STDERR.flush
-            STDOUT.flush
           if data[:control] && parent.data[:descriptor]
             if parent.data[:descriptor].can_nest?
-              puts "adding"
-              p parent.data[:descriptor]
-              puts "subrooted at -------", self.parent.to_s("  ")
               data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]), data[:cinfo])
             end
             data[:in_ui] = true
           end
           if expired? && data[:control]
-            p data[:control]
-
-              puts "seconddding"
-              p nearest_desc(data[:control])
-              puts "subrooted at -------", self.parent.to_s("  ")
-            data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]), data[:cinfo])
+            prior_name = data[:control].name
+            original_par = nearest_desc(data[:control])
+            data[:descriptor] = add_designable_control.call(data[:control], nil, nil, original_par, data[:cinfo])
             data[:in_ui] = true
-            puts "success!"
+            data[:expired_proc] = -> {
+              puts "#########}whoa!, remorphing #{prior_name}"
+              # TODO: removing when parent is sealed
+              data[:control].name = prior_name
+              par = nearest_desc(data[:control])
+              add_designable_control.call(data[:control], nil, nil, par, data[:cinfo])
+              par
+            }
+            data[:last_parent] = original_par
+          end
+        else
+          if data[:expired_proc] && data[:last_parent] != nearest_desc(nil)
+            data[:last_parent] = data[:expired_proc].call
           end
         end
         @children.each do |name, child|
@@ -76,7 +76,7 @@ module SD
 
       def nearest_desc(control)
         desc = parent.data[:descriptor] || parent.nearest_desc(control)
-        if desc == parent.data[:descriptor] && parent.name != ""
+        if desc == parent.data[:descriptor] && parent.name != "" && control
           # truncate the path
           # TODO: check if nested or passthrough
           control.name = control.name.gsub(%r{^#{parent.name}/?}, "")
@@ -88,7 +88,7 @@ module SD
         end
       end
       def expired?
-        Time.now - data[:time] > 0.02
+        Time.now - data[:time] > 0.05
       end
       def self.observable=(obs)
         @@observable = obs
