@@ -37,7 +37,7 @@ module SD
         elsif cdesc.keys.include? "Package"
           # TODO: evil
         elsif cdesc.keys.include? "Class"
-          # TODO: evil
+          JavaControlInfo.new(JavaUtilities.get_proxy_class(cdesc['Class']).java_class, cdesc)
         else
           ControlInfo.new(loader, cdesc)
         end

@@ -77,7 +77,7 @@ module SD
     end
 
     class JavaControlInfo < ControlInfo
-      def initialize(jclass)
+      def initialize(jclass, moar_info={})
         annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
         cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
         types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
@@ -98,6 +98,7 @@ module SD
           []
         end
         self.new = lambda { jclass.ruby_class.new }
+        self.group_types = moar_info["Group Type"] # TODO: this is not very good... should be cleaner
       end
     end
   end
