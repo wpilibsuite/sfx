@@ -7,6 +7,7 @@ require 'data_source_selector'
 require 'settings_dialog'
 require 'yaml'
 require 'zlib'
+require 'ostruct'
 require 'rubygems/package'
 
 class SD::Designer
@@ -245,7 +246,7 @@ class SD::Designer
     @layout_managers[parent].layout_controls({designer => [x, y]})
     # Add it to the map so we can get the controller later if needed from UI tree
     @ui2pmap[control.ui] = control if designer != control # don't add if it exists
-    self.message = "Added new #{control.java_class.name}"
+    self.message = "Added new #{oobj.id}"
     designer
   end
 
@@ -807,7 +808,8 @@ class SD::Designer
     vc.tab.set_on_action &method(:tab_clicked)
     @view_controllers << vc
     @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
-    @aa_name_trees[vc] = SD::DesignerSupport::AANameTree.new("", SD::DesignerSupport::AANameTree.new("", vc.pane).tap{|x|x.data[:descriptor] = vc.pane})
+    os = OpenStruct.new({can_nest?: true, child: vc.pane})
+    @aa_name_trees[vc] = SD::DesignerSupport::AANameTree.new("", SD::DesignerSupport::AANameTree.new("", os).tap{|x|x.data[:descriptor] = os})
     @aa_name_trees_threads[vc] = [Mutex.new, Thread.new do
         loop {
           Thread.stop

@@ -45,27 +45,33 @@ module SD
           end
           if data[:control] && parent.data[:descriptor]
             if parent.data[:descriptor].can_nest?
-              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]), data[:cinfo])
+              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]).child, data[:cinfo])
             end
             data[:in_ui] = true
           end
           if expired? && data[:control]
-            prior_name = data[:control].name
-            original_par = nearest_desc(data[:control])
-            data[:descriptor] = add_designable_control.call(data[:control], nil, nil, original_par, data[:cinfo])
+            original_pard = nearest_desc(data[:control])
+            original_par = original_pard.child
+            if original_pard.can_nest?
+              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, original_par, data[:cinfo])
+              data[:expired_proc] = -> {
+                data[:control].name = name
+                par = (pard = nearest_desc(data[:control])).child
+                if !pard.respond_to? :can_nest? || pard.can_nest?
+                  add_designable_control.call(data[:control], nil, nil, par, data[:cinfo])
+                else
+                  # remove when parent is sealed
+                  data[:last_parent].children.remove(data[:control])
+                  data[:expired_proc] = nil
+                end
+                par
+              }
+              data[:last_parent] = original_par
+            end
             data[:in_ui] = true
-            data[:expired_proc] = -> {
-              puts "#########}whoa!, remorphing #{prior_name}"
-              # TODO: removing when parent is sealed
-              data[:control].name = prior_name
-              par = nearest_desc(data[:control])
-              add_designable_control.call(data[:control], nil, nil, par, data[:cinfo])
-              par
-            }
-            data[:last_parent] = original_par
           end
         else
-          if data[:expired_proc] && data[:last_parent] != nearest_desc(nil)
+          if data[:expired_proc] && data[:last_parent] != nearest_desc(nil).child
             data[:last_parent] = data[:expired_proc].call
           end
         end
@@ -81,14 +87,10 @@ module SD
           # TODO: check if nested or passthrough
           control.name = control.name.gsub(%r{^#{parent.name}/?}, "")
         end
-        if desc.is_a? SD::DesignerSupport::Overlay
-          desc.child
-        else
-          desc
-        end
+        desc
       end
       def expired?
-        Time.now - data[:time] > 0.05
+        Time.now - data[:time] > 0.5
       end
       def self.observable=(obs)
         @@observable = obs
