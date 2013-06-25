@@ -25,22 +25,48 @@ module SD
       end
       def process(add_designable_control)
         unless data[:in_ui]
-          unless data[:control] or data[:object].group_name.nil? or data[:object].group_name.empty?
-            data[:control] = SD::Plugins::controls.find{|x|x.group_types == data[:object].group_name}.tap{|x|data[:cinfo] = x}.new
-            data[:control].name = @name
-            data[:time] = Time.now
+          if !data[:control] and (!(data[:object].group_name.nil? or data[:object].group_name.empty?) or data[:object].type)
+            begin
+              puts data[:object]
+              data[:cinfo] = if !(data[:object].group_name.nil? or data[:object].group_name.empty?)
+                SD::Plugins.controls.find{|x| x.group_types == data[:object].group_name}
+              else
+                SD::DesignerSupport::PrefTypes.for(data[:object].type)
+              end
+            rescue
+              puts "ahhrg"
+              puts $!
+              # just let it be null
+            end
+            if data[:cinfo]
+              puts "maky maky"
+              p data[:cinfo]
+              data[:control] = data[:cinfo].new
+              data[:control].name = @name
+              data[:time] = Time.now
+            end
           end
 
+            STDERR.flush
+            STDOUT.flush
           if data[:control] && parent.data[:descriptor]
             if parent.data[:descriptor].can_nest?
-              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, parent.data[:descriptor], data[:cinfo])
+              puts "adding"
+              p parent.data[:descriptor]
+              puts "subrooted at -------", self.parent.to_s("  ")
+              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc, data[:cinfo])
             end
             data[:in_ui] = true
           end
           if expired? && data[:control]
             p data[:control]
+
+              puts "seconddding"
+              p nearest_desc
+              puts "subrooted at -------", self.parent.to_s("  ")
             data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc, data[:cinfo])
             data[:in_ui] = true
+            puts "success!"
           end
         end
         @children.each do |name, child|
@@ -49,13 +75,24 @@ module SD
       end
 
       def nearest_desc
-        parent.data[:descriptor] || parent.nearest_desc
+        desc = parent.data[:descriptor] || parent.nearest_desc
+        if desc.is_a? SD::DesignerSupport::Overlay
+          desc.child
+        else
+          desc
+        end
       end
       def expired?
         Time.now - data[:time] > 0.02
       end
       def self.observable=(obs)
         @@observable = obs
+      end
+
+      def to_s(nest="")
+        childs = children.map{|k, x|x.to_s(nest + " ")}.join("\n" + nest)
+        bits = "#{data[:in_ui] ? "ui" : ""} #{data[:control] ? "control" : "" } #{parent.data[:descriptor] ? "parent" : "" }"
+        "#{nest}#{name} ;; #{bits} -- #{parent.data[:descriptor].inspect}#{childs.length > 0 ? "\n#{nest}" : "" } #{childs}"
       end
     end
   end

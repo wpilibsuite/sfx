@@ -63,7 +63,7 @@ module SD
             @children.each do |itm, (x, y)|
               next unless itm
               @root.ui.layout
-              x, y = unless x or y
+              x, y = unless x and y
                 # do a brute force search on spaces that fit
                 catch :done do
                   0.step(@root.ui.width, 10) do |x|

@@ -88,6 +88,7 @@ class SD::Designer
       @data_core.known_names.add_change_listener do |change|
         change.next # change is an "iterator" of stuff, so use next to get the added list
         change.added_sub_list.each do |new_name|
+          puts "found #{new_name}"
           add_known new_name
           @view_controllers.each do |vc|
             if tmp = vc.should_add?(new_name, @data_core.known_names.get)
@@ -97,7 +98,7 @@ class SD::Designer
                 root = @aa_name_trees[vc]
                 namepart = ""
                 bits.each do |namebit|
-                  namepart << "/"
+                  namepart += "/" # Can't use << here or we modify the strings that are already in the treeview
                   namepart << namebit
                   child = root.children[namebit]
                   unless child
@@ -106,6 +107,8 @@ class SD::Designer
                   root = child
                 end
                 @aa_name_trees[vc].process method(:add_designable_control)
+                puts "it is:  --------------"
+                puts @aa_name_trees[vc].to_s
               end
               thread.run
             end
@@ -141,6 +144,8 @@ class SD::Designer
           save
         end
       end
+      #@aa_name_trees_threads.each{|k, v|v[1].kill}
+      @data_core.dispose
       @canvas.dispose unless true # stop_it
     end
 
@@ -232,9 +237,13 @@ class SD::Designer
     if control.is_a? Java::dashfx.lib.controls.DesignablePane
       designer.set_on_drag_dropped &method(:drag_drop)
       designer.set_on_drag_over &method(:drag_over)
+      puts "adidng control"
       @layout_managers[control] = SD::Windowing::LayoutManager.new(control)
     end
+    p @layout_managers
+    p parent
     @layout_managers[parent].layout_controls({designer => [x, y]})
+    puts "layout good"
     # Add it to the map so we can get the controller later if needed from UI tree
     @ui2pmap[control.ui] = control
     self.message = "Added new #{control.java_class.name}"
@@ -804,8 +813,10 @@ class SD::Designer
         loop {
           Thread.stop
           sleep(0.1)
-          @aa_name_trees_threads[vc][0].synchronize do
-            @aa_name_trees[vc].process method(:add_designable_control)
+          run_later do
+            @aa_name_trees_threads[vc][0].synchronize do
+              @aa_name_trees[vc].process method(:add_designable_control)
+            end
           end
         }
       end]

@@ -18,5 +18,6 @@ Controls:
   Source: /pid/PIDParent.fxml
   Group Type: PIDController
   Save Children: false
+  Sealed: true
   Placeholders: [p, i, d, disabled]
 
