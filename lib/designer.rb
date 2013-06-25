@@ -92,29 +92,24 @@ class SD::Designer
           @view_controllers.each do |vc|
             if tmp = vc.should_add?(new_name, @data_core.known_names.get)
               bits = new_name.split('/').reject(&:empty?)
-              root = @aa_name_trees[vc]
-              namepart = ""
-              bits.each do |namebit|
-                namepart << "/"
-                namepart << namebit
-                child = root.children[namebit]
-                unless child
-                  child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root)
+              mutex, thread = @aa_name_trees_threads[vc]
+              mutex.synchronize do
+                root = @aa_name_trees[vc]
+                namepart = ""
+                bits.each do |namebit|
+                  namepart << "/"
+                  namepart << namebit
+                  child = root.children[namebit]
+                  unless child
+                    child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root)
+                  end
+                  root = child
                 end
-                root = child
+                @aa_name_trees[vc].process method(:add_designable_control)
               end
-              #aa_add_some(vc.pane, new_name)
-              @aa_name_trees[vc].process method(:add_designable_control)
+              thread.run
             end
           end
-        end
-      end
-
-      #TODO: hack
-      Thread.new do
-        sleep 5
-        run_later do
-          @aa_name_trees.each {|k, v|v.process method(:add_designable_control)}
         end
       end
 
@@ -805,6 +800,15 @@ class SD::Designer
     @view_controllers << vc
     @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
     @aa_name_trees[vc] = SD::DesignerSupport::AANameTree.new("", SD::DesignerSupport::AANameTree.new("", vc.pane).tap{|x|x.data[:descriptor] = vc.pane})
+    @aa_name_trees_threads[vc] = [Mutex.new, Thread.new do
+        loop {
+          Thread.stop
+          sleep(0.1)
+          @aa_name_trees_threads[vc][0].synchronize do
+            @aa_name_trees[vc].process method(:add_designable_control)
+          end
+        }
+      end]
     tab_select(vc.tab)
     return vc.tab
   end
