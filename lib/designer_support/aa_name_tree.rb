@@ -54,7 +54,7 @@ module SD
               puts "adding"
               p parent.data[:descriptor]
               puts "subrooted at -------", self.parent.to_s("  ")
-              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc, data[:cinfo])
+              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]), data[:cinfo])
             end
             data[:in_ui] = true
           end
@@ -62,9 +62,9 @@ module SD
             p data[:control]
 
               puts "seconddding"
-              p nearest_desc
+              p nearest_desc(data[:control])
               puts "subrooted at -------", self.parent.to_s("  ")
-            data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc, data[:cinfo])
+            data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]), data[:cinfo])
             data[:in_ui] = true
             puts "success!"
           end
@@ -74,8 +74,13 @@ module SD
         end
       end
 
-      def nearest_desc
-        desc = parent.data[:descriptor] || parent.nearest_desc
+      def nearest_desc(control)
+        desc = parent.data[:descriptor] || parent.nearest_desc(control)
+        if desc == parent.data[:descriptor] && parent.name != ""
+          # truncate the path
+          # TODO: check if nested or passthrough
+          control.name = control.name.gsub(%r{^#{parent.name}/?}, "")
+        end
         if desc.is_a? SD::DesignerSupport::Overlay
           desc.child
         else
