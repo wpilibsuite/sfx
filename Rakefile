@@ -14,6 +14,7 @@ desc "Creates a single jar from all the other files"
 task "single-jar" => :compile do
   cp "../sfxlib/dist/sfxlib.jar", "lib/"
   cp "../sfxmeta/dist/sfxmeta.jar", "lib/"
+  cp "../LiveWindowPlugin/dist/LiveWindowPlugin.jar", "plugins/"
   cp nwt_jar, "lib/networktables-desktop.jar"
 
   # now we stuff stuff together (ha ha)
@@ -36,6 +37,7 @@ task :compile do
       target name: "clean" # must clean or the annotation processors will fail
       target name: "jar"
     end
+    ant(dir: "../LiveWindowPlugin/", target: "jar")
   end
 end
 
@@ -46,6 +48,9 @@ task :clean do
       target name: "clean"
     end
     ant(dir: "../sfxmeta/") do
+      target name: "clean"
+    end
+    ant(dir: "../LiveWindowPlugin/") do
       target name: "clean"
     end
   end
