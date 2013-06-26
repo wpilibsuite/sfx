@@ -14,7 +14,7 @@
 			<Label text="P:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 			<Label text="I:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
 			<Label text="D:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-			<Placeholder fx:id="disabled" controlPath="xBadx" propList="name: disabled" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+			<Placeholder fx:id="disabled" controlPath="RedGreen" propList="name: disabled" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
 			<Placeholder fx:id="d" controlPath="Value Meter" propList="name: d" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 			<Placeholder fx:id="i" controlPath="Value Meter" propList="name: i" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 			<Placeholder fx:id="p" controlPath="Value Meter" propList="name: p" GridPane.columnIndex="1" GridPane.rowIndex="1" />

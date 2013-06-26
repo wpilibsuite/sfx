@@ -40,7 +40,7 @@ module SD
         aa_code: {type: string, default: "return false;"},
         defaults_type_number: {type: control, default: "Bad Slider"},
         defaults_type_string: {type: control, default: "Label"},
-        defaults_type_bool: {type: control, default: "xBadx"},
+        defaults_type_bool: {type: control, default: "RedGreen"},
         recently_open: {type: array},
       }.each do |key, value|
         # getters

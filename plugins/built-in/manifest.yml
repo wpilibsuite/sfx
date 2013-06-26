@@ -5,8 +5,8 @@ Version: 0.0.1a1
 Plugin ID: 611C21A7-6D24-4F51-81D6-E5615F59DADA
 Controls:
 -
-  Name: xBadx
-  Description: Horriffic non-scalable boolean from built-insx
+  Name: RedGreen
+  Description: Boolean control using Red and Green
   Image: /bool/icon.png
   Source: /bool/BadBool.fxml
   Types: Boolean
