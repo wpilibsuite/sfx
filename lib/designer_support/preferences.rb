@@ -52,7 +52,7 @@ module SD
             value[:default]
           end
           if meths[:map]
-            meths[:map].call result
+            meths[:map].call (result || meths[:default])
           else
             result
           end
