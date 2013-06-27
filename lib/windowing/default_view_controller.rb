@@ -19,7 +19,7 @@ module SD
       attr_accessor :tab, :name
       attr_reader :layout_manager
       def initialize
-        @name = "general"
+        @name = "General"
         self.root_canvas = SD::DesignerSupport::Preferences.root_canvas.new
         # load default prefs
         @filter = SD::DesignerSupport::AAFilter.new
