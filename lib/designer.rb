@@ -19,6 +19,7 @@ class SD::Designer
   fxml "SFX.fxml"
 
   def initialize
+    $DEBUG_IT_FXML_RB = false
     # best to catch missing stuff now
     @toolbox= @left_gutter
     @selected_items = []
@@ -216,7 +217,7 @@ class SD::Designer
               class_loader = java.net.URLClassLoader.new([java.net.URL.new("file:#{plugin_path}")].to_java(java.net.URL))
               lambda {|url| class_loader.find_resource url.gsub(%r{^/}, '')}
             else
-              lambda {|url| java.net.URL.new("file://#{plugin_path}/#{url}")}
+              lambda {|url| java.net.URL.new("file:#{plugin_path}/#{url}")}
             end)
         end
       end
