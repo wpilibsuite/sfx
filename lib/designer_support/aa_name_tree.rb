@@ -57,21 +57,21 @@ module SD
               data[:expired_proc] = -> {
                 data[:control].name = name
                 par = (pard = nearest_desc(data[:control])).child
-                if !pard.respond_to? :can_nest? || pard.can_nest?
-                  add_designable_control.call(data[:control], nil, nil, par, data[:cinfo])
+                if pard.can_nest?
+                  add_designable_control.call(data[:descriptor], nil, nil, par, data[:cinfo])
                 else
                   # remove when parent is sealed
-                  data[:last_parent].children.remove(data[:control])
+                  data[:last_parent].child.children.remove(data[:descriptor])
                   data[:expired_proc] = nil
                 end
-                par
+                pard
               }
-              data[:last_parent] = original_par
+              data[:last_parent] = original_pard
             end
             data[:in_ui] = true
           end
         else
-          if data[:expired_proc] && data[:last_parent] != nearest_desc(nil).child
+          if data[:expired_proc] && data[:last_parent] != nearest_desc(nil)
             data[:last_parent] = data[:expired_proc].call
           end
         end
