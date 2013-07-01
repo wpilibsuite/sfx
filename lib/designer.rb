@@ -19,7 +19,6 @@ class SD::Designer
   fxml "SFX.fxml"
 
   def initialize
-    $DEBUG_IT_FXML_RB = false
     # best to catch missing stuff now
     @toolbox= @left_gutter
     @selected_items = []

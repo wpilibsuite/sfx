@@ -42,7 +42,11 @@ module SD
             fx = FxmlLoader.new
             fx.location = url_resolver.(source)
             fx.controller = SD::DesignerSupport::PlaceholderFixer.new(*placeholders) if placeholders
-            fx.load.tap do |obj|
+            if placeholders
+              fx.load(:no_jit)
+            else
+              fx.load()
+            end.tap do |obj|
               fx.controller.fix(obj) if placeholders
               [*defaults].each do |k, v|
                 obj.send(k + "=", v)
