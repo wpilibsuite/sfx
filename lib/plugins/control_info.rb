@@ -37,7 +37,7 @@ module SD
         end
         @types = [*info["Types"], *info["Supported Types"]].map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
         @group_types = info["Group Type"]
-        @new = lambda { |source, placeholders, defaults|
+        @new = lambda { |source, placeholders, pholder_override, defaults|
           lambda {
             fx = FxmlLoader.new
             fx.location = url_resolver.(source)
@@ -48,7 +48,7 @@ module SD
               fx.load()
             end.tap do |obj|
               if placeholders
-                objs = fx.controller.fix(obj)
+                objs = fx.controller.fix(obj, pholder_override)
                 if [*defaults].any? {|k, v| k.include? "."}
                   nested, defaults = defaults.partition{|k, v| k.include? "."}
                   nested.each do |k, v|
@@ -62,7 +62,7 @@ module SD
               end
             end
           }
-        }.(info["Source"],info["Placeholders"],info["Defaults"])
+        }.(info["Source"],info["Placeholders"],info["Placeholder Override"] ||{},info["Defaults"])
       end
 
       def new

@@ -23,11 +23,11 @@ module SD
         @replace = what_to_replace
       end
 
-      def fix(root)
+      def fix(root, overrides)
         Hash[@replace.map do |itm|
           pholder = instance_variable_get("@#{itm}")
           # set all the properties
-          new_ctl = with(SD::Plugins::ControlInfo.find(pholder.control_path).new, YAML.load("{#{pholder.prop_list}}"))
+          new_ctl = with(SD::Plugins::ControlInfo.find(overrides[itm]||pholder.control_path).new, YAML.load("{#{pholder.prop_list}}"))
           root.add_control new_ctl
           pholder.replace new_ctl.ui
           [itm, new_ctl]
