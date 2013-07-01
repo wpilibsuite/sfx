@@ -49,7 +49,7 @@ class SD::Designer
     @aa_regexer.text_property.add_change_listener do |ov, ol, new|
       begin
         regx = Regexp.new(new, "i")
-        @aa_filter.regex = regx
+        # @aa_filter.regex = regx # TODO: fix
         # filter the list
         @aa_tree_list.each do |child|
           child[:fout] = child[:value].match(regx) == nil
