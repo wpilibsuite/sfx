@@ -47,7 +47,16 @@ module SD
             else
               fx.load()
             end.tap do |obj|
-              fx.controller.fix(obj) if placeholders
+              if placeholders
+                objs = fx.controller.fix(obj)
+                if [*defaults].any? {|k, v| k.include? "."}
+                  nested, defaults = defaults.partition{|k, v| k.include? "."}
+                  nested.each do |k, v|
+                    name, prop = k.split(".")
+                    objs[name].send(prop + "=", v)
+                  end
+                end
+              end
               [*defaults].each do |k, v|
                 obj.send(k + "=", v)
               end

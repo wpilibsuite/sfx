@@ -24,10 +24,14 @@ module SD
       end
 
       def fix(root)
-        @replace.each do |itm|
+        Hash[@replace.map do |itm|
           pholder = instance_variable_get("@#{itm}")
-          pholder.replace with(SD::Plugins::ControlInfo.find(pholder.control_path).new, YAML.load("{#{pholder.prop_list}}")).tap{|x|root.add_control x}.ui
-        end
+          # set all the properties
+          new_ctl = with(SD::Plugins::ControlInfo.find(pholder.control_path).new, YAML.load("{#{pholder.prop_list}}"))
+          root.add_control new_ctl
+          pholder.replace new_ctl.ui
+          [itm, new_ctl]
+        end]
       end
     end
   end
