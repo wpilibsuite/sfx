@@ -783,8 +783,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="297.8144"
-     inkscape:cy="1690.6448"
+     inkscape:cx="266.69531"
+     inkscape:cy="1750.6448"
      inkscape:document-units="px"
      inkscape:current-layer="g4556"
      showgrid="false"
@@ -811,7 +811,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1714,6 +1714,40 @@
                x="123.43484"
                id="tspan4510"
                sodipodi:role="line">df0040</tspan></text>
+          <text
+             xml:space="preserve"
+             style="font-size:18px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+             x="309.5"
+             y="-743.38782"
+             id="text8106"
+             sodipodi:linespacing="125%"
+             transform="translate(-12.551146,80.079843)"><tspan
+               sodipodi:role="line"
+               id="tspan8108"
+               x="309.5"
+               y="-743.38782">-40 L darker</tspan></text>
+          <text
+             xml:space="preserve"
+             style="font-size:18px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#900029;fill-opacity:1;stroke:none;font-family:Sans"
+             x="285.94885"
+             y="-610.30798"
+             id="text8110"
+             sodipodi:linespacing="125%"><tspan
+               sodipodi:role="line"
+               id="tspan8112"
+               x="285.94885"
+               y="-610.30798">900029</tspan></text>
+          <text
+             xml:space="preserve"
+             style="font-size:18px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#3d8b00;fill-opacity:1;stroke:none;font-family:Sans"
+             x="290.69885"
+             y="-647.05798"
+             id="text8622"
+             sodipodi:linespacing="125%"><tspan
+               sodipodi:role="line"
+               id="tspan8624"
+               x="290.69885"
+               y="-647.05798">3d8b00</tspan></text>
         </g>
         <g
            id="g4566">
