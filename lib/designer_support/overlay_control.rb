@@ -119,6 +119,11 @@ module SD::DesignerSupport
           end
         end
       end
+      if child.respond_to? :custom and child.custom
+        child.custom.all_methods.each do |mname|
+          props << [child.custom.send("#{mname}Property"), child.custom.designable_for(mname), child.custom.type_for(mname)]
+        end
+      end
       return props
     end
 

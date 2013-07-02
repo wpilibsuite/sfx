@@ -37,16 +37,23 @@ module SD
         end
         @types = [*info["Types"], *info["Supported Types"]].map{|x|Java::dashfx.lib.data.SmartValueTypes.valueOf(x).mask}
         @group_types = info["Group Type"]
-        @new = lambda { |source, placeholders, pholder_override, defaults|
+        @new = lambda { |source, placeholders, pholder_override, defaults,custom_props|
           lambda {
             fx = FxmlLoader.new
             fx.location = url_resolver.(source)
             fx.controller = SD::DesignerSupport::PlaceholderFixer.new(*placeholders) if placeholders
+            opts = {jit: :no_jit}
+            if custom_props
+              puts "custom props@!"
+              opts[:on_root_set] = lambda { |root|
+                puts "we rooting!"
+                root.setCustomPropObject(SD::Plugins::CustomPropertyClass.new(custom_props))
+              }
+            end
             if placeholders
-              fx.load(:no_jit)
-            else
-              fx.load()
-            end.tap do |obj|
+              opts[:jit] = :no_jit
+            end
+            fx.load(jruby_ext: opts).tap do |obj|
               if placeholders
                 objs = fx.controller.fix(obj, pholder_override)
                 if [*defaults].any? {|k, v| k.include? "."}
@@ -62,7 +69,7 @@ module SD
               end
             end
           }
-        }.(info["Source"],info["Placeholders"],info["Placeholder Override"] ||{},info["Defaults"])
+        }.(info["Source"],info["Placeholders"],info["Placeholder Override"] ||{},info["Defaults"], info["Custom Properties"])
       end
 
       def new
