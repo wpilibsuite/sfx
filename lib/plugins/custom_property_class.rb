@@ -22,7 +22,7 @@ module SD
         Java::int => Java::javafx.beans.property.SimpleIntegerProperty,
         Java::boolean => Java::javafx.beans.property.SimpleBooleanProperty,
       }
-      DEFAULT_MAP.default = Java::javafx.beans.property.SimpleStringProperty
+      DEFAULT_MAP.default = Java::javafx.beans.property.SimpleObjectProperty
       def self.new(props)
         full_map = props.map{|k, v|
           if v.is_a? String
