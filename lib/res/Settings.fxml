@@ -52,6 +52,16 @@
                     <Label text="Warning: changing this value will reset your current layout. All Controls will be saved but positioning information will be destroyed" textFill="#990000" wrapText="true" />
                   </children>
                 </VBox>
+                <Label text="Toolbox:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <ComboBox fx:id="toolbox_icons" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <items>
+                    <FXCollections fx:factory="observableArrayList">
+                      <String fx:value="Item 1" />
+                      <String fx:value="Item 2" />
+                      <String fx:value="Item 3" />
+                    </FXCollections>
+                  </items>
+                </ComboBox>
               </children>
               <columnConstraints>
                 <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="SOMETIMES" minWidth="-1.0" prefWidth="-1.0" />

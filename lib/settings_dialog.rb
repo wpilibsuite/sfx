@@ -54,6 +54,8 @@ class SD::SettingsDialog
       root_types, SD::SSListCell, Proc.new{|dat|
         @main.root_canvas = dat[:raw_value].new})
 
+    prep_diff(@toolbox_icons, "toolbox_icons", :str_combo, ["Icons&Text", "IconsOnly", "TextOnly"])
+
     @aa_regex.text = @prefs.aa_regex
     @aa_code_code = @prefs.aa_code
 
@@ -92,6 +94,16 @@ class SD::SettingsDialog
       obj.value = combo_range.find{|x| x.id == @prefs.send(prop_name).id}
       obj.selection_model.selected_item_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new.name, raw_value: new, on_save: on_save}
+        if block
+          block.call(new)
+        end
+      end
+    when :str_combo
+      obj.items.clear
+      obj.items.add_all combo_range
+      obj.value = combo_range.find{|x| x == @prefs.send(prop_name)}
+      obj.selection_model.selected_item_property.add_change_listener do |ov, old, new|
+        @diffs[prop_name] = {type: :combo, value: new, raw_value: new, on_save: on_save}
         if block
           block.call(new)
         end

@@ -38,6 +38,7 @@ module SD
         aa_policy: {type: string, default: "regex"},
         aa_regex: {type: string, default: "SmartDashboard"},
         aa_code: {type: string, default: "return false;"},
+        toolbox_icons: {type: string, default: "Icons&Text"},
         defaults_type_number: {type: control, default: "Bad Slider"},
         defaults_type_string: {type: control, default: "Label"},
         defaults_type_bool: {type: control, default: "RedGreen"},

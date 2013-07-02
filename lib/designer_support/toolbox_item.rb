@@ -5,6 +5,14 @@ module SD::DesignerSupport
     fxml "DesignerToolboxItem.fxml"
 
     def initialize(obj, dnd_get_id, opts={})
+      if SD::DesignerSupport::Preferences.toolbox_icons == "Icons&Text"
+        children.clear
+        load_fxml "DesignerToolboxItemWithText.fxml"
+      elsif SD::DesignerSupport::Preferences.toolbox_icons == "TextOnly"
+        children.clear
+        load_fxml "DesignerToolboxItemOnlyText.fxml"
+      end
+      @label.text = obj.name
       @obj = obj
       @dnd_get_id = dnd_get_id
       Tooltip.install self, tooltip(graphic: vbox!{label(obj.name); label(obj.description)})
