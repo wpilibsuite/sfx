@@ -26,15 +26,15 @@ module SD
       def self.new(props)
         full_map = props.map{|k, v|
           if v.is_a? String
-            {"name" => k, "var" => k.snake_case.gsub(" ", "_"), "ptype" => DEFAULT_MAP[JavaUtilities.get_proxy_class(v)], "type" => JavaUtilities.get_proxy_class(v), "description" => "#{k} Property"}
+            {"Name" => k, "Var" => k.snake_case.gsub(" ", "_"), "Ptype" => DEFAULT_MAP[JavaUtilities.get_proxy_class(v)], "Type" => JavaUtilities.get_proxy_class(v), "Description" => "#{k} Property"}
           else
-            v["name"] = k
-            v["type"] = JavaUtilities.get_proxy_class(v["type"])
-
-            v["ptype"] = if v["ptype"]
-              JavaUtilities.get_proxy_class(v["ptype"])
+            v["Name"] = k
+            v["Type"] = JavaUtilities.get_proxy_class(v["Type"])
+            v["Default"] = RubyWrapperBeanAdapter.coerce(v["Default"], v["Type"].java_class) if v["Default"]
+            v["Ptype"] = if v["Ptype"]
+              JavaUtilities.get_proxy_class(v["Ptype"])
             else
-              DEFAULT_MAP[v["type"]]
+              DEFAULT_MAP[v["Type"]]
             end
             v
           end
@@ -42,33 +42,35 @@ module SD
         c = Class.new do
           include JRubyFX
           full_map.each do |pdesc|
-            fxml_accessor pdesc["var"].to_sym, pdesc["ptype"], pdesc["type"]
+            fxml_accessor pdesc["Var"].to_sym, pdesc["Ptype"], pdesc["Type"]
           end
 
           def initialize(full_map)
             @full_map = full_map
+            full_map.each do |pdesc|
+              send("#{pdesc['Var'].snake_case}=", pdesc["Default"]) if pdesc["Default"]
+            end
           end
 
           add_method_signature :all_methods, [java.lang.String[].java_class]
           def all_methods
-            @full_map.map{|k|k["var"]}
+            @full_map.map{|k|k["Var"]}
           end
 
           add_method_signature :designable_for, [java.lang.Object.java_class, java.lang.String.java_class]
           def designable_for(name)
-            pdesc = @full_map.find{|x|x["var"] == name}
-            RDesignableProperty.new pdesc["name"], pdesc["description"]
+            pdesc = @full_map.find{|x|x["Var"] == name}
+            RDesignableProperty.new pdesc["Name"], pdesc["Description"]
           end
-
 
           add_method_signature :type_for, [java.lang.Class.java_class, java.lang.String.java_class]
           def type_for(name)
-            pdesc = @full_map.find{|x|x["var"] == name}
-            pdesc["type"].java_class
+            pdesc = @full_map.find{|x|x["Var"] == name}
+            pdesc["Type"].java_class
           end
         end
         c.become_java!
-        return c.new(full_map).tap{|x| puts "just created", x.inspect, x}
+        return c.new(full_map)
       end
     end
   end

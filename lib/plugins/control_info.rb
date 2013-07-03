@@ -44,9 +44,7 @@ module SD
             fx.controller = SD::DesignerSupport::PlaceholderFixer.new(*placeholders) if placeholders
             opts = {jit: :no_jit}
             if custom_props
-              puts "custom props@!"
               opts[:on_root_set] = lambda { |root|
-                puts "we rooting!"
                 root.setCustomPropObject(SD::Plugins::CustomPropertyClass.new(custom_props))
               }
             end
