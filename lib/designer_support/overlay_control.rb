@@ -40,6 +40,7 @@ module SD::DesignerSupport
       #
       @selected_ui.opacity = 0
       @running = SimpleBooleanProperty.new(false)
+      @running.bind(parent_designer.running_property)
       @disabled = SimpleBooleanProperty.new(false)
       # TODO: intercept events
       @selected_ui.visibleProperty.bind(@running.or(@disabled).not)

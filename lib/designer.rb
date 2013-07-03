@@ -16,6 +16,8 @@ class SD::Designer
   java_import 'dashfx.lib.data.InitInfo'
   java_import 'dashfx.lib.registers.ControlRegister'
 
+  property_accessor :running
+
   fxml "SFX.fxml"
 
   def initialize
@@ -41,6 +43,7 @@ class SD::Designer
     @view_controllers = []
     @aa_name_trees = {}
     @aa_name_trees_threads = {}
+    @running = simple_boolean_property(self, "running", false)
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -392,11 +395,7 @@ class SD::Designer
 
   def run
     @mode = :run
-    @view_controllers.each do |vc|
-      vc.pane.children.each do |c|
-        c.running = true
-      end
-    end
+    self.running = true
     hide_controls
     hide_toolbox
     hide_properties
@@ -404,11 +403,7 @@ class SD::Designer
 
   def design
     @mode = :design
-    @view_controllers.each do |vc|
-      vc.pane.children.each do |c|
-        c.running = false
-      end
-    end
+    self.running = false
     show_controls
   end
 
