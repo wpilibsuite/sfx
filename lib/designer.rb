@@ -602,7 +602,11 @@ class SD::Designer
     bnds = elt.localToScene(elt.getBoundsInLocal)
     scr_x = @scene.x + @stage.x
     scr_y = @scene.y + @stage.y
-    scr = Screen.getScreensForRectangle(scr_x, scr_y, 1, 1)[0]
+    scr = Screen.getScreensForRectangle(scr_x + bnds.min_x, scr_y + bnds.min_y, 1, 1)[0]
+    unless scr
+      lamb = lambda{|x,y|Screen.getScreensForRectangle(scr_x + x, scr_y + y, 1, 1)[0]}
+      scr = lamb.call(bnds.max_x, bnds.max_y) || lamb.call(bnds.max_x, bnds.min_y) || lamb.call(bnds.min_x, bnds.max_y) || Screen.primary
+    end
     loc_x = bnds.max_x + scr_x + 5
     loc_y = bnds.min_y + scr_y
     if scr.bounds.max_x <= loc_x + @properties.width
