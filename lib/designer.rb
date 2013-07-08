@@ -44,6 +44,7 @@ class SD::Designer
     @aa_name_trees = {}
     @aa_name_trees_threads = {}
     @running = simple_boolean_property(self, "running", false)
+    @aa_ignores = []
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -92,6 +93,7 @@ class SD::Designer
       @data_core.known_names.add_change_listener do |change|
         change.next # change is an "iterator" of stuff, so use next to get the added list
         change.added_sub_list.each do |new_name|
+          next if @aa_ignores.include? new_name
           add_known new_name
           @view_controllers.each do |vc|
             if tmp = vc.should_add?(new_name, @data_core.known_names.get)
@@ -468,7 +470,7 @@ class SD::Designer
       Gem::Package::TarWriter.new(io) do |tar|
         tar.add_file("version", 0644) {|f|f.write("0.1")}
         tar.add_file("data.yml", 0644) do |yml|
-          psg = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers)
+          psg = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers, @data_core)
           yml.write YAML.dump(psg)
           @current_save_data = psg
         end
@@ -534,7 +536,8 @@ class SD::Designer
     @current_save_data = doc
     # TODO: tab support
     clear_tabs()
-    doc.each do |ro|
+    @aa_ignores = doc.known_names
+    doc.vcs.each do |ro|
       vc = ro.new
       add_tab(vc)
       ro.children.each {|x| open_visitor(x, vc.pane)}
@@ -823,6 +826,8 @@ class SD::Designer
           end
         }
       end]
+    @ui2pmap[vc.pane] = vc
+    @ui2pmap[vc.ui] = vc
     tab_select(vc.tab)
     return vc.tab
   end
@@ -847,6 +852,7 @@ class SD::Designer
     @vc_index = 0
     @aa_name_trees = {}
     @aa_name_trees_threads = {}
+    @ui2pmap = {}
   end
 
   # edit the smart dashboard settings

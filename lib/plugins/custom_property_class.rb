@@ -26,47 +26,52 @@ module SD
       def self.new(props)
         full_map = props.map{|k, v|
           if v.is_a? String
-            {"Name" => k, "Var" => k.snake_case.gsub(" ", "_"), "Ptype" => DEFAULT_MAP[JavaUtilities.get_proxy_class(v)], "Type" => JavaUtilities.get_proxy_class(v), "Description" => "#{k} Property"}
+            {name: k, var: k.snake_case.gsub(" ", "_"), ptype: DEFAULT_MAP[JavaUtilities.get_proxy_class(v)], type: JavaUtilities.get_proxy_class(v), description: "#{k} Property"}
           else
-            v["Name"] = k
-            v["Type"] = JavaUtilities.get_proxy_class(v["Type"])
-            v["Default"] = RubyWrapperBeanAdapter.coerce(v["Default"], v["Type"].java_class) if v["Default"]
-            v["Ptype"] = if v["Ptype"]
-              JavaUtilities.get_proxy_class(v["Ptype"])
-            else
-              DEFAULT_MAP[v["Type"]]
-            end
-            v
+            type = JavaUtilities.get_proxy_class(v["Type"])
+            default = RubyWrapperBeanAdapter.coerce(v["Default"], type.java_class) if v["Default"]
+            {
+              name: k,
+              type: type,
+              default: default,
+              ptype: if v["Ptype"]
+                JavaUtilities.get_proxy_class(v["Ptype"])
+              else
+                DEFAULT_MAP[type]
+              end,
+              var: v["Var"],
+              description: v["Description"]
+            }
           end
         }
         c = Class.new do
           include JRubyFX
           full_map.each do |pdesc|
-            fxml_accessor pdesc["Var"].to_sym, pdesc["Ptype"], pdesc["Type"]
+            fxml_accessor pdesc[:var].to_sym, pdesc[:ptype], pdesc[:type]
           end
 
           def initialize(full_map)
             @full_map = full_map
             full_map.each do |pdesc|
-              send("#{pdesc['Var'].snake_case}=", pdesc["Default"]) if pdesc["Default"]
+              send("#{pdesc[:var].snake_case}=", pdesc[:default]) if pdesc[:default]
             end
           end
 
           add_method_signature :all_methods, [java.lang.String[].java_class]
           def all_methods
-            @full_map.map{|k|k["Var"]}
+            @full_map.map{|k|k[:var]}
           end
 
           add_method_signature :designable_for, [java.lang.Object.java_class, java.lang.String.java_class]
           def designable_for(name)
-            pdesc = @full_map.find{|x|x["Var"] == name}
-            RDesignableProperty.new pdesc["Name"], pdesc["Description"]
+            pdesc = @full_map.find{|x|x[:var] == name}
+            RDesignableProperty.new pdesc[:name], pdesc[:description]
           end
 
           add_method_signature :type_for, [java.lang.Class.java_class, java.lang.String.java_class]
           def type_for(name)
-            pdesc = @full_map.find{|x|x["Var"] == name}
-            pdesc["Type"].java_class
+            pdesc = @full_map.find{|x|x[:var] == name}
+            pdesc[:type].java_class
           end
         end
         c.become_java!

@@ -31,8 +31,8 @@ module SD
       end
 
       # TODO: I don't like this special casing
-      def self.parse_scene_graph(roots)
-        roots.map{|vc| DashRoot.new(vc.class, vc.pane.children.map{|x|self.parse_object x})}
+      def self.parse_scene_graph(roots, data_core)
+        DataObject.new data_core, roots.map{|vc| DashRoot.new(vc.class, vc.pane.children.map{|x|self.parse_object x})}
       end
 
       def self.parse_object(elt)
@@ -48,6 +48,13 @@ module SD
 
       def new
         @vc_class.new
+      end
+    end
+    class DataObject
+      attr_accessor :vcs, :known_names
+      def initialize(data, vcs)
+        @vcs = vcs
+        @known_names = data.known_names.to_a
       end
     end
   end
