@@ -533,9 +533,12 @@ class SD::Designer
     doc =  YAML.load(data['data.yml'])
     @current_save_data = doc
     # TODO: tab support
-    @canvas.children.clear
-    self.root_canvas = doc.object.new
-    doc.children.each {|x| open_visitor(x, @canvas) }
+    clear_tabs()
+    doc.each do |ro|
+      vc = ro.new
+      add_tab(vc)
+      ro.children.each {|x| open_visitor(x, vc.pane)}
+    end
     @currently_open_file = file
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
     self.message = "File Load Successfull"
@@ -544,8 +547,8 @@ class SD::Designer
   def open_visitor(cdesc, parent)
     desc = SD::Plugins::ControlInfo.find(cdesc.object)
     obj = desc.new
-    obj.ui.setPrefWidth cdesc.sprops["Width"]
-    obj.ui.setPrefHeight cdesc.sprops["Height"]
+    obj.ui.setPrefWidth cdesc.sprops["Width"] if cdesc.sprops["Width"] > 0
+    obj.ui.setPrefHeight cdesc.sprops["Height"] if cdesc.sprops["Height"] > 0
     add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], parent, desc)
     cdesc.props.each do |prop, val|
       nom = "set#{prop}"
@@ -832,6 +835,14 @@ class SD::Designer
 
   def tab_clicked(e)
     tab_select(e.target)
+  end
+
+  def clear_tabs
+    @tab_box.children.remove_all(*@view_controllers.map(&:tab))
+    @view_controllers = []
+    @vc_index = 0
+    @aa_name_trees = {}
+    @aa_name_trees_threads = {}
   end
 
   # edit the smart dashboard settings

@@ -91,7 +91,7 @@ module SD
       end
 
       protected
-      attr_writer :name, :description, :category, :group_types, :types, :new, :image_proc
+      attr_writer :name, :description, :category, :group_types, :types, :new, :image_proc, :save_children
     end
 
     class JavaControlInfo < ControlInfo
@@ -117,6 +117,7 @@ module SD
         end
         self.new = lambda { jclass.ruby_class.new }
         self.group_types = moar_info["Group Type"] # TODO: this is not very good... should be cleaner
+        self.save_children = moar_info['Save Children']
       end
     end
   end

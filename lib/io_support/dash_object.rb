@@ -45,6 +45,10 @@ module SD
         @vc_class = vc_class
         @children = children
       end
+
+      def new
+        @vc_class.new
+      end
     end
   end
 end
