@@ -10,19 +10,10 @@ class SD::Designers::NumberDesigner
   attr_reader :ui
 
   def initialize
-    @slider = Slider.new
-    @ui = BorderPane.new
-
-    @slider.max = 40
-    @slider.min = -40
-    @ui.center = @slider
-    lbl = Label.new
-    lbl.textProperty().bind(@slider.valueProperty().asString("%.2f"));
-    @ui.right = lbl
+    @ui = SD::DesignerSupport::NumberSpinner.new
   end
 
-  #FIXME: TODO: use normal spinner
   def design(prop)
-    @slider.valueProperty().bindBidirectional(prop);
+    ui.value_property.bindBidirectional(prop)
   end
 end

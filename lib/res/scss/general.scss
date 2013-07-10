@@ -12,3 +12,46 @@
 .text-field:focused {
 	-fx-background-color: transparent, -fx-text-box-border, -fx-control-inner-background;
 }
+
+.number-spinner {
+	.button {
+		-fx-border-radius: 0;
+		-fx-background-color: -fx-control-inner-background;
+		-fx-background-radius: 0;
+		-fx-border-width: 1px 0 1px 1px;
+		-fx-border-color: -fx-text-box-border;
+		-fx-text-fill: red;
+		-fx-background-insets: 0, 0, 1, 2;
+		-fx-padding: 2 7 3 7;
+		&.plus {
+			-fx-text-fill: green;
+			-fx-border-radius: 0 2px 2px 0;
+			-fx-background-color: -fx-control-inner-background;
+			-fx-background-radius: 0 2px 2px 0;
+			-fx-border-width: 1px;
+			&:armed {
+				-fx-background-color: green;
+				-fx-text-fill: white;
+			}
+		}
+		&:focused {
+			-fx-background-color: -fx-control-inner-background;
+			-fx-background-insets: 0, 0, 1;
+		}
+		&:armed {
+			-fx-background-color: red;
+			-fx-text-fill: white;
+		}
+	}
+	.text-field {
+		-fx-border-width: 1px 0 1px 1px;
+		-fx-border-color: -fx-text-box-border transparent -fx-text-box-border -fx-text-box-border;
+		-fx-background-color: -fx-control-inner-background;
+		-fx-border-radius: 2px 0 0 2px;
+		-fx-background-radius: 2px 0 0 2px;
+		&:focused {
+			-fx-background-insets: 0, 1, 2;
+			-fx-background-color: -fx-control-inner-background;
+		}
+	}
+}
