@@ -34,7 +34,7 @@ module SD::DesignerSupport
       props.each do |prop|
         with(@prop_list) do
           add label!(prop[1].value + ": ", tooltip: tooltip!(prop[1].description)), 0, col
-          add Java::dashfx.lib.designers.Designers.getFor(prop[2]).tap{|x|x.design(prop[0])}.getUiBits, 1, col
+          add SD::Designers.get_for(prop[2]).tap{|x|x.design(prop[0])}.ui, 1, col
           col += 1
         end
       end
