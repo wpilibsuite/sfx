@@ -14,6 +14,6 @@ class SD::Designers::BoolDesigner
   end
 
 	def design(prop)
-		ui.selectedProperty().bindBidirectional(prop);
+		ui.selectedProperty().bindBidirectional(prop.property)
   end
 end

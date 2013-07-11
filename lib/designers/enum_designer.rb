@@ -23,9 +23,9 @@ class SD::Designers::EnumDesigner
   end
 
   def design(prop)
-    @lprop = prop
-    ui.getSelectionModel().select(prop.value)
-    prop.add_change_listener do |new|
+    @lprop = prop.property
+    ui.getSelectionModel().select(@lprop.value)
+    @lprop.add_change_listener do |new|
       ui.selection_model.select new
     end
   end

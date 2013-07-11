@@ -33,8 +33,8 @@ module SD::DesignerSupport
       col = 0
       props.each do |prop|
         with(@prop_list) do
-          add label!(prop[1].value + ": ", tooltip: tooltip!(prop[1].description)), 0, col
-          add SD::Designers.get_for(prop[2]).tap{|x|x.design(prop[0])}.ui, 1, col
+          add label!(prop.name + ": ", tooltip: tooltip!(prop.description)), 0, col
+          add SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui, 1, col
           col += 1
         end
       end

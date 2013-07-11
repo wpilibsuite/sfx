@@ -17,13 +17,17 @@ module SD::DesignerSupport
     include JRubyFX
     property_accessor :value
 
-    def initialize
+    def initialize(min, step, max, log_style=true)
       super()
+      @min = min || -1.0/0
+      @step = step
+      @max = max || 1.0/0
+      @log_style = log_style
       @value = simple_double_property(self, "value", 0.0)
       @value.add_change_listener do |new|
         @field.text = new.to_s unless @noback
       end
-      font = build(FxmlBuilderBuilder, {"name"=>"System Bold", "size"=>"13.0"}, Java::JavafxSceneText::Font)
+      font = Font.new("System Bold", 13)
 
       @field = Java::JavafxSceneControl::TextField.new("0.0")
       @field.setAlignment(Java::javafx::geometry::Pos::CENTER_RIGHT)
@@ -62,16 +66,53 @@ module SD::DesignerSupport
       getStyleClass.add("number-spinner")
     end
 
-    def minus_press(e)
+    def on_press(action, bound)
       reparse_value
-      self.value -= 1
-      @field.text = self.value.to_s
+      self.value = unless (min..max).include?(stepped = value.send(action, step))
+        bound
+      else
+        stepped
+      end
+    end
+
+    def minus_press(e)
+      on_press(:-, min)
     end
 
     def plus_press(e)
-      reparse_value
-      self.value += 1
-      @field.text = self.value.to_s
+      on_press(:+, max)
+    end
+
+    def step
+      if @step == nil
+        x = value
+        k = 1
+        if x > 10
+          while x > 10
+            x /= 10.0
+            k *= 10
+          end
+          if x < 2
+            k /= 10.0
+          end
+        elsif x == 0
+          k = 1
+        elsif @log_style
+          if x == 1
+            k = 0.1
+          else
+            while x < 1
+              x *= 10.0
+              k /= 10.0
+            end
+          end
+        else
+          k = 1
+        end
+        k
+      else
+        step
+      end
     end
 
     def released(e)
@@ -80,6 +121,22 @@ module SD::DesignerSupport
 
     def reparse_value
       self.value = @field.text.to_f
+    end
+
+    def min
+      if @min.is_a? ObservableValue
+        @min.value
+      else
+        @min
+      end
+    end
+    
+    def max
+      if @max.is_a? ObservableValue
+        @max.value
+      else
+        @max
+      end
     end
   end
 end

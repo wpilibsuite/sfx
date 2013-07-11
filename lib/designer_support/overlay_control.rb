@@ -90,8 +90,9 @@ module SD::DesignerSupport
             q = src.invoke(child).to_java
             # TODO: proper types
             # TODO: fake properties for PC
-            type = jc.java_method("get" + src.name.gsub(/^(get|set)/, '').gsub(/Property$/, '').gsub(/^([a-z])/){|x|x.upcase}).return_type
-            props << [q, annote, type] if q.is_a? Java::JavafxBeansValue::WritableValue # TODO: real class
+            camel = src.name.gsub(/^(get|set)/, '').gsub(/Property$/, '')
+            type = jc.java_method("get" + camel.gsub(/^([a-z])/){|x|x.upcase}).return_type
+            props << SD::DesignerSupport::Property.new(camel, annote.value, annote.description, type, q, child, src) if q.is_a? Java::JavafxBeansValue::WritableValue
           elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty and src != pc
             annote.value.length.times do |i|
               prop_name = annote.value[i] + "Property"
@@ -103,8 +104,9 @@ module SD::DesignerSupport
                 type = child.respond_to?(get_name) ? child.java_class.java_instance_methods.find{|x|x.name==get_name} :
                   child.ui.java_class.java_instance_methods.find{|x|x.name==get_name}
               end
+              type_method = type
               type = type.return_type
-              props << [meth.call, RDesignableProperty.new(annote.value[i], annote.descriptions[i]), type]
+              props << SD::DesignerSupport::Property.new(annote.value[i], annote.value[i], annote.descriptions[i], type, meth.call, child, type_method)
             end
           elsif annote.is_a? Java::dashfx.lib.controls.DesignableChildProperty and src == pc
             annote.property.length.times do |i|
@@ -114,17 +116,19 @@ module SD::DesignerSupport
               q.add_change_listener do |new|
                 @parent.class.send "set#{annote.property[i]}", self, new
               end
-              type = pc.java_class_methods.find{|x|x.name == "get#{annote.property[i]}"}.return_type
-              props << [q, RDesignableProperty.new(annote.name[i], annote.description[i]), type]
+              type_method = pc.java_class_methods.find{|x|x.name == "get#{annote.property[i]}"}
+              type = type_method.return_type
+              props << SD::DesignerSupport::Property.new(annote.property[i], annote.name[i], annote.description[i], type, q, @parent, type_method)
             end
           end
         end
       end
       if child.respond_to? :custom and child.custom
         child.custom.all_methods.each do |mname|
-          props << [child.custom.send("#{mname}Property"), child.custom.designable_for(mname), child.custom.type_for(mname)]
+          props << [child.custom.send("#{mname}Property"), child.custom.designable_for(mname), child.custom.type_for(mname), [:custom, child.custom]]
         end
       end
+      props.each{|x|x.related_props = props}
       return props
     end
 

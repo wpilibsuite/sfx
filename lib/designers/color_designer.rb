@@ -13,6 +13,6 @@ class SD::Designers::ColorDesigner
   end
 
 	def design(prop)
-		ui.valueProperty().bindBidirectional(prop);
+		ui.valueProperty().bindBidirectional(prop.property)
   end
 end

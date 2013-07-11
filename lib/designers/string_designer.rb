@@ -14,6 +14,6 @@ class SD::Designers::StringDesigner
   end
 
 	def design(prop)
-		ui.textProperty().bindBidirectional(prop);
+		ui.textProperty().bindBidirectional(prop.property)
   end
 end

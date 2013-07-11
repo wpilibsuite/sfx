@@ -19,7 +19,7 @@
   -fx-border-color: -fx-text-box-border;
   -fx-text-fill: red;
   -fx-background-insets: 0, 0, 1, 2;
-  -fx-padding: 2 7 3 7;
+  -fx-padding: 2 5 3 5;
 }
 .number-spinner .button.plus {
   -fx-text-fill: green;
