@@ -15,7 +15,7 @@ class SD::Designers::EnumDesigner
 
   def enum=(x)
     ui.items = FXCollections.observableArrayList(x.enum_constants)
-    ui.selection_mode.selectedItemProperty().add_change_listener do |new|
+    ui.selection_model.selectedItemProperty().add_change_listener do |new|
       if @lprop && (@lprop.value == nil || @lprop.value != new)
         @lprop.value = new
       end
