@@ -21,4 +21,11 @@ Controls:
   Save Children: false
   Sealed: true
   Placeholders: [p, i, d, disabled]
-
+-
+  Name: Command
+  Description: Default testing PID editor/viewer
+  Source: /command/command.fxml
+  Group Type: Command
+  Save Children: false
+  Sealed: true
+  Placeholders: [Name]
