@@ -62,7 +62,7 @@ module SD
             @full_map.map{|k|k[:var]}
           end
 
-          add_method_signature :designable_for, [java.lang.Object.java_class, java.lang.String.java_class]
+          add_method_signature :property_for, [java.lang.Object.java_class, java.lang.String.java_class]
           def property_for(name)
             pdesc = @full_map.find{|x|x[:var] == name}
             SD::DesignerSupport::Property.new(name, pdesc[:name], pdesc[:description], pdesc[:type].java_class, send("#{name}Property"), nil, nil)
