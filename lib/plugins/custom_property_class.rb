@@ -63,15 +63,9 @@ module SD
           end
 
           add_method_signature :designable_for, [java.lang.Object.java_class, java.lang.String.java_class]
-          def designable_for(name)
+          def property_for(name)
             pdesc = @full_map.find{|x|x[:var] == name}
-            RDesignableProperty.new pdesc[:name], pdesc[:description]
-          end
-
-          add_method_signature :type_for, [java.lang.Class.java_class, java.lang.String.java_class]
-          def type_for(name)
-            pdesc = @full_map.find{|x|x[:var] == name}
-            pdesc[:type].java_class
+            SD::DesignerSupport::Property.new(name, pdesc[:name], pdesc[:description], pdesc[:type].java_class, send("#{name}Property"), nil, nil)
           end
         end
         c.become_java!
