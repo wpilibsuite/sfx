@@ -40,6 +40,7 @@ module SD
             if data[:cinfo]
               data[:control] = data[:cinfo].new
               data[:control].name = @name
+              data[:control].label = File.basename @name if data[:control].respond_to?(:label=)
               data[:time] = Time.now
             end
           end

@@ -318,7 +318,8 @@ class SD::Designer
     obj = dnd_obj.new # create the object that we are dragging on
     if @dnd_opts[dnd_obj]
       # TODO: check for other options
-      obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name
+      obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name=
+      obj.label = File.basename(@dnd_opts[dnd_obj][:assign_name]) if obj.respond_to? :label=
     end
     add_designable_control obj, x, y, pare, @dnd_ids[id]
     hide_toolbox
