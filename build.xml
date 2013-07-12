@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<java jar="${jruby.dest}" fork="true">
 			<env key="jrubyfx" value="gems/jrubyfx/lib" />
 			<env key="fxmlloader" value="gems/jrubyfx-fxmlloader/lib" />
-			<arg line="-S rake patch single-jar"/>
+			<arg line="-S rake single-jar"/>
 		</java>
 	</target>
 	<target name="fast">
@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<java jar="${jruby.dest}" fork="true">
 			<env key="jrubyfx" value="gems/jrubyfx/lib" />
 			<env key="fxmlloader" value="gems/jrubyfx-fxmlloader/lib" />
-			<arg line="-S rake patch single-jar"/>
+			<arg line="-S rake single-jar"/>
 		</java>
 	</target>
 
