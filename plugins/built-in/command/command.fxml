@@ -34,6 +34,10 @@
 			{
 				swapper(null, null, runnerVp.getValue());
 			}
+			else
+			{
+				swapper(null, null, false);
+			}
 		}
 
 		function run_command()
