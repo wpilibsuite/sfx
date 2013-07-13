@@ -98,7 +98,7 @@ class SD::Designer
           @view_controllers.each do |vc|
             if tmp = vc.should_add?(new_name, @data_core.known_names.get)
               bits = new_name.split('/').reject(&:empty?)
-              mutex, thread = @aa_name_trees_threads[vc]
+              mutex, thread, time_func = @aa_name_trees_threads[vc]
               mutex.synchronize do
                 root = @aa_name_trees[vc]
                 namepart = ""
@@ -107,11 +107,10 @@ class SD::Designer
                   namepart << namebit
                   child = root.children[namebit]
                   unless child
-                    child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root)
+                    child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root, time_func)
                   end
                   root = child
                 end
-                @aa_name_trees[vc].process method(:add_designable_control)
               end
               thread.run
             end
@@ -820,18 +819,22 @@ class SD::Designer
     @view_controllers << vc
     @tab_box.children.add(@tab_box.children.length - 1, vc.tab)
     os = OpenStruct.new({can_nest?: true, child: vc.pane})
-    @aa_name_trees[vc] = SD::DesignerSupport::AANameTree.new("", SD::DesignerSupport::AANameTree.new("", os).tap{|x|x.data[:descriptor] = os})
+    @aa_name_trees[vc] = SD::DesignerSupport::AANameTree.new("", SD::DesignerSupport::AANameTree.new("", os, proc{}).tap{|x|x.data[:descriptor] = os}, proc{})
     @aa_name_trees_threads[vc] = [Mutex.new, Thread.new do
         loop {
           Thread.stop
-          sleep(0.1)
+          tdiff = (@aa_name_trees_threads[vc][3] + 0.5) - Time.now
+          while tdiff > 0
+            sleep(tdiff)
+            tdiff = (@aa_name_trees_threads[vc][3] + 0.5) - Time.now
+          end
           run_later do
             @aa_name_trees_threads[vc][0].synchronize do
               @aa_name_trees[vc].process method(:add_designable_control)
             end
           end
         }
-      end]
+      end, lambda{|x| @aa_name_trees_threads[vc][3] = x}, Time.now]
     @ui2pmap[vc.pane] = vc
     @ui2pmap[vc.ui] = vc.pane
     tab_select(vc.tab)

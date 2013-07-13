@@ -17,10 +17,11 @@ module SD
   module DesignerSupport
     class AANameTree
       attr_accessor :name, :children, :parent, :data
-      def initialize(name, parent)
+      def initialize(name, parent, last_time)
         @name = name
         @children = {}
         @parent = parent
+        @last_time = last_time
         @data = {time: Time.now, object: @@observable.call(name)}
       end
       def process(add_designable_control)
@@ -42,6 +43,7 @@ module SD
               data[:control].name = @name
               data[:control].label = File.basename @name if data[:control].respond_to?(:label=)
               data[:time] = Time.now
+              @last_time.call(data[:time])
             end
           end
           if data[:control] && parent.data[:descriptor]
@@ -49,8 +51,7 @@ module SD
               data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]).child, data[:cinfo])
             end
             data[:in_ui] = true
-          end
-          if expired? && data[:control]
+          elsif expired? && data[:control]
             original_pard = nearest_desc(data[:control])
             original_par = original_pard.child
             if original_pard.can_nest?
@@ -91,7 +92,7 @@ module SD
         desc
       end
       def expired?
-        Time.now - data[:time] > 0.5
+        Time.now - data[:time] > 0.2
       end
       def self.observable=(obs)
         @@observable = obs
