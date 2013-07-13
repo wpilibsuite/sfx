@@ -6,7 +6,7 @@ module SD::DesignerSupport
     java_import 'dashfx.lib.controls.ResizeDirections'
     fxml "DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer, :original_name
-    attr_accessor :editing_nested
+    property_reader :editing_nested
     #Observable
     property_accessor :running, :disabled
 
@@ -42,9 +42,9 @@ module SD::DesignerSupport
       @running = SimpleBooleanProperty.new(false)
       @running.bind(parent_designer.running_property)
       @disabled = SimpleBooleanProperty.new(false)
+      @editing_nested = SimpleBooleanProperty.new(false)
       # TODO: intercept events
-      @selected_ui.visibleProperty.bind(@running.or(@disabled).not)
-      @editing_nested = false
+      @selected_ui.visibleProperty.bind(@editing_nested.or(@running.or(@disabled)).not)
       @ctrl_info = ctrl_info
       @original_name = ctrl_info.id
     end
@@ -63,7 +63,7 @@ module SD::DesignerSupport
     end
 
     def dragUpdate(e, original = true)
-      return if @editing_nested # TODO: something is wrong here...
+      return if editing_nested # TODO: something is wrong here...
       if @drag_action
         @parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
       elsif @supported_ops.include? e.target.id.to_sym
@@ -195,8 +195,7 @@ module SD::DesignerSupport
 
     def exit_nesting
       # TODO: we should not need to test running
-      @editing_nested = false
-      self.running = false
+      @editing_nested.set false
     end
 
     def pane?
@@ -216,10 +215,11 @@ module SD::DesignerSupport
         @parent_designer.nested_edit(self)
         # enable nested mode!
 
-        @editing_nested = true
-        self.running = true
+        @editing_nested.set true
         # TODO: disable!
         e.consume
+      else # this is somewhat of a hack...
+        @parent_designer.canvas_click(e)
       end
     end
 

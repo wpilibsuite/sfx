@@ -24,12 +24,7 @@ module SD
       array = {get: @backer.method(:get),set: @backer.method(:put), default: "--- []\n", map: lambda{|x| YAML.load x}, unmap: lambda{|x| YAML.dump x}}
 
 
-      module_function
-
-      def raw
-        puts "Warning! leaking raw prefs to #{caller[0]}"
-        @backer
-      end
+      module_function # C++ style "everything after this is a module function"
 
       {
         team_number_auto: {type: bool, default: true},

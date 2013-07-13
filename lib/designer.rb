@@ -256,7 +256,12 @@ class SD::Designer
   end
 
   def ui2p(ui)
-    @ui2pmap[ui]
+    tmp = @ui2pmap[ui]
+    until tmp
+      ui = ui.parent
+      tmp = @ui2pmap[ui]
+    end
+    tmp
   end
 
   def add_known(item)
@@ -828,7 +833,7 @@ class SD::Designer
         }
       end]
     @ui2pmap[vc.pane] = vc
-    @ui2pmap[vc.ui] = vc
+    @ui2pmap[vc.ui] = vc.pane
     tab_select(vc.tab)
     return vc.tab
   end
@@ -874,7 +879,6 @@ class SD::Designer
     @BorderPane.center = cvs.ui
     @cur_canvas = cvs
     @layout_managers[cvs.pane] = cvs.layout_manager
-    @ui2pmap[cvs.ui] = cvs
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
