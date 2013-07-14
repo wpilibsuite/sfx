@@ -25,6 +25,7 @@ Controls:
   Name: Command
   Description: Default testing PID editor/viewer
   Source: /command/command.fxml
+  Image: /command/icon.png
   Group Type: Command
   Save Children: false
   Sealed: true

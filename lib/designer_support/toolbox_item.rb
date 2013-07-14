@@ -8,11 +8,12 @@ module SD::DesignerSupport
       if SD::DesignerSupport::Preferences.toolbox_icons == "Icons&Text"
         children.clear
         load_fxml "DesignerToolboxItemWithText.fxml"
+        @label.text = obj.name
       elsif SD::DesignerSupport::Preferences.toolbox_icons == "TextOnly"
         children.clear
         load_fxml "DesignerToolboxItemOnlyText.fxml"
+        @label.text = obj.name
       end
-      @label.text = obj.name
       @obj = obj
       @dnd_get_id = dnd_get_id
       Tooltip.install self, tooltip(graphic: vbox!{label(obj.name); label(obj.description)})
@@ -36,13 +37,13 @@ module SD::DesignerSupport
     end
 
     def begin_drag(event)
-        db = startDragAndDrop(TransferMode::COPY);
+      db = startDragAndDrop(TransferMode::COPY);
 
-        content = ClipboardContent.new
-        content.putString(dnd_get_id.to_s);
-        db.setContent(content);
+      content = ClipboardContent.new
+      content.putString(dnd_get_id.to_s);
+      db.setContent(content);
 
-        event.consume();
+      event.consume();
     end
   end
 end

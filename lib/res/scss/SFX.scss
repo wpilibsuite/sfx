@@ -7,7 +7,7 @@
 	-fx-background-color: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 90%, rgba(0,0,0,0));
 }
 .titled-pane > .title, .titled-pane > .content, #left_gutter {
-	-fx-background-color: linear-gradient(to left, #666, $sfx-gray 2%, $sfx-gray 100%);
+	-fx-background-color: linear-gradient(to left, #666, white 2%, white 100%);
 }
 
 .titled-pane:focused, .titled-pane {
