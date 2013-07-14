@@ -27,7 +27,7 @@ class SD::Designer
     @dnd_ids = []
     @dnd_opts = {}
     @add_tab = @AddTab
-    @toolbox_group = {:standard => @STDToolboxFlow}
+    @toolbox_group = {}
     @root = @GridPane
     @savedSelection = 1
     @preparsed = 0
@@ -224,8 +224,23 @@ class SD::Designer
             end)
         end
       end
-
-      @toolbox_bits = {:standard => SD::Plugins.controls}
+      @toolbox_bits = SD::Plugins.controls.group_by{|x| x.category}
+      @toolbox_bits.keys.each do |key|
+        lfp = nil
+        @accord.panes << (titled_pane(text: "Toolbox - #{key}") do
+            sp = scroll_pane(fit_to_width: true, max_height: 1.0/0.0, max_width: 1.0/0.0) do
+              setHbarPolicy Java::JavafxSceneControl::ScrollPane::ScrollBarPolicy::NEVER
+              setPannable false
+              setPrefHeight -1.0
+              setPrefViewportWidth 0
+              setPrefWidth -1.0
+              styleClass.add "toolbox-panes"
+              setContent(lfp = flow_pane(pref_height: 200, pref_width: 200))
+            end
+            setContent sp
+          end)
+        @toolbox_group[key] = lfp
+      end
       @found_plugins = true
     end
     @toolbox_bits
@@ -286,7 +301,8 @@ class SD::Designer
           #open a popup and populate it
           tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
           find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-            data.reject{|x|x.category == "Grouping"}.each do |i|
+            next if key == "Grouping"
+            data.each do |i|
               ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
               ti.set_on_mouse_clicked do
                 drop_add associate_dnd_id(i, :assign_name => id), event.x, event.y, event.source
@@ -334,7 +350,8 @@ class SD::Designer
   def morph_child(overlay, event) #TODO: drip drip drip leakage
     tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
     find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-      data.reject{|x|x.category == "Grouping"}.each do |i|
+      next if key == "Grouping"
+      data.each do |i|
         ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))
         ti.set_on_mouse_clicked do
           obj = i.new

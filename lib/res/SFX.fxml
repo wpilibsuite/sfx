@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
-<?scenebuilder-classpath-element ../../../SDLib/dist/SDLib.jar?>
 
 <GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns:fx="http://javafx.com/fxml">
   <fx:define>
@@ -160,7 +159,7 @@
     <children>
       <Accordion fx:id="accord" prefWidth="234.0" VBox.vgrow="ALWAYS">
         <expandedPane>
-          <TitledPane fx:id="x2" animated="false" text="Incoming">
+          <TitledPane fx:id="x2" animated="true" text="Incoming">
             <content>
               <BorderPane prefHeight="200.0" prefWidth="200.0">
                 <center>
@@ -200,15 +199,6 @@
         </expandedPane>
         <panes>
           <fx:reference source="x2" />
-          <TitledPane fx:id="x3" animated="false" text="Toolbox">
-            <content>
-              <ScrollPane fx:id="spaine" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="false" prefHeight="-1.0" prefViewportWidth="0.0" prefWidth="-1.0" styleClass="toolbox-panes">
-                <content>
-                  <FlowPane fx:id="STDToolboxFlow" prefHeight="200.0" prefWidth="200.0" />
-                </content>
-              </ScrollPane>
-            </content>
-          </TitledPane>
         </panes>
       </Accordion>
       <HBox prefHeight="32.0" prefWidth="-1.0">
