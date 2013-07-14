@@ -10,6 +10,7 @@ Controls:
   Image: /bool/icon.png
   Source: /bool/BadBool.fxml
   Types: Boolean
+  Category: General
   Defaults:
     value: false
 -
@@ -18,6 +19,7 @@ Controls:
   Source: /pid/PIDParent.fxml
   Image: /pid/pidicon.png
   Group Type: PIDController
+  Category: General
   Save Children: false
   Sealed: true
   Placeholders: [p, i, d, disabled]
@@ -27,6 +29,7 @@ Controls:
   Source: /command/command.fxml
   Image: /command/icon.png
   Group Type: Command
+  Category: General
   Save Children: false
   Sealed: true
   Placeholders: [Name]
