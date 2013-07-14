@@ -666,6 +666,7 @@ class SD::Designer
   end
 
   def canvas_click(e)
+    hide_properties
     if @just_dragged
       @just_dragged  = false
       return
@@ -842,6 +843,8 @@ class SD::Designer
   end
 
   def tab_select(tab)
+    hide_properties
+    hide_toolbox
     vc = @view_controllers.find{|x|x.tab == tab}
     @view_controllers.each do |lm|
       lm.tab.style_class.remove("active")
