@@ -33,11 +33,15 @@ module SD
       end
       yml["Controls"] = (yml['Controls'] || []).map do |cdesc|
         if cdesc.keys.include? "List Class"
-          JavaUtilities.get_proxy_class(cdesc["List Class"]).all.map{|x|JavaControlInfo.new x}
+          JavaUtilities.get_proxy_class(cdesc["List Class"]).all.map{|x|JavaControlInfo.new loader, x}
         elsif cdesc.keys.include? "Package"
           # TODO: evil
         elsif cdesc.keys.include? "Class"
-          JavaControlInfo.new(JavaUtilities.get_proxy_class(cdesc['Class']).java_class, cdesc)
+          if cdesc['Class'][0].downcase == cdesc['Class'][0] # lowercase = package name => java
+            JavaControlInfo.new(loader, JavaUtilities.get_proxy_class(cdesc['Class']).java_class, cdesc)
+          else
+            RubyControlInfo.new(loader, cdesc)
+          end
         else
           ControlInfo.new(loader, cdesc)
         end
