@@ -45,6 +45,7 @@ class SD::Designer
     @aa_name_trees_threads = {}
     @running = simple_boolean_property(self, "running", false)
     @aa_ignores = []
+    @vc_focus = []
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -124,9 +125,17 @@ class SD::Designer
       @playback = SD::Playback.new(@data_core, @stage)
 
       # Add known tab and any plugin tabs
-      main_tab = add_tab(SD::Windowing::DefaultViewController.new)
+      main_vc = SD::Windowing::DefaultViewController.new
+      main_vc.on_focus_request do |focus|
+        tab_auto_focus(main_vc, focus)
+      end
+      main_tab = add_tab(main_vc)
       SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
-        add_tab(x.new)
+        vc = x.new
+        vc.on_focus_request do |focus|
+          tab_auto_focus(vc, focus)
+        end
+        add_tab(vc)
       end
       tab_select(main_tab)
 
@@ -872,7 +881,23 @@ class SD::Designer
   end
 
   def tab_clicked(e)
+    @vc_focus = [] # when we manually click, make it default to current
     tab_select(e.target)
+  end
+
+  def tab_auto_focus(vc, focus)
+    unless focus
+    @vc_focus -= [vc]
+    else
+      if @vc_focus.include? vc or @view_controllers[@vc_index] == vc
+        return # there will be no pillaging tonight
+      end
+      @vc_focus << vc
+      if @vc_focus.length == 1
+        @vc_focus = [@view_controllers[@vc_index]] + @vc_focus
+      end
+    end
+    tab_select(@vc_focus.last.tab) if @vc_focus.length > 0
   end
 
   def clear_tabs

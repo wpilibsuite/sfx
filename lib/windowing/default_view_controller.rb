@@ -38,6 +38,10 @@ module SD
         @filter.filter(name, all)
       end
 
+      def on_focus_request
+        # don't care about focus
+      end
+
       private
       def root_canvas=(cvs)
         if @canvas
