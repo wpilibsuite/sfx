@@ -57,3 +57,21 @@ $bottom_size: 32px;
 		}
 	}
 }
+
+.tab-switcher{
+	-fx-background-color: $sfx-gray;
+	-fx-background-radius: 5px;
+	.button {
+		-fx-background-color: transparent, linear-gradient(to bottom, lighten($sfx-blue, 20%) 10%, lighten($sfx-blue, 40%) 100%);
+		-fx-padding: 6px 12px;
+		-fx-background-radius: 5px;
+		-fx-border-radius: 5px;
+		-fx-border-color: $sfx-dark-gray;
+		-fx-border-width: 1px;
+		-fx-font-weight: normal;
+		&.active {
+			-fx-background-color: transparent, linear-gradient(to bottom, white, lighten($sfx-green, 20%) 100%);
+			-fx-text-fill: black;
+		}
+	}
+}

@@ -16,11 +16,13 @@ class SD::Designer
   java_import 'dashfx.lib.data.InitInfo'
   java_import 'dashfx.lib.registers.ControlRegister'
 
-  property_accessor :running
+  property_accessor :running, :vc_index
+  attr_accessor :view_controllers
 
   fxml "SFX.fxml"
 
   def initialize
+    @@singleton = self
     # best to catch missing stuff now
     @toolbox= @left_gutter
     @selected_items = []
@@ -40,12 +42,13 @@ class SD::Designer
     @aa_tree_list = []
     @aa_tree.root = tree_item("/")
     @layout_managers = {}
-    @view_controllers = []
+    @view_controllers = FXCollections.observableArrayList
     @aa_name_trees = {}
     @aa_name_trees_threads = {}
     @running = simple_boolean_property(self, "running", false)
     @aa_ignores = []
     @vc_focus = []
+    @vc_index = simple_integer_property(self, "vc_index", 0)
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -501,7 +504,7 @@ class SD::Designer
       Gem::Package::TarWriter.new(io) do |tar|
         tar.add_file("version", 0644) {|f|f.write("0.1")}
         tar.add_file("data.yml", 0644) do |yml|
-          psg = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers, @data_core)
+          psg = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core)
           yml.write YAML.dump(psg)
           @current_save_data = psg
         end
@@ -837,7 +840,7 @@ class SD::Designer
   end
 
   def current_vc
-    @view_controllers[@vc_index]
+    @view_controllers[vc_index]
   end
 
   def add_tab(vc)
@@ -877,7 +880,7 @@ class SD::Designer
     end
     vc.tab.style_class.add("active")
     self.root_canvas = vc
-    @vc_index = @view_controllers.index(vc)
+    @vc_index.value = @view_controllers.index(vc)
   end
 
   def tab_clicked(e)
@@ -889,12 +892,12 @@ class SD::Designer
     unless focus
     @vc_focus -= [vc]
     else
-      if @vc_focus.include? vc or @view_controllers[@vc_index] == vc
+      if @vc_focus.include? vc or @view_controllers[vc_index] == vc
         return # there will be no pillaging tonight
       end
       @vc_focus << vc
       if @vc_focus.length == 1
-        @vc_focus = [@view_controllers[@vc_index]] + @vc_focus
+        @vc_focus = [@view_controllers[vc_index]] + @vc_focus
       end
     end
     tab_select(@vc_focus.last.tab) if @vc_focus.length > 0
@@ -902,8 +905,8 @@ class SD::Designer
 
   def clear_tabs
     @tab_box.children.remove_all(*@view_controllers.map(&:tab))
-    @view_controllers = []
-    @vc_index = 0
+    @view_controllers.clear
+    @vc_index.value = 0
     @aa_name_trees = {}
     @aa_name_trees_threads = {}
     @ui2pmap = {}
@@ -930,5 +933,9 @@ class SD::Designer
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
+  end
+
+  def self.instance
+    @@singleton
   end
 end

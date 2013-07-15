@@ -49,3 +49,21 @@
   -fx-text-fill: black;
   -fx-font-weight: normal;
 }
+
+.tab-switcher {
+  -fx-background-color: #cccccc;
+  -fx-background-radius: 5px;
+}
+.tab-switcher .button {
+  -fx-background-color: transparent, linear-gradient(to bottom, #1789f6 10%, #79bbfa 100%);
+  -fx-padding: 6px 12px;
+  -fx-background-radius: 5px;
+  -fx-border-radius: 5px;
+  -fx-border-color: #777777;
+  -fx-border-width: 1px;
+  -fx-font-weight: normal;
+}
+.tab-switcher .button.active {
+  -fx-background-color: transparent, linear-gradient(to bottom, white, #95ff43 100%);
+  -fx-text-fill: black;
+}

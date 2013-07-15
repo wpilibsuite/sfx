@@ -33,3 +33,12 @@ Controls:
   Save Children: false
   Sealed: true
   Placeholders: [Name]
+-
+  Name: Tab Switcher
+  Description: Handy movable tab switcher
+  Source: /tab-switcher/tab_switcher.rb
+  Class: SD::CoreExt::TabSwitcher
+  Category: General
+  Save Children: false
+  Sealed: true
+
