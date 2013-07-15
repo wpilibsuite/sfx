@@ -23,7 +23,7 @@ module SD::CoreExt
       self.style_class << "tab-switcher"
       @designer = SD::Designer.instance
       rebuild_menu
-      @designer.view_controllers.add_change_listener do |change|
+      @designer.view_controllers.add_change_listener do
         rebuild_menu
       end
       @designer.vc_index_property.add_change_listener do

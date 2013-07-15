@@ -20,8 +20,11 @@ class SD::Designer
   attr_accessor :view_controllers
 
   fxml "SFX.fxml"
+  
+  @@singleton = nil
 
   def initialize
+    raise "Multiple designers created!" if @@singleton
     @@singleton = self
     # best to catch missing stuff now
     @toolbox= @left_gutter
