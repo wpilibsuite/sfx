@@ -36,6 +36,7 @@ Controls:
 -
   Name: Tab Switcher
   Description: Handy movable tab switcher
+  Image: /tab-switcher/icon.png
   Source: /tab-switcher/tab_switcher.rb
   Class: SD::CoreExt::TabSwitcher
   Category: General
