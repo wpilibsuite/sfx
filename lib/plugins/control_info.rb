@@ -105,9 +105,9 @@ module SD
         annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
         cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
         types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
-        oi = annote.image
-        self.name = annote.value
-        self.description = annote.description
+        oi = annote.image if annote
+        self.name = annote.value if annote
+        self.description = annote.description if annote
         if oi and oi.length > 0
           self.image_proc = Proc.new do
             jclass.ruby_class.java_class.resource_as_stream(oi)
