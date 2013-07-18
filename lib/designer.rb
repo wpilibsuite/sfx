@@ -466,6 +466,7 @@ class SD::Designer
       animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
       animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
       animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32 * mul)
+      animate bg.pref_height_property, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
     end.play
   end
 

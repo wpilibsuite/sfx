@@ -20,7 +20,7 @@
   </fx:define>
   <BorderPane fx:id="BorderPane" pickOnBounds="false" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
-      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="32" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
         <children>
           <HBox id="hack_expander" fx:id="add_slider" minWidth="32.0" prefHeight="-1.0" prefWidth="-1.0">
             <children>
