@@ -477,10 +477,12 @@ class SD::Designer
 
   # set the popup message at the bottom
   def message=(msg)
-    @alert_msg.text = msg
+    am = @alert_msg
     with(@msg_carrier) do |mc|
       timeline do
         animate mc.translateYProperty, 0.sec => [200.ms, 5.sec, 5.2.sec], 30.0 => [0.0, 0.0, 30.0]
+        animate mc.minWidthProperty, 0.sec => [200.ms, 5.sec, 5.2.sec], 0 => [200, 200, 0]
+        animate am.textProperty, 0.sec => [200.ms, 5.sec, 5.2.sec, 5.21.sec], "" => [msg, msg, msg, ""]
       end.play
     end
   end

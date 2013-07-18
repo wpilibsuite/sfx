@@ -27,7 +27,7 @@
               <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
               <Pane fx:id="hack_corner" prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter">
                 <children>
-                  <Button alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#show_toolbox" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Add">
+                  <Button alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" minHeight="0.0" minWidth="32.0" mnemonicParsing="false" onAction="#show_toolbox" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Add">
                     <graphic>
                       <ImageView id="add_image_view" fx:id="add_tab_icon" fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
                         <image>
