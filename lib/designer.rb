@@ -893,7 +893,7 @@ class SD::Designer
 
   def tab_auto_focus(vc, focus)
     unless focus
-    @vc_focus -= [vc]
+      @vc_focus -= [vc]
     else
       if @vc_focus.include? vc or @view_controllers[vc_index] == vc
         return # there will be no pillaging tonight
@@ -930,12 +930,20 @@ class SD::Designer
   # Assign the designer surface and set up handlers
   def root_canvas=(cvs)
     cvs.pane.registered(@data_core)
-    @BorderPane.center = cvs.ui
+    @spain.content = cvs.ui
     @cur_canvas = cvs
+    cvs.ui.min_width_property.bind(@spain.width_property.subtract(2.0))
+    cvs.ui.min_height_property.bind(@spain.height_property.subtract(2.0))
+    cvs.ui.pref_width = -1 # autosize
+    cvs.ui.pref_height = -1 # autosize
     @layout_managers[cvs.pane] = cvs.layout_manager
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
+  end
+
+  def force_layout
+    @cur_canvas.ui.request_layout
   end
 
   def self.instance

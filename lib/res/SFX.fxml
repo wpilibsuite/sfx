@@ -14,7 +14,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
-<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns:fx="http://javafx.com/fxml">
+<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <fx:define>
     <Image url="@img/stock_left.png" fx:id="add_tab_close" />
   </fx:define>
@@ -141,6 +141,9 @@
         </children>
       </HBox>
     </bottom>
+    <center>
+      <ScrollPane fx:id="spain" onMouseReleased="#canvas_click" onDragDropped="#drag_drop" onDragOver="#drag_over" />
+    </center>
   </BorderPane>
   <AnchorPane mouseTransparent="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
     <children>

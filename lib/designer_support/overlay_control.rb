@@ -66,6 +66,7 @@ module SD::DesignerSupport
       return if editing_nested # TODO: something is wrong here...
       if @drag_action
         @parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
+        @parent_designer.force_layout
       elsif @supported_ops.include? e.target.id.to_sym
         nodes = [self]
         if original && (e.control_down? || @parent_designer.multiple_selected?)
