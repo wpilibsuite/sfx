@@ -34,6 +34,15 @@ Controls:
   Sealed: true
   Placeholders: [Name]
 -
+  Name: Subsystem
+  Description: Default Subsystem
+  Source: /subsystem/subsystem.fxml
+  Group Type: Subsystem
+  Category: General
+  Save Children: false
+  Sealed: true
+  Placeholders: [command]
+-
   Name: Tab Switcher
   Description: Handy movable tab switcher
   Image: /tab-switcher/icon.png
