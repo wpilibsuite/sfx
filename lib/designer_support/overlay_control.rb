@@ -211,8 +211,12 @@ module SD::DesignerSupport
       pane? and !@ctrl_info.sealed
     end
 
+    def can_nested_edit?
+      pane? and !@ctrl_info.sealed and @ctrl_info.save_children
+    end
+
     def checkDblClick(e)
-      if e.click_count > 1 && pane?
+      if e.click_count > 1 && can_nested_edit?
         @parent_designer.nested_edit(self)
         # enable nested mode!
 
