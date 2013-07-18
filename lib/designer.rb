@@ -1,5 +1,5 @@
 require 'jrubyfx'
-%W[designer_support io_support plugins windowing designers].each do |x|
+%W[designer_support io_support plugins windowing designers utils].each do |x|
   Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
 end
 require 'playback'
@@ -20,7 +20,7 @@ class SD::Designer
   attr_accessor :view_controllers
 
   fxml "SFX.fxml"
-  
+
   @@singleton = nil
 
   def initialize
