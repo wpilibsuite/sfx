@@ -235,6 +235,7 @@ module SD::DesignerSupport
 
     def request_ctx_menu(e)
       @context_menu.show(@selected_ui, e.screen_x, e.screen_y)
+      e.consume
     end
 
     # Z ordering requests
