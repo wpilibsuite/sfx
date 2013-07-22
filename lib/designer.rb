@@ -279,8 +279,10 @@ class SD::Designer
     end
     @layout_managers[parent].layout_controls({designer => [x, y]})
     # Add it to the map so we can get the controller later if needed from UI tree
-    @ui2pmap[control.ui] = control if designer != control # don't add if it exists
-    self.message = "Added new #{oobj.id}"
+    if designer != control # don't add if it exists
+      @ui2pmap[control.ui] = control
+      self.message = "Added new #{oobj.id}"
+    end
     designer
   end
 
@@ -729,6 +731,29 @@ class SD::Designer
     end
     @selected_items = new_selections
     update_properties
+  end
+
+  def try_reparent(child, x, y)
+    @last_reparent_try.hide_nestable if @last_reparent_try
+    ui = current_vc.ui
+    childs = ui.children.to_a.reverse
+    if new_parent = childs.find { |n| n != child && n.can_nest? && n.contains(n.scene_to_local(x,y)) }
+      @last_reparent_try = new_parent
+      new_parent.show_nestable
+    else
+      @last_reparent_try = nil
+    end
+  end
+
+  def reparent!(child, x, y)
+    child.parent.children.remove(child)
+    p @last_reparent_try.child
+    p ui2p(@last_reparent_try)
+    add_designable_control(child, x, y, @last_reparent_try.child, nil)
+  end
+
+  def reparent?
+    !!@last_reparent_try
   end
 
   def do_playback_mode

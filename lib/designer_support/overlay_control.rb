@@ -49,6 +49,10 @@ module SD::DesignerSupport
       @original_name = ctrl_info.id
     end
 
+    def parent_pane
+      @parent
+    end
+
     def registered(prov)
       sops = @parent.getSupportedOps
       @supported_ops = RESIZABILITY_MAPPER.map do |key, cor|
@@ -67,6 +71,7 @@ module SD::DesignerSupport
       if @drag_action
         @parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
         @parent_designer.force_layout
+        @parent_designer.try_reparent(self, e.scene_x, e.scene_y)
       elsif @supported_ops.include? e.target.id.to_sym
         nodes = [self]
         if original && (e.control_down? || @parent_designer.multiple_selected?)
@@ -182,8 +187,15 @@ module SD::DesignerSupport
       if @drag_action
         @parent.finish_dragging
         @parent_designer.properties_dragshow(self)
+        if @parent_designer.reparent?
+          @parent_designer.reparent!(self, e.scene_x, e.scene_y)
+        end
       end
       @drag_action = nil
+    end
+
+    def child_designers
+      child.children
     end
 
     def getUI
@@ -213,6 +225,14 @@ module SD::DesignerSupport
 
     def can_nested_edit?
       pane? and !@ctrl_info.sealed and @ctrl_info.save_children
+    end
+
+    def show_nestable
+      self.style = "-fx-border-color: limegreen"
+    end
+
+    def hide_nestable
+      self.style = "-fx-border-color: transparent"
     end
 
     def checkDblClick(e)
