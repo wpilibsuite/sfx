@@ -48,19 +48,19 @@ module SD
           end
           if data[:control] && parent.data[:descriptor]
             if parent.data[:descriptor].can_nest?
-              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, nearest_desc(data[:control]).child, data[:cinfo])
+              data[:descriptor] = add_designable_control.call(data[:control], NilPoint.new, nearest_desc(data[:control]).child, data[:cinfo])
             end
             data[:in_ui] = true
           elsif expired? && data[:control]
             original_pard = nearest_desc(data[:control])
             original_par = original_pard.child
             if original_pard.can_nest?
-              data[:descriptor] = add_designable_control.call(data[:control], nil, nil, original_par, data[:cinfo])
+              data[:descriptor] = add_designable_control.call(data[:control], NilPoint.new, original_par, data[:cinfo])
               data[:expired_proc] = -> {
                 data[:control].name = name
                 par = (pard = nearest_desc(data[:control])).child
                 if pard.can_nest?
-                  add_designable_control.call(data[:descriptor], nil, nil, par, data[:cinfo])
+                  add_designable_control.call(data[:descriptor], NilPoint.new, par, data[:cinfo])
                 else
                   # remove when parent is sealed
                   data[:last_parent].child.children.remove(data[:descriptor])

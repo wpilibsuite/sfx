@@ -262,7 +262,7 @@ class SD::Designer
   end
 
   # called to wrap the control in an overlay and to place in a control
-  def add_designable_control(control, x, y, parent, oobj)
+  def add_designable_control(control, xy, parent, oobj)
     ovl = SD::DesignerSupport::Overlay
     designer = if control.is_a? ovl then
       # control.parent TODO: re-register
@@ -277,7 +277,7 @@ class SD::Designer
       designer.set_on_drag_over &method(:drag_over)
       @layout_managers[control] = SD::Windowing::LayoutManager.new(control)
     end
-    @layout_managers[parent].layout_controls({designer => [x, y]})
+    @layout_managers[parent].layout_controls({designer => xy})
     # Add it to the map so we can get the controller later if needed from UI tree
     if designer != control # don't add if it exists
       @ui2pmap[control.ui] = control
@@ -358,7 +358,7 @@ class SD::Designer
       obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name=
       obj.label = File.basename(@dnd_opts[dnd_obj][:assign_name]) if obj.respond_to? :label=
     end
-    add_designable_control obj, x, y, pare, @dnd_ids[id]
+    add_designable_control obj, MousePoint.new(x, y), pare, @dnd_ids[id]
     hide_toolbox
     @clickoff_fnc.call if @clickoff_fnc
     @on_mouse.call(nil) if @on_mouse
@@ -594,7 +594,7 @@ class SD::Designer
     obj = desc.new
     obj.ui.setPrefWidth cdesc.sprops["Width"] if cdesc.sprops["Width"] > 0
     obj.ui.setPrefHeight cdesc.sprops["Height"] if cdesc.sprops["Height"] > 0
-    add_designable_control(obj, cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], parent, desc)
+    add_designable_control(obj, MousePoint.new(cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], false), parent, desc)
     cdesc.props.each do |prop, val|
       nom = "set#{prop}"
       if obj.respond_to? nom
@@ -688,6 +688,7 @@ class SD::Designer
   end
 
   def show_toolbox
+    hide_properties
     return if @toolbox_status == :visible
     @toolbox_status = :visible
     asl = @add_slider
@@ -735,19 +736,36 @@ class SD::Designer
 
   def try_reparent(child, x, y)
     @last_reparent_try.hide_nestable if @last_reparent_try
-    ui = current_vc.ui
-    childs = ui.children.to_a.reverse
-    if new_parent = childs.find { |n| n != child && n.can_nest? && n.contains(n.scene_to_local(x,y)) }
-      @last_reparent_try = new_parent
-      new_parent.show_nestable
+#    puts "----"
+#    current_vc.ui.children.each do |ch|
+#      if ch.is_a? SD::DesignerSupport::Overlay
+#        ch.print_tree
+#      else
+#        p ch
+#      end
+#    end
+#    puts "--"
+    try_reparent_cc(current_vc.ui.children, child, x, y)
+  end
+
+  def try_reparent_cc(ui, child, x, y)
+    childs = ui.to_a.reverse
+    if new_parent = childs.find { |n| n != child && n != child.parent && n.can_nest? && n.contains(n.scene_to_local(x,y)) }
+      if !try_reparent_cc(new_parent.child.children, child, x, y) && !new_parent.child.children.include?(child)
+        @last_reparent_try = new_parent
+        new_parent.show_nestable
+      end
+      true
     else
       @last_reparent_try = nil
+      false
     end
   end
 
   def reparent!(child, x, y)
     child.parent.children.remove(child)
-    add_designable_control(child, *@last_reparent_try.scene_to_local(x, y), @last_reparent_try.child, nil)
+    add_designable_control(child, MousePoint.new(*@last_reparent_try.scene_to_local(x, y), false), @last_reparent_try.child, nil)
+    @last_reparent_try.hide_nestable
   end
 
   def reparent?
@@ -780,9 +798,14 @@ class SD::Designer
         end}) do |x|
       x.disabled = true
     end
+    (@last_nested ||= []) << octrl
   end
 
   def exit_nesting(octrl)
+    if octrl != (ctrl = @last_nested.pop) && ctrl
+      # do it in the proper order, don't exit parent nesting before children
+      octrl = ctrl
+    end
     octrl.disabled = false
     octrl.exit_nesting
     nested_traverse(octrl, lambda { |ctrl| ui2p(ctrl.parent).exit_nested }) do |x|
@@ -796,14 +819,14 @@ class SD::Designer
 
   # helper function for traversing parents when nesting editing
   def nested_traverse(octrl, after, &eachblock)
-    return if octrl == current_vc.ui
+    return if octrl == current_vc.ui && ctrl != (@last_nested && @last_nested.last)
     ctrl = octrl
     begin
       saved = (ctrl.parent.children.to_a.find_all{|i| i != ctrl})
       saved.each &eachblock
       after.call(ctrl)
       ctrl = ctrl.parent
-    end while ctrl != current_vc.ui
+    end while ctrl != current_vc.ui && ctrl != (@last_nested && @last_nested.last)
   end
 
   # Settings for the canvas TODO: add other canvas properties
@@ -834,7 +857,7 @@ class SD::Designer
         end
         new_obj = new_objd.new
         if new_obj
-          add_designable_control with(new_obj, name: ctrl.name), nil, nil, pane, new_objd
+          add_designable_control with(new_obj, name: ctrl.name), NilPoint.new, pane, new_objd
         else
           puts "Warning: no default control for #{ctrl.type.mask}"
         end

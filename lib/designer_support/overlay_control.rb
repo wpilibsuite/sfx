@@ -71,7 +71,7 @@ module SD::DesignerSupport
       if @drag_action
         @parent.continue_dragging(e.scene_x - @drag_action[0], e.scene_y - @drag_action[1])
         @parent_designer.force_layout
-        @parent_designer.try_reparent(self, e.scene_x, e.scene_y)
+        @parent_designer.try_reparent(self, e.scene_x, e.scene_y) if e.target == @moveRegion
       elsif @supported_ops.include? e.target.id.to_sym
         nodes = [self]
         if original && (e.control_down? || @parent_designer.multiple_selected?)
@@ -188,7 +188,8 @@ module SD::DesignerSupport
         @parent.finish_dragging
         @parent_designer.properties_dragshow(self)
         if @parent_designer.reparent?
-          @parent_designer.reparent!(self, e.scene_x, e.scene_y)
+          bnds = local_to_scene(bounds_in_local.min_x, bounds_in_local.min_y)
+          @parent_designer.reparent!(self, bnds.x, bnds.y)
         end
       end
       @drag_action = nil
@@ -220,11 +221,11 @@ module SD::DesignerSupport
     end
 
     def can_nest?
-      pane? and !@ctrl_info.sealed
+      pane? and !@ctrl_info.sealed # and @ctrl_info.save_children
     end
 
     def can_nested_edit?
-      pane? and !@ctrl_info.sealed and @ctrl_info.save_children
+      pane? and !@ctrl_info.sealed # and @ctrl_info.save_children
     end
 
     def show_nestable
@@ -288,6 +289,19 @@ module SD::DesignerSupport
       @parent_designer.tap do |pd|
         pd.select(self)
         pd.delete_selected
+      end
+    end
+
+    def print_tree(index = "")
+      puts index + self.inspect
+      if child.respond_to? :children
+        child.children.each do |ch|
+          if ch.is_a? SD::DesignerSupport::Overlay
+            ch.print_tree(index + "  ")
+          else
+            puts "#{index}  #{ch.inspect}"
+          end
+        end
       end
     end
   end

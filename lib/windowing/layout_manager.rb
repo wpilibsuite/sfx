@@ -23,14 +23,14 @@ module SD
         @thread = false
       end
 
-      # requires {child =>[x, y], child => nil} style
+      # requires {child =>xy, child => nil} style
       # first places, second finds
       def layout_controls(children_map)
         @root.synchronized do
           @children.merge! children_map
           if @root.appendable?
             children_map.each do |child, (x, y)|
-              @root.add_child_at child, x||0, y||0
+              @root.add_child_at child, x, y
             end
           else
             @root.children.add_all children_map.keys
@@ -60,10 +60,10 @@ module SD
                 end
               end
             end
-            @children.each do |itm, (x, y)|
+            @children.each do |itm, xy|
               next unless itm
               @root.ui.layout
-              x, y = unless x and y
+              x, y = if xy.empty?
                 # do a brute force search on spaces that fit
                 catch :done do
                   0.step(@root.ui.width, 10) do |x|
@@ -72,10 +72,12 @@ module SD
                     end
                   end
                 end
+              elsif xy.fixed
+                xy
               else
                 # just center it
                 bip = itm.bounds_in_parent
-                [x - (bip.width / 2).to_i, y - (bip.height / 2).to_i]
+                [xy.x - (bip.width / 2).to_i, xy.y - (bip.height / 2).to_i]
               end
               # once we find a location, place the control at that location and mask it off in the map
               itm.layout_x = x
