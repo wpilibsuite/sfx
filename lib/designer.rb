@@ -747,9 +747,7 @@ class SD::Designer
 
   def reparent!(child, x, y)
     child.parent.children.remove(child)
-    p @last_reparent_try.child
-    p ui2p(@last_reparent_try)
-    add_designable_control(child, x, y, @last_reparent_try.child, nil)
+    add_designable_control(child, *@last_reparent_try.scene_to_local(x, y), @last_reparent_try.child, nil)
   end
 
   def reparent?
