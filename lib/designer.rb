@@ -736,15 +736,16 @@ class SD::Designer
 
   def try_reparent(child, x, y)
     @last_reparent_try.hide_nestable if @last_reparent_try
-#    puts "----"
-#    current_vc.ui.children.each do |ch|
-#      if ch.is_a? SD::DesignerSupport::Overlay
-#        ch.print_tree
-#      else
-#        p ch
-#      end
-#    end
-#    puts "--"
+    @last_reparent_try = nil
+    #    puts "----"
+    #    current_vc.ui.children.each do |ch|
+    #      if ch.is_a? SD::DesignerSupport::Overlay
+    #        ch.print_tree
+    #      else
+    #        p ch
+    #      end
+    #    end
+    #    puts "--"
     try_reparent_cc(current_vc.ui.children, child, x, y)
   end
 
@@ -802,7 +803,7 @@ class SD::Designer
   end
 
   def exit_nesting(octrl)
-    if octrl != (ctrl = @last_nested.pop) && ctrl
+    if octrl != (ctrl = @last_nested.last) && ctrl
       # do it in the proper order, don't exit parent nesting before children
       octrl = ctrl
     end
@@ -814,12 +815,13 @@ class SD::Designer
         x.exit_nesting
       end
     end
+    @last_nested.pop
     select(octrl)
   end
 
   # helper function for traversing parents when nesting editing
   def nested_traverse(octrl, after, &eachblock)
-    return if octrl == current_vc.ui && ctrl != (@last_nested && @last_nested.last)
+    return if octrl == current_vc.ui || octrl == (@last_nested && @last_nested.last)
     ctrl = octrl
     begin
       saved = (ctrl.parent.children.to_a.find_all{|i| i != ctrl})
