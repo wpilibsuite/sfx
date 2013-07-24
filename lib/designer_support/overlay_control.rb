@@ -6,9 +6,8 @@ module SD::DesignerSupport
     java_import 'dashfx.lib.controls.ResizeDirections'
     fxml "DesignerOverlayControl.fxml"
     attr_reader :child, :parent_designer, :original_name
-    property_reader :editing_nested
     #Observable
-    property_accessor :running, :disabled
+    property_accessor :editing_nested, :running, :disabled
 
     DIRECTIONS = {
       :moveRegion =>[0.0, 0.0, 1.0, 1.0],
@@ -47,6 +46,37 @@ module SD::DesignerSupport
       @selected_ui.visibleProperty.bind(@editing_nested.or(@running.or(@disabled)).not)
       @ctrl_info = ctrl_info
       @original_name = ctrl_info.id
+
+      # bind the wings and flanks for nested editing victory!
+      @antwerp_flank.pref_height_property.bind @north_wing.height_property
+      @berlin_flank.pref_height_property.bind @north_wing.height_property
+      @munich_flank.pref_height_property.bind @south_wing.height_property
+      @chateauDIf_flank.pref_height_property.bind @south_wing.height_property
+
+      # deploy troops on nested editing
+      @editing_nested.add_change_listener do |nesting|
+        # main sides
+        @north_wing.visible = @south_wing.visible = @east_wing.visible = @west_wing.visible = nesting
+        # corners
+        @munich_flank.visible = @chateauDIf_flank.visible = @berlin_flank.visible = @antwerp_flank.visible = nesting
+
+        # main sides
+        tmp = @parent_designer.compute_wingmen(@childContainer.local_to_scene(@childContainer.bounds_in_local)) if nesting
+        @west_wing.min_width = nesting ? tmp.west : 0
+        @east_wing.min_width = nesting ? tmp.east : 0
+        @north_wing.min_height = nesting ? tmp.north : 0
+        @south_wing.min_height = nesting ? tmp.south : 0
+        # corners
+        @antwerp_flank.layout_x = @chateauDIf_flank.layout_x = -(@antwerp_flank.pref_width = @chateauDIf_flank.pref_width = (nesting ? tmp.west : 0))
+        if nesting
+          wid_prop = tmp.width - ((@berlin_flank.pref_width = @munich_flank.pref_width = tmp.east - 6) + tmp.west)
+          @berlin_flank.layout_x = (wid_prop)
+          @munich_flank.layout_x = (wid_prop)
+        else
+          @berlin_flank.layout_x = 0
+          @munich_flank.layout_x = 0
+        end
+      end
     end
 
     def parent_pane
@@ -225,7 +255,7 @@ module SD::DesignerSupport
     end
 
     def can_nested_edit?
-      pane? and !@ctrl_info.sealed # and @ctrl_info.save_children
+      pane? and !@ctrl_info.sealed
     end
 
     def show_nestable
@@ -236,14 +266,28 @@ module SD::DesignerSupport
       self.style = "-fx-border-color: transparent"
     end
 
+    def surrender_nest(e)
+      # only give up if we have 2 hits
+      if e.click_count > 1 && editing_nested
+        self.editing_nested = false
+        e.consume
+        @parent_designer.select()
+      elsif !editing_nested
+        puts "AAARGH! invisible things are visible!"
+      end
+    end
+
     def checkDblClick(e)
       if e.click_count > 1 && can_nested_edit?
-        @parent_designer.nested_edit(self)
+        # @parent_designer.nested_edit(self)
         # enable nested mode!
-
-        @editing_nested.set true
-        # TODO: disable!
-        e.consume
+        if !editing_nested
+          puts "whee"
+          self.editing_nested = true
+          # TODO: disable!
+          e.consume
+          @parent_designer.select()
+        end
       else # this is somewhat of a hack...
         @parent_designer.canvas_click(e)
       end

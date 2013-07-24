@@ -579,11 +579,14 @@ class SD::Designer
     # TODO: tab support
     clear_tabs()
     @aa_ignores = doc.known_names
+    vc_first = nil
     doc.vcs.each do |ro|
       vc = ro.new
+      vc_first = vc unless vc_first
       add_tab(vc)
       ro.children.each {|x| open_visitor(x, vc.pane)}
     end
+    tab_select(vc_first.tab)
     @currently_open_file = file
     @stage.title = "SmartDashboard : #{File.basename(file, ".fxsdash")}"
     self.message = "File Load Successfull"
@@ -792,6 +795,13 @@ class SD::Designer
     end
   end
 
+  def compute_wingmen(chb)
+    parb = @BorderPane.local_to_scene(@BorderPane.bounds_in_local)
+    # north east south west (css style)
+    OpenStruct.new(north: chb.min_y - parb.min_y, east: parb.max_x - chb.max_x,
+      width: parb.width, south: parb.max_y - chb.max_y, west: chb.min_x - parb.min_x)
+  end
+
   def nested_edit(octrl)
     nested_traverse(octrl, lambda { |ctrl|
         ui2p(ctrl.parent).edit_nested(ctrl) do
@@ -935,6 +945,7 @@ class SD::Designer
     vc.tab.style_class.add("active")
     self.root_canvas = vc
     @vc_index.value = @view_controllers.index(vc)
+    vc.ui.request_layout # force layout to avoid extra blank screen + click
   end
 
   def tab_clicked(e)
