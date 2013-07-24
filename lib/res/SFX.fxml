@@ -20,7 +20,7 @@
   </fx:define>
   <BorderPane fx:id="BorderPane" pickOnBounds="false" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
     <bottom>
-      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="32" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
         <children>
           <HBox id="hack_expander" fx:id="add_slider" minWidth="32.0" prefHeight="-1.0" prefWidth="-1.0">
             <children>
@@ -142,7 +142,18 @@
       </HBox>
     </bottom>
     <center>
-      <ScrollPane fx:id="spain" onMouseReleased="#canvas_click" onDragDropped="#drag_drop" onDragOver="#drag_over" />
+      <ScrollPane fx:id="spain" onDragDropped="#drag_drop" onDragOver="#drag_over" onMouseReleased="#canvas_click">
+        <content>
+          <AnchorPane fx:id="overlay_pod" prefHeight="200.0" prefWidth="200.0">
+            <children>
+              <Pane fx:id="north_wing" layoutX="0.0" layoutY="0.0" onMouseClicked="#surrender_nest" prefHeight="20.0" prefWidth="${overlay_pod.width}" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" />
+              <Pane fx:id="south_wing" layoutX="0.0" onMouseClicked="#surrender_nest" prefHeight="20.0" prefWidth="${overlay_pod.width}" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" AnchorPane.bottomAnchor="0.0" />
+              <Pane fx:id="west_wing" layoutY="45.0" onMouseClicked="#surrender_nest" prefHeight="154.0" prefWidth="20.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" AnchorPane.leftAnchor="0.0" />
+              <Pane fx:id="east_wing" layoutY="45.0" onMouseClicked="#surrender_nest" prefHeight="154.0" prefWidth="20.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" AnchorPane.rightAnchor="0.0" />
+            </children>
+          </AnchorPane>
+        </content>
+      </ScrollPane>
     </center>
   </BorderPane>
   <AnchorPane mouseTransparent="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="0">

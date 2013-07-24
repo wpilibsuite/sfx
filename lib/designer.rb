@@ -52,6 +52,10 @@ class SD::Designer
     @aa_ignores = []
     @vc_focus = []
     @vc_index = simple_integer_property(self, "vc_index", 0)
+    @nested_list = []
+
+    @overlay_pod.min_width_property.bind(@spain.width_property.subtract(2.0))
+    @overlay_pod.min_height_property.bind(@spain.height_property.subtract(2.0))
 
     # Load preferences
     @prefs = SD::DesignerSupport::Preferences
@@ -754,7 +758,7 @@ class SD::Designer
 
   def try_reparent_cc(ui, child, x, y)
     childs = ui.to_a.reverse
-    if new_parent = childs.find { |n| n != child && n != child.parent && n.can_nest? && n.contains(n.scene_to_local(x,y)) }
+    if new_parent = childs.find { |n| n != child && n != child.parent && n.can_nest? && !n.is_outside?(x,y) }
       if !try_reparent_cc(new_parent.child.children, child, x, y) && !new_parent.child.children.include?(child)
         @last_reparent_try = new_parent
         new_parent.show_nestable
@@ -796,37 +800,38 @@ class SD::Designer
   end
 
   def compute_wingmen(chb)
-    parb = @BorderPane.local_to_scene(@BorderPane.bounds_in_local)
+    parb = @spain.local_to_scene(@spain.bounds_in_local)
     # north east south west (css style)
     OpenStruct.new(north: chb.min_y - parb.min_y, east: parb.max_x - chb.max_x,
       width: parb.width, south: parb.max_y - chb.max_y, west: chb.min_x - parb.min_x)
   end
 
-  def nested_edit(octrl)
-    nested_traverse(octrl, lambda { |ctrl|
-        ui2p(ctrl.parent).edit_nested(ctrl) do
-          exit_nesting(octrl)
-        end}) do |x|
-      x.disabled = true
+  def show_wingmen(child)
+    nesting = !!child
+    @north_wing.visible = @south_wing.visible = @east_wing.visible = @west_wing.visible = nesting
+
+    if nesting
+      ccb = child.control_bounds
+      tmp = compute_wingmen(ccb)
     end
-    (@last_nested ||= []) << octrl
+    @west_wing.pref_width = nesting ? tmp.west : 0
+    @east_wing.pref_width = nesting ? tmp.east : 0 # TODO: binding
+    @west_wing.layout_y = @east_wing.layout_y = @north_wing.pref_height = nesting ? tmp.north : 0
+    @south_wing.pref_height = nesting ? tmp.south : 0
+
+    @west_wing.pref_height = @east_wing.pref_height = ccb.height if nesting
   end
 
-  def exit_nesting(octrl)
-    if octrl != (ctrl = @last_nested.last) && ctrl
-      # do it in the proper order, don't exit parent nesting before children
-      octrl = ctrl
+  def nested_edit(octrl)
+    show_wingmen(octrl)
+    @nested_list << octrl
+  end
+
+  def surrender_nest(e)
+    if e.click_count > 1 # Run away!
+      @nested_list.length > 0 && @nested_list.pop.exit_nesting
+      show_wingmen(@nested_list.last)
     end
-    octrl.disabled = false
-    octrl.exit_nesting
-    nested_traverse(octrl, lambda { |ctrl| ui2p(ctrl.parent).exit_nested }) do |x|
-      if x.is_a? SD::DesignerSupport::Overlay
-        x.disabled = false
-        x.exit_nesting
-      end
-    end
-    @last_nested.pop
-    select(octrl)
   end
 
   # helper function for traversing parents when nesting editing
@@ -992,12 +997,16 @@ class SD::Designer
   # Assign the designer surface and set up handlers
   def root_canvas=(cvs)
     cvs.pane.registered(@data_core)
-    @spain.content = cvs.ui
+    @overlay_pod.children.remove @cur_canvas.ui if @cur_canvas
+    @overlay_pod.children.add 0, cvs.ui
+    raise "overlay pod has #{@overlay_pod.children.length} children instead of expected 5" unless @overlay_pod.children.length == 5
     @cur_canvas = cvs
     cvs.ui.min_width_property.bind(@spain.width_property.subtract(2.0))
     cvs.ui.min_height_property.bind(@spain.height_property.subtract(2.0))
     cvs.ui.pref_width = -1 # autosize
     cvs.ui.pref_height = -1 # autosize
+    @overlay_pod.pref_width_property.bind cvs.ui.width_property
+    @overlay_pod.pref_height_property.bind cvs.ui.height_property
     @layout_managers[cvs.pane] = cvs.layout_manager
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)

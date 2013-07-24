@@ -46,37 +46,14 @@ module SD::DesignerSupport
       @selected_ui.visibleProperty.bind(@editing_nested.or(@running.or(@disabled)).not)
       @ctrl_info = ctrl_info
       @original_name = ctrl_info.id
+    end
 
-      # bind the wings and flanks for nested editing victory!
-      @antwerp_flank.pref_height_property.bind @north_wing.height_property
-      @berlin_flank.pref_height_property.bind @north_wing.height_property
-      @munich_flank.pref_height_property.bind @south_wing.height_property
-      @chateauDIf_flank.pref_height_property.bind @south_wing.height_property
+    def control_bounds
+      @childContainer.local_to_scene(@childContainer.bounds_in_local)
+    end
 
-      # deploy troops on nested editing
-      @editing_nested.add_change_listener do |nesting|
-        # main sides
-        @north_wing.visible = @south_wing.visible = @east_wing.visible = @west_wing.visible = nesting
-        # corners
-        @munich_flank.visible = @chateauDIf_flank.visible = @berlin_flank.visible = @antwerp_flank.visible = nesting
-
-        # main sides
-        tmp = @parent_designer.compute_wingmen(@childContainer.local_to_scene(@childContainer.bounds_in_local)) if nesting
-        @west_wing.min_width = nesting ? tmp.west : 0
-        @east_wing.min_width = nesting ? tmp.east : 0
-        @north_wing.min_height = nesting ? tmp.north : 0
-        @south_wing.min_height = nesting ? tmp.south : 0
-        # corners
-        @antwerp_flank.layout_x = @chateauDIf_flank.layout_x = -(@antwerp_flank.pref_width = @chateauDIf_flank.pref_width = (nesting ? tmp.west : 0))
-        if nesting
-          wid_prop = tmp.width - ((@berlin_flank.pref_width = @munich_flank.pref_width = tmp.east - 6) + tmp.west)
-          @berlin_flank.layout_x = (wid_prop)
-          @munich_flank.layout_x = (wid_prop)
-        else
-          @berlin_flank.layout_x = 0
-          @munich_flank.layout_x = 0
-        end
-      end
+    def is_outside?(x, y)
+      !@childContainer.contains(@childContainer.scene_to_local(x, y))
     end
 
     def parent_pane
@@ -274,6 +251,8 @@ module SD::DesignerSupport
         @parent_designer.select()
       elsif !editing_nested
         puts "AAARGH! invisible things are visible!"
+      else
+        e.consume
       end
     end
 
@@ -283,6 +262,7 @@ module SD::DesignerSupport
         # enable nested mode!
         if !editing_nested
           puts "whee"
+          @parent_designer.nested_edit(self)
           self.editing_nested = true
           # TODO: disable!
           e.consume
