@@ -49,11 +49,11 @@ module SD::DesignerSupport
     end
 
     def control_bounds
-      @childContainer.local_to_scene(@childContainer.bounds_in_local)
+      @overlay.local_to_scene(@overlay.bounds_in_local)
     end
 
-    def is_outside?(x, y)
-      !@childContainer.contains(@childContainer.scene_to_local(x, y))
+    def is_inside?(x, y)
+      @overlay.contains(@overlay.scene_to_local(x, y))
     end
 
     def parent_pane
@@ -217,6 +217,7 @@ module SD::DesignerSupport
     def exit_nesting
       # TODO: we should not need to test running
       @editing_nested.set false
+      @parent_designer.select(self)
     end
 
     def pane?
@@ -243,27 +244,12 @@ module SD::DesignerSupport
       self.style = "-fx-border-color: transparent"
     end
 
-    def surrender_nest(e)
-      # only give up if we have 2 hits
-      if e.click_count > 1 && editing_nested
-        self.editing_nested = false
-        e.consume
-        @parent_designer.select()
-      elsif !editing_nested
-        puts "AAARGH! invisible things are visible!"
-      else
-        e.consume
-      end
-    end
-
     def checkDblClick(e)
       if e.click_count > 1 && can_nested_edit?
-        # @parent_designer.nested_edit(self)
         # enable nested mode!
         if !editing_nested
-          puts "whee"
-          @parent_designer.nested_edit(self)
           self.editing_nested = true
+          @parent_designer.nested_edit(self)
           # TODO: disable!
           e.consume
           @parent_designer.select()
@@ -327,6 +313,38 @@ module SD::DesignerSupport
           end
         end
       end
+    end
+  end
+  class OverlayRootWrapper
+    attr_reader :child, :editing_nested
+    def initialize(x, en)
+      @child = x
+      @editing_nested = en
+    end
+
+
+    def show_nestable
+      @child.style = "-fx-background-color: limegreen"
+    end
+
+    def hide_nestable
+      @child.style = "-fx-background-color: transparent"
+    end
+
+    def !=(rhs)
+      @child != rhs
+    end
+
+    def can_nest?
+      true
+    end
+
+    def is_inside?(x, y)
+      true #somewhat a lie, but if its false, we have other probelems.
+    end
+
+    def scene_to_local(x, y)
+      @child.scene_to_local(x, y)
     end
   end
 end

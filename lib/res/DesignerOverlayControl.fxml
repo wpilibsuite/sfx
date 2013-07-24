@@ -31,16 +31,6 @@
         <Insets />
       </GridPane.margin>
     </BorderPane>
-    <Pane fx:id="west_wing" maxWidth="-1.0" minWidth="0.0" onMouseClicked="#surrender_nest" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.rowSpan="1" />
-    <Pane fx:id="east_wing" maxWidth="-1.0" minWidth="0.0" onMouseClicked="#surrender_nest" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.rowSpan="1" />
-    <Pane fx:id="north_wing" maxWidth="-1.0" minHeight="0.0" minWidth="0.0" onMouseClicked="#surrender_nest" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: rgba(0, 0, 0, 0.5);" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="0" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
-      <children>
-        <Pane fx:id="berlin_flank" layoutX="0.0" onMouseClicked="#surrender_nest" prefHeight="0.0" prefWidth="0.0" style="-fx-background-color: rgba(0, 0, 0, 0.05)" visible="false" />
-        <Pane fx:id="antwerp_flank" layoutX="0.0" layoutY="0.0" onMouseClicked="#surrender_nest" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: rgba(0, 0, 0, 0.05)" visible="false" />
-      </children>
-    </Pane>
-    <Pane fx:id="south_wing" maxWidth="-1.0" minHeight="0.0" minWidth="0.0" onMouseClicked="#surrender_nest" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
-    </Pane>
     <GridPane fx:id="selected_ui" onContextMenuRequested="#request_ctx_menu" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
       <children>
         <Pane fx:id="overlay" mouseTransparent="true" style="-fx-background-color:#00000012;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">

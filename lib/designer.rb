@@ -753,13 +753,17 @@ class SD::Designer
     #      end
     #    end
     #    puts "--"
-    try_reparent_cc(current_vc.ui.children, child, x, y)
+    try_reparent_cc([SD::DesignerSupport::OverlayRootWrapper.new(current_vc.ui, !@nested_list.last)], child, x, y)
   end
 
   def try_reparent_cc(ui, child, x, y)
-    childs = ui.to_a.reverse
-    if new_parent = childs.find { |n| n != child && n != child.parent && n.can_nest? && !n.is_outside?(x,y) }
-      if !try_reparent_cc(new_parent.child.children, child, x, y) && !new_parent.child.children.include?(child)
+    childs = ui.reverse
+    if new_parent = childs.find { |n| n != child && n.can_nest? && n.is_inside?(x,y) }
+      if !try_reparent_cc(new_parent.child.children.to_a, child, x, y)
+        if new_parent.child.children.include?(child) # TODO:  && n != child.parent ????
+          return true if new_parent.editing_nested
+          return try_reparent_cc(ui - [new_parent], child, x, y)
+        end
         @last_reparent_try = new_parent
         new_parent.show_nestable
       end
@@ -781,7 +785,6 @@ class SD::Designer
   end
 
   def do_playback_mode
-    puts "Playback!"
     @playback.launch
   end
 
@@ -1008,6 +1011,7 @@ class SD::Designer
     @overlay_pod.pref_width_property.bind cvs.ui.width_property
     @overlay_pod.pref_height_property.bind cvs.ui.height_property
     @layout_managers[cvs.pane] = cvs.layout_manager
+    @layout_managers[cvs.ui] = cvs.layout_manager
     cvs.ui.setOnDragDropped &method(:drag_drop)
     cvs.ui.setOnDragOver &method(:drag_over)
     cvs.ui.setOnMouseReleased &method(:canvas_click)
