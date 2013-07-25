@@ -616,9 +616,24 @@ class SD::Designer
   def new_document
     # TODO: check for unsaved changes
     # assign the root canvas node from preferences
-    @canvas = @current_save_data = @currently_open_file = nil
+    @current_save_data = @currently_open_file = nil
     @stage.title = "SmartDashboard : Untitled"
-    self.root_canvas = @prefs.root_canvas.new
+    clear_tabs()
+    # TODO: don't copy this in the ctor
+
+    main_vc = SD::Windowing::DefaultViewController.new
+    main_vc.on_focus_request do |focus|
+      tab_auto_focus(main_vc, focus)
+    end
+    main_tab = add_tab(main_vc)
+    SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
+      vc = x.new
+      vc.on_focus_request do |focus|
+        tab_auto_focus(vc, focus)
+      end
+      add_tab(vc)
+    end
+    tab_select(main_tab)
   end
 
   def hide_properties
