@@ -461,7 +461,7 @@ class SD::Designer
     nul = hide ? 0 : 1
     # TODO: this should be cleaned up
     bg = @bottom_gutter
-    sb = @stop_button
+    sbs = [@stop_button, @playback_button]
     stg = @stage
     oy = stg.y
     ox = stg.x
@@ -470,7 +470,9 @@ class SD::Designer
     stg_hap.add_change_listener {|ov, old, new| stg.setHeight(new); stg.y = oy; stg.x = ox; }
     timeline do
       animate bg.translateYProperty, 0.ms => 500.ms, (32 * nul) => (32 - 32 * nul)
-      animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
+      sbs.each do |sb|
+        animate sb.visibleProperty, 0.ms => 500.ms, (!hide) => hide
+      end
       animate stg_hap, 0.ms => 500.ms, stg.height => (stg.height + 32 * mul)
       animate bg.pref_height_property, 0.ms => 500.ms, (32 - 32 * nul) => (32 * nul)
     end.play

@@ -7,7 +7,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="32px"
@@ -15,8 +14,8 @@
    id="svg4714"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="play.svg"
-   inkscape:export-filename="/home/patrick/NetBeansProjects/SFX/lib/res/img/media-playback-start.png"
+   sodipodi:docname="playback.svg"
+   inkscape:export-filename="/home/patrick/NetBeansProjects/SFX/lib/res/img/playback.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -32,15 +31,6 @@
          offset="1"
          id="stop3757" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3753"
-       id="linearGradient3759"
-       x1="6.7071066"
-       y1="4.8630681"
-       x2="12.034641"
-       y2="23.601398"
-       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -49,10 +39,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16.9375"
-     inkscape:cx="25.682657"
-     inkscape:cy="16"
-     inkscape:current-layer="g7681"
+     inkscape:zoom="11.976621"
+     inkscape:cx="42.168958"
+     inkscape:cy="12.74743"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
@@ -81,19 +71,25 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
-    <g
-       transform="translate(0,-16)"
-       id="g7681">
-      <path
-         style="fill:#008000;fill-opacity:1;stroke:none"
-         d="M 6,19.875 6,44.125 26.96875,32 6,19.875 z"
-         id="path7566"
-         inkscape:connector-curvature="0" />
-      <path
-         style="fill:#60dc00;fill-opacity:1;stroke:none"
-         d="M 7,21.625 7,42.375 24.96875,32 7,21.625 z"
-         id="path7675"
-         inkscape:connector-curvature="0" />
-    </g>
+    <path
+       style="fill:#008000;fill-opacity:1;stroke:none"
+       d="M 20,6.78125 4,16 20,25.21875 20,6.78125 z"
+       id="path5150"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#008000;fill-opacity:1;stroke:none"
+       d="M 28,6.78125 12,16 28,25.21875 28,6.78125 z"
+       id="path5138"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#60dc00;fill-opacity:1;stroke:none"
+       d="M 27,8.53125 14.03125,16 27,23.46875 27,8.53125 z"
+       id="path5140"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#60dc00;fill-opacity:1;stroke:none"
+       d="M 19,8.53125 6.03125,16 19,23.46875 19,8.53125 z"
+       id="path5152"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
