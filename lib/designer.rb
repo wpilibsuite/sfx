@@ -930,6 +930,13 @@ class SD::Designer
     @view_controllers[vc_index]
   end
 
+  def new_tab
+    @count ||= 0
+    @count += 1
+    new_vc = SD::Windowing::DefaultViewController.new("NewTab-#{@count}")
+    add_tab(new_vc)
+  end
+
   def add_tab(vc)
     vc.tab = button(vc.name)
     vc.tab.set_on_action &method(:tab_clicked)

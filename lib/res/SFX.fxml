@@ -93,7 +93,7 @@
           </ImageView>
           <HBox fx:id="tab_box" prefHeight="-1.0" prefWidth="-1.0" spacing="2.0">
             <children>
-              <Button mnemonicParsing="false" onAction="#tab_clicked" text="+" />
+              <Button mnemonicParsing="false" onAction="#new_tab" text="+" />
             </children>
           </HBox>
           <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
