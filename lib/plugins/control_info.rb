@@ -29,14 +29,11 @@ module SD
             fx = FxmlLoader.new
             fx.location = url_resolver.(source)
             fx.controller = SD::DesignerSupport::PlaceholderFixer.new(*placeholders) if placeholders
-            opts = {jit: :no_jit}
+            opts = {}
             if custom_props
               opts[:on_root_set] = lambda { |root|
                 root.setCustomPropObject(SD::Plugins::CustomPropertyClass.new(custom_props))
               }
-            end
-            if placeholders
-              opts[:jit] = :no_jit
             end
             fx.load(jruby_ext: opts).tap do |obj|
               if placeholders

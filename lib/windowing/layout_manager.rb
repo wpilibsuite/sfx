@@ -35,7 +35,7 @@ module SD
           else
             @root.children.add_all children_map.keys
             children_map.keys.each {|c| @root.add_control c} #TODO: should not need to do this
-            @has_nils ||= children_map.values.include?([nil,nil])
+            @has_nils ||= children_map.values.find(&:empty?)
             unless @thread
               @thread = Thread.new &method(:thread_run)
             end

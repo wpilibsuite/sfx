@@ -11,3 +11,4 @@ gems/*
 *.zip
 *.fxsdash
 .sass-cache/*
+*/.jrubyfx_cache/*
