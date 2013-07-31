@@ -37,6 +37,7 @@ module SD
 
     def initialize(core, filter)
       @core = core
+      @scale_value = 1.0
       @filter = filter
       @filter.enter_playback
       @slider.max_property.bind @filter.length
@@ -52,6 +53,10 @@ module SD
         else
           load(@original_src[idx-1])
         end
+      end
+      @log_scale.value_property.add_change_listener do |new|
+        @scale_value = logify(new)
+        @speed_lbl.text = "#{"%.1f" % @scale_value}x"
       end
     end
 
@@ -132,10 +137,25 @@ module SD
       @datat = data.class
       @datav = if data.respond_to? :export_data
         @exp = true
-        data.export_data.tap{|x| puts "exporting: ", x; p x}
+        safe(data.export_data)
       else
         @exp = false
         data.as_raw
+      end
+    end
+
+    def safe(value)
+      if value.respond_to?(:java_class) && value.java_class.array?
+        value.map{|x|safe(x)}
+      else
+        case value
+        when java.lang.String then value.to_s
+        when java.lang.Double then value.double_value
+        when java.lang.Float then value.float_value
+        when java.lang.Integer then value.int_value
+        when java.lang.Boolean then value.boolean_value
+        else value
+        end
       end
     end
 

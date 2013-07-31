@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="113.0" prefWidth="675.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="113.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <center>
     <VBox prefHeight="-1.0" prefWidth="-1.0">
       <children>
@@ -30,8 +30,8 @@
             <Button mnemonicParsing="false" text="Delete" />
             <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
             <Label text="Speed:" />
-            <Slider majorTickUnit="50.0" max="100.0" min="0.0" minorTickCount="0" showTickMarks="true" value="50.0" />
-            <Label text="1x" />
+            <Slider fx:id="log_scale" majorTickUnit="50.0" max="100.0" min="0.0" minorTickCount="0" showTickMarks="true" value="50.0" />
+            <Label fx:id="speed_lbl" text="1x" />
           </children>
           <padding>
             <Insets left="6.0" right="6.0" top="3.0" />
