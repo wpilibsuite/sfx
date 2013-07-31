@@ -41,8 +41,25 @@ module SD
       @filter.enter_playback
       @slider.max_property.bind @filter.length
       @slider.value_property.bind_bidirectional @filter.pointer
+      @playback_src.items.clear
+      @playback_src.items.add_all("Live Data",
+        *Dir[File.join(Dir.home, ".smartdashboard-playback", "*.sdfxplbk")].tap{|x| @original_src = x}.map{|x|
+          File.basename(x, ".sdfxplbk").gsub(/ ([0-9]{1,2})_([0-9]{2})_([0-9]{2}) ([AP]M)/, ' \1:\2:\3 \4')})
+      @playback_src.selection_model.clear_and_select(0)
+      @playback_src.selection_model.selected_index_property.add_change_listener do |idx|
+        if idx == 0
+          #hmm, TODO
+        else
+          load(@original_src[idx-1])
+        end
+      end
     end
 
+    logify_generic = ->(min_out, max_out, min_in, max_in, x) do
+      Math::E ** (Math.log(min_out) + ((Math.log(max_out)- Math.log(min_out)) / (max_in - min_in)) * (x - min_in))
+    end
+
+    define_method(:logify, logify_generic.curry[0.1, 10, 0, 100])
 
     def step_1
       if @slider.value < @filter.length.get - 1
@@ -78,6 +95,52 @@ module SD
 
     def stop
       @filter.stop_the_film
+    end
+
+    def load(file)
+      list, dates = File.open(file, "r") {|f|Marshal.load(f)}
+      @filter._impl_load(list.map(&:to_data), dates.map(&:to_java))
+    end
+
+    def save
+      list, dates = @filter._impl_save
+      list = list.map{|x|DiskTransaction.new(x)}
+      dates = dates.map{|d|Time.at(d.time/1000.0)}
+      timestamp = Time.now.strftime("%F %r -- ")
+      dir = File.join(Dir.home, ".smartdashboard-playback")
+      Dir.mkdir(dir) unless Dir.exist? dir
+      File.open(File.join(dir, timestamp.gsub(":", "_") + ".sdfxplbk"), "w") do |f|
+        f << Marshal.dump([list,dates])
+      end
+      @playback_src.items.add(timestamp)
+    end
+  end
+  class DiskTransaction
+    def initialize(trans)
+      @deleted = trans.deleted_names.to_a
+      @values = trans.values.map{|x|DiskValue.new(x.name, x.group_name, x.type, x.data)}
+    end
+    def to_data
+      Java::dashfx.lib.data.SimpleTransaction.new(@values.map(&:to_data).to_java(Java::dashfx.lib.data.SmartValue), @deleted.to_java(:String))
+    end
+  end
+  class DiskValue
+    def initialize(name, group, type, data)
+      @name = name
+      @group = group
+      @type = type && type.mask || 0xFFFFFFFF
+      @datat = data.class
+      @datav = if data.respond_to? :export_data
+        @exp = true
+        data.export_data.tap{|x| puts "exporting: ", x; p x}
+      else
+        @exp = false
+        data.as_raw
+      end
+    end
+
+    def to_data
+      Java::dashfx.lib.data.SmartValue.new(@datat.new(@datav), Java::dashfx.lib.data.SmartValueTypes.values.find{|x| x.mask == @type}, @name, @group)
     end
   end
 end
