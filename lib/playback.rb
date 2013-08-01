@@ -38,6 +38,7 @@ module SD
     def initialize(core, filter)
       @core = core
       @scale_value = 1.0
+      @playing = nil
       @filter = filter
       @filter.enter_playback
       @slider.max_property.bind @filter.length
@@ -57,6 +58,10 @@ module SD
       @log_scale.value_property.add_change_listener do |new|
         @scale_value = logify(new)
         @speed_lbl.text = "#{"%.1f" % @scale_value}x"
+        if @playing
+          @filter.stop_the_film
+          @filter.play_with_time(@playing/@scale_value)
+        end
       end
     end
 
@@ -91,14 +96,17 @@ module SD
     end
 
     def play
-      @filter.play_with_time
+      @playing = 1
+      @filter.play_with_time(1/@scale_value)
     end
 
     def yalp
-      @filter.play_with_time(-1)
+      @playing = -1
+      @filter.play_with_time(-1/@scale_value)
     end
 
     def stop
+      @playing = nil
       @filter.stop_the_film
     end
 
