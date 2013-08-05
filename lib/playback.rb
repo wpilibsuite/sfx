@@ -127,8 +127,132 @@ module SD
       end
       @playback_src.items.add(timestamp)
     end
+
+  end
+  class PlaybackDumper
+    def initialize(filename)
+      @file = File.open(filename, "wb:utf-8")
+      @tmp = []
+      @previous = {}
+      @lookup_tables = {}
+    end
+    def <<(save_stream)
+      @tmp += save_stream
+      if @tmp.length > 20
+        flush
+      end
+    end
+    def flush
+      # TODO: sync
+      # build table
+      f = @file
+      f << "f"
+      new_values = @tmp.inject([]){|ar, dt| ar + dt.values}
+      names = new_values.map(&:name) - @lookup_tables.keys
+      f << [names.length].pack("U") # size of index
+      from = @lookup_tables.values.max
+      names.each do |name|
+        @lookup_tables[name] = (from += 1)
+        f << [from, name.length].pack("U*")
+        f << name
+      end
+      f << [@previous.length].pack("U")
+      @previous.each do |name, value|
+        write_transaction_value(name, value)
+      end
+      f << "\0"
+      @tmp.each do |tmp|
+        write_transaction(tmp)
+      end
+    end
+    private
+    def write_transaction(fr)
+      f = @file
+      f << "t"
+      f << [fr.values.length].pack("U")
+      fr.values.each do |name, value|
+        # TODO: stuff
+      end
+    end
+
+    def write_transaction_value(name, value)
+      f = @file
+      f << [@lookup_tables[name]].pack("U")
+      type = value_type(value)
+      enc, dec = find_codec(type)
+      f << [type].pack("C")
+      enc.call(value, f)
+    end
+
+
+
+    def single_value(val)
+      lambda {|f|val}
+    end
+    def packer(format, &block)
+      if block_given?
+        lambda {|v,f| f << [block.(v)].pack(format)}
+      else
+        lambda {|v,f| f << [v].pack(format)}
+      end
+    end
+    def unpacker(format, clz=nil)
+      size = [0].pack(format).length
+      lambda do |f|
+        up = f.read(size).unpack(format)
+        return clz ? clz.new(up) : up
+      end
+    end
+
+    nothing = lambda {|v,f|}
+
+    # TODO: i'm not sure I like this
+    TYPES = {
+      NilClass => 0,
+      java.lang.Double => 1,
+      Float => 2, # actually a java double
+      java.lang.Float => 3,
+      java.lang.Integer => 4,
+      Fixnum => 5,
+      java.lang.String => 20,
+      String => 21,
+      java.lang.Boolean => 22,
+      TrueClass => 23,
+      FalseClass => 24,
+      java.lang.Object[] => 50,
+    }
+
+    CODECS = {
+      # type => encoder, decoder
+      0 => [nothing, single_value(nil)],
+      1 => [packer("E", &:double_value), unpacker("E", java.lang.Double)],
+      2 => [packer("E"), unpacker("E")],
+      3 => [packer("e", &:float_value), unpacker("e", java.lang.Float)],
+      4 => [packer("S<", &:int_value), unpacker("S<", java.lang.Integer)],
+      5 => [packer("S<"), unpacker("S<")],
+      # TODO: verify this stringy stuff works correctly
+      20 => [lambda{|v,f| f << [v.length].pack("U"); f << v}, lambda{|f| len = f.getc.ord; f.read(len)}],
+      21 => [lambda{|v,f| f << [v.length].pack("U"); f << v.to_s}, lambda{|f| len = f.getc.ord; java.lang.String.new(f.read(len))}],
+      22 => [packer("C"){|v|v ? 1 : 0}, lambda {|f| java.lang.Boolean.new([false, true][f.read(1).unpack("C")])}],
+      23 => [nothing, single_value(true)],
+      23 => [nothing, single_value(false)],
+      50 => [lambda {|v, f| TODO }, lambda{|f| TODO}]
+    }
+
+    def value_type(value)
+      vt = Types[value.class]
+      raise "Invalid class #{value.class} from #{value.to_s} (#{value.inspect})" unless vt
+      return vt
+    end
+
+    def find_codec(type)
+      cd = CODECS[type]
+      raise "Invalid type #{type}" unless cd
+      return cd
+    end
   end
   class DiskTransaction
+    attr_reader :values, :deleted
     def initialize(trans)
       @deleted = trans.deleted_names.to_a
       @values = trans.values.map{|x|DiskValue.new(x.name, x.group_name, x.type, x.data)}
