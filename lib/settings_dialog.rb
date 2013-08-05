@@ -44,14 +44,10 @@ class SD::SettingsDialog
     bool_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 0x40) != 0}.empty?}
     root_types = std_parts.find_all{|x|x.category == "Grouping"}
 
-    prep_diff(@default_number, "defaults_type_number", :combo,
-      number_types, SD::SSListCell)
-    prep_diff(@default_string, "defaults_type_string", :combo,
-      string_types, SD::SSListCell)
-    prep_diff(@default_bool, "defaults_type_bool", :combo,
-      bool_types, SD::SSListCell)
-    prep_diff(@root_layout_pane, "root_canvas", :combo,
-      root_types, SD::SSListCell, Proc.new{|dat|
+    prep_diff(@default_number, "defaults_type_number", :combo, number_types, SD::SSListCell)
+    prep_diff(@default_string, "defaults_type_string", :combo, string_types, SD::SSListCell)
+    prep_diff(@default_bool, "defaults_type_bool", :combo, bool_types, SD::SSListCell)
+    prep_diff(@root_layout_pane, "root_canvas", :combo, root_types, SD::SSListCell, Proc.new{|dat|
         @main.root_canvas = dat[:raw_value].new})
 
     prep_diff(@toolbox_icons, "toolbox_icons", :str_combo, ["Icons&Text", "IconsOnly", "TextOnly"])
@@ -72,6 +68,8 @@ class SD::SettingsDialog
     case type
     when :bool
       obj.selected = @prefs.send(prop_name)
+      # This is somewhat of a hack
+      block.call(obj.selected) if block
       obj.selected_property.add_change_listener do |ov, old, new|
         @diffs[prop_name] = {type: type, value: new}
         if block
