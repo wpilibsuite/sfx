@@ -135,6 +135,7 @@ module SD
       @tmp = []
       @previous = {}
       @lookup_tables = {}
+      @rlookup_tables = {}
     end
     def <<(save_stream)
       @tmp += save_stream
@@ -153,7 +154,7 @@ module SD
       from = @lookup_tables.values.max
       names.each do |name|
         @lookup_tables[name] = (from += 1)
-        f << [from, name.length].pack("U*")
+        f << [from, name.bytesize].pack("U*")
         f << name
       end
       f << [@previous.length].pack("U")
@@ -166,13 +167,38 @@ module SD
       end
     end
     private
+
+    def read_fframe
+      raise "FAIL" unless "f" == @file.getc
+      f = @file
+      # read names
+      pairs = f.getc.ord
+      pairs.times do
+        id = f.getc.ord
+        name = f.read(f.getc.ord)
+        @lookup_tables[name] = id
+        @rlookup_tables[id] = name
+      end
+      # read transactions!
+      pairs = f.getc.ord
+      pairs.times do
+        read_transaction_value
+      end
+    end
+
+    def read_transaction_value
+      f = @file
+      name = @rlookup_tables[f.getc.ord]
+      typeid = f.read(1).ord
+      enc, dec = find_codec(typeid)
+      return name, dec.call(f)
+    end
+
     def write_transaction(fr)
       f = @file
       f << "t"
       f << [fr.values.length].pack("U")
-      fr.values.each do |name, value|
-        # TODO: stuff
-      end
+      fr.values.each &method(:write_transaction_value)
     end
 
     def write_transaction_value(name, value)
@@ -183,8 +209,6 @@ module SD
       f << [type].pack("C")
       enc.call(value, f)
     end
-
-
 
     def single_value(val)
       lambda {|f|val}
