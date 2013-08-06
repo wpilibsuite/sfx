@@ -1,5 +1,31 @@
-require 'jrubyfx'
-#p Java::javafx.beans.property.SimpleStringProperty
+# Check Java version first
+jre = ENV_JAVA["java.runtime.version"].match %r{^(?<version>(?<major>\d+)\.(?<minor>\d+))\.(?<patch>\d+)(_(?<update>\d+))?-?(?<release>ea|u\d)?(-?b(?<build>\d+))?}
+if jre[:minor].to_i != 7 or jre[:update].to_i < 6
+  jop = javax.swing.JOptionPane
+  jop.show_message_dialog(nil,
+    "Your version of the JVM (#{jre[:minor]} with update #{jre[:update]}) is unsupported.
+Only Java 7 after update 6 is supported. Java 6 and Java 8 are not supported.",
+    "Java Platform Unsupported", # title
+    jop::ERROR_MESSAGE)
+end
+begin
+  require 'jrubyfx'
+rescue SystemExit
+  begin
+    # Attempt to load a javafx class to see if thats why we are exiting
+    Java.javafx.application.Application
+  rescue  LoadError, NameError
+    jop = javax.swing.JOptionPane
+  jop.show_message_dialog(nil,
+    "JavaFX not found.
+Only Java 7u6 is supported. Java 6 and Java 8 are not supported.",
+    "JavaFX not found", # title
+    jop::ERROR_MESSAGE)
+    exit -1
+  end
+end
+
+# set up load path
 $LOAD_PATH << "."
 $PLUGIN_DIR = File.join(File.dirname(File.dirname(File.expand_path __FILE__)), "plugins")
 q = $LOAD_PATH.find { |i| i.include?(".jar!/META-INF/jruby.home/lib/ruby/")}
@@ -9,12 +35,13 @@ if q
   $LOAD_PATH << xx
 end
 
-$LOAD_PATH << "#{ENV["HOME"]}/sunspotfrcsdk/desktop-lib/"
+$LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
+
+# require in all the jars
 require 'sfxlib.jar'
 require 'sfxmeta.jar'
 require "networktables-desktop.jar" # TODO: file.join
-#p Java::dashfx.lib.data.InitInfo
-#p Java::dashfx.lib.data.DataInitDescriptor
+
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"
 resource_root :images, File.join(File.dirname(__FILE__), "res", "img"), "res/img"
 
