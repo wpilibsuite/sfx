@@ -394,7 +394,9 @@ module SD
       @group = group || ""
       @type = type
       @datat = datat
-      @datav = if data.respond_to? :as_raw
+      @datav = if data.respond_to? :export_data
+        data.export_data
+      elsif data.respond_to? :as_raw
         data.as_raw
       else
         data
