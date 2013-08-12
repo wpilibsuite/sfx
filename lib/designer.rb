@@ -456,6 +456,7 @@ class SD::Designer
     animate_controls(true)
   end
 
+  # this is for play/pause bottom gutter hiding/showing
   def animate_controls(hide)
     mul = hide ? -1 : 1
     nul = hide ? 0 : 1
@@ -701,12 +702,15 @@ class SD::Designer
     return if @toolbox_status == :hidden
     @toolbox_status = :hidden
     asl = @add_slider
+    gshadow = @gutter_shadow
     @clickoff_tbx = Proc.new {|x|}
     @on_tmouse.call if @on_tmouse
     with(@left_gutter) do |tbx|
       timeline do
         animate tbx.translateXProperty, 0.ms => 500.ms, 0.0 => -266.0
-        animate asl.minWidthProperty, 0.ms => 500.ms, 266.0 => 0.0
+        animate asl.minWidthProperty, 0.ms => 500.ms, 268.0 => 0.0
+        animate gshadow.translateXProperty, 0.ms => 500.ms, 266.0 => 0.0
+        animate gshadow.minWidthProperty, 100.ms => 500.ms, 30.0 => 0.0
       end.play
     end
   end
@@ -716,10 +720,13 @@ class SD::Designer
     return if @toolbox_status == :visible
     @toolbox_status = :visible
     asl = @add_slider
+    gshadow = @gutter_shadow
     with(@left_gutter) do |tbx|
       timeline do
         animate tbx.translateXProperty, 0.sec => 500.ms, -266.0 => 0.0
-        animate asl.minWidthProperty, 0.ms => 500.ms, 0.0 => 266.0
+        animate asl.minWidthProperty, 0.ms => 500.ms, 0.0 => 268.0
+        animate gshadow.translateXProperty, 0.ms => 500.ms, 0.0 => 266.0
+        animate gshadow.minWidthProperty, 0.ms => 400.ms, 0.0 => 30.0
       end.play
     end
     register_toolbox_clickoff do

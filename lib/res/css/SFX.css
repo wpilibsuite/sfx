@@ -1,5 +1,5 @@
-.tab-pane *.tab-header-background {
-  -fx-background-color: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 90%, rgba(0, 0, 0, 0.4));
+#gutter_shadow {
+  -fx-background-color: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 90%, rgba(0, 0, 0, 0.4));
 }
 
 .tab-pane.hidden *.tab-header-background {
@@ -7,7 +7,7 @@
 }
 
 .titled-pane > .title, .titled-pane > .content, #left_gutter {
-  -fx-background-color: linear-gradient(to left, #666666, white 2%, white 100%);
+  -fx-background-color: white;
 }
 
 .titled-pane:focused, .titled-pane {
@@ -30,6 +30,10 @@
   -fx-background-color: transparent;
   -fx-margin: 0;
   -fx-padding: 0;
+}
+
+#add_slider {
+  -fx-background-color: linear-gradient(to right, rgba(0, 0, 0, 0) 99%, rgba(0, 0, 0, 0.2) 99%, rgba(0, 0, 0, 0.4));
 }
 
 #bottom_gutter {

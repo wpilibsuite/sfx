@@ -1,3 +1,4 @@
+# TODO: cleanup this file. its rather icky
 # Check Java version first
 jre = ENV_JAVA["java.runtime.version"].match %r{^(?<version>(?<major>\d+)\.(?<minor>\d+))\.(?<patch>\d+)(_(?<update>\d+))?-?(?<release>ea|u\d)?(-?b(?<build>\d+))?}
 if jre[:minor].to_i != 7 or jre[:update].to_i < 6
