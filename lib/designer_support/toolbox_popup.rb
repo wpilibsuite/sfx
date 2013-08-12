@@ -16,14 +16,23 @@
 
 module SD::DesignerSupport
   class ToolboxPopup < Java::javafx::stage::Popup
+    include JRubyFX
     def initialize
       super
       @pane = ToolboxPane.new self
       content.add(@pane)
+      @sections = {}
     end
 
-    def add(item)
-      @pane.tb_area.add(item)
+    def add(item, section)
+      unless @sections.has_key?(section)
+        @pane.tb_area.add(tp = TitledPane.new(section, pane = FlowPane.new))
+        @pane.tb_area.expanded_pane = tp if section == "General"
+        @sections[section] = pane
+        pane
+      else
+        @sections[section]
+      end.children.add(item)
     end
   end
   class ToolboxPane < Java::javafx::scene::layout::BorderPane

@@ -329,7 +329,7 @@ class SD::Designer
                 drop_add associate_dnd_id(i, :assign_name => id), event.x, event.y, event.source
                 @on_mouse.call if @on_mouse # hide it
               end
-              tbx_popup.add ti
+              tbx_popup.add ti, key
             end
           end
           # position the popup at the location of the mouse
@@ -383,7 +383,7 @@ class SD::Designer
           @clickoff_fnc.call if @clickoff_fnc
           @on_mouse.call(nil) if @on_mouse
         end
-        tbx_popup.add ti
+        tbx_popup.add ti, key
       end
     end
     # position the popup at the location of the mouse

@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<fx:root type="javafx.scene.layout.BorderPane" id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: white;&#10;-fx-border-color: black;&#10;-fx-border-width: 2;" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.BorderPane" id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="-1.0" prefWidth="500.0" style="-fx-background-color: white;&#10;-fx-border-color: black;&#10;-fx-border-width: 2;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <center>
-    <FlowPane fx:id="tb_area" prefHeight="-1.0" prefWidth="-1.0" />
+    <Accordion fx:id="tb_area" expandedPane="$null" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
   </center>
   <padding>
     <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
   </padding>
+  <stylesheets>
+    <URL value="@css/SFX.css" />
+  </stylesheets>
 </fx:root>
