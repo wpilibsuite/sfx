@@ -93,6 +93,10 @@ module SD
         @name
       end
 
+      def can_display?(type)
+        !!@types.find{|x|(x & type.mask) != 0}
+      end
+
       protected
       attr_writer :name, :description, :category, :group_types, :types, :new, :image_proc, :save_children, :sealed
     end

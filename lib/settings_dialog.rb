@@ -38,10 +38,10 @@ class SD::SettingsDialog
     prep_diff(@team_number, "team_number", :int_1)
 
     std_parts = SD::Plugins.controls
-    # TODO: no magic numbers
-    number_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 3) != 0}.empty?}
-    string_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 4) != 0}.empty?}
-    bool_types = std_parts.find_all{|x|!x.types.find_all{|x|(x & 0x40) != 0}.empty?}
+    svt = Java::dashfx.lib.data.SmartValueTypes
+    number_types = std_parts.find_all{|x|x.can_display? svt::Number}
+    string_types = std_parts.find_all{|x|x.can_display? svt::String}
+    bool_types = std_parts.find_all{|x|x.can_display? svt::Boolean}
     root_types = std_parts.find_all{|x|x.category == "Grouping"}
 
     prep_diff(@default_number, "defaults_type_number", :combo, number_types, SD::SSListCell)
