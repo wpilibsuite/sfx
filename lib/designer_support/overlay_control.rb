@@ -61,6 +61,7 @@ module SD::DesignerSupport
     end
 
     def registered(prov)
+      @prov = prov
       sops = @parent.getSupportedOps
       @supported_ops = RESIZABILITY_MAPPER.map do |key, cor|
         if sops.contains(key)
@@ -292,6 +293,7 @@ module SD::DesignerSupport
         @childContainer.center = new.get_ui
         @ctrl_info = i
         @original_name = i.name
+        registered(@prov)
       end
     end
 
