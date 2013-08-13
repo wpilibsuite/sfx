@@ -18,15 +18,15 @@ rescue SystemExit
     Java.javafx.application.Application
   rescue  LoadError, NameError
     jop = javax.swing.JOptionPane
-  jop.show_message_dialog(nil,
-    "JavaFX not found.
+    jop.show_message_dialog(nil,
+      "JavaFX not found.
 Only Java 7u6 is supported. Java 6 and Java 8 are not supported.",
-    "JavaFX not found", # title
-    jop::ERROR_MESSAGE)
+      "JavaFX not found", # title
+      jop::ERROR_MESSAGE)
     exit -1
   end
 end
-
+# TODO: reload toolbox on icon style change
 # set up load path
 $LOAD_PATH << "."
 $PLUGIN_DIR = File.join(File.dirname(File.dirname(File.expand_path __FILE__)), "plugins")
@@ -35,6 +35,26 @@ if q
   xx = File.dirname(q[0..(2 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]).gsub(/^file\:/, '')
   $PLUGIN_DIR = File.join(xx, "plugins")
   $LOAD_PATH << xx
+  unless File.exist? File.join(xx, "sfxlib.jar")
+    # extract them to avoid double double trouble trouble
+    sq = q[0..(3 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]
+    ["sfxlib.jar", "sfxmeta.jar"].each do |filen|
+      is = java.net.URL.new("jar:#{sq}!/x#{filen}").open_stream
+      File.open(File.join(xx, filen),"wb") do |f|
+        ar = Java::byte[40960].new
+        loop do
+          r = is.read(ar, 0, 40960)
+          if r == 40960
+            f << ar.to_s
+          elsif r == -1
+            break
+          else
+            f << ar.to_s[0...r]
+          end
+        end
+      end
+    end
+  end
 end
 
 $LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
