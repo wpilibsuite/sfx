@@ -8,6 +8,7 @@ if jre[:minor].to_i != 7 or jre[:update].to_i < 6
 Only Java 7 after update 6 is supported. Java 6 and Java 8 are not supported.",
     "Java Platform Unsupported", # title
     jop::ERROR_MESSAGE)
+  exit -1
 end
 begin
   require 'jrubyfx'
