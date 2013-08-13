@@ -31,13 +31,14 @@ end
 
 desc "Compiles a bunch of other files"
 task :compile do
-  JRubyFX::Tasks.compile(Dir['../{LiveWindowPlugin,SFX,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
   ant do
     ant(dir: "../sfxmeta/", target: "jar")
     ant(dir: "../sfxlib/") do
       target name: "clean" # must clean or the annotation processors will fail
       target name: "jar"
     end
+    # TODO: figure out how to safely re-do this
+    JRubyFX::Tasks.compile(Dir['../{LiveWindowPlugin,SFX,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
     ant(dir: "../LiveWindowPlugin/", target: "jar")
   end
 end
