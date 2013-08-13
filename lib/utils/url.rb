@@ -25,9 +25,9 @@ module SD
 
       def initialize(name, clazz, host, port, mount, options={})
         @name = simple_string_property(self, "name", name)
-        @class_name = simple_string_property(self, "className", clazz.to_s)
+        @class_name = simple_string_property(self, "className", "Java::#{clazz.java_class.name}") # TODO: nested classes
         @host = simple_string_property(self, "host", (host.nil? or host.empty? or host == MAGIC_HOST) ? nil : host)
-        @port = simple_integer_property(self, "port", (port.nil? or port.empty?) ? 0 : port.to_i)
+        @port = simple_integer_property(self, "port", (port.nil? or port == "") ? 0 : port.to_i)
         @mount = simple_string_property(self, "mount", mount)
       end
 

@@ -237,7 +237,7 @@ class SD::Designer
           SD::Plugins.load(plugin_path, if plugin_path.end_with? ".jar"
               require plugin_path
               class_loader = java.net.URLClassLoader.new([java.net.URL.new("file:#{plugin_path}")].to_java(java.net.URL))
-              lambda {|url| class_loader.find_resource url.gsub(%r{^/}, '')}
+              lambda {|url| class_loader.find_resource(url.gsub(%r{^/}, ''))}
             else
               lambda {|url| java.net.URL.new("file:#{plugin_path}/#{url}")}
             end)
@@ -805,8 +805,10 @@ class SD::Designer
     child.parent.children.remove(child)
     add_designable_control(child, MousePoint.new(*@last_reparent_try.scene_to_local(x, y), false), @last_reparent_try.child, nil)
     @last_reparent_try.hide_nestable
+    @last_reparent_try = nil
   end
-
+  
+  # TODO: store this state on the overlay control if possible
   def reparent?
     !!@last_reparent_try
   end
