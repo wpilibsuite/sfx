@@ -807,7 +807,7 @@ class SD::Designer
     @last_reparent_try.hide_nestable
     @last_reparent_try = nil
   end
-  
+
   # TODO: store this state on the overlay control if possible
   def reparent?
     !!@last_reparent_try
@@ -828,6 +828,10 @@ class SD::Designer
   def canvas_keyup(e)
     if e.code == KeyCode::DELETE
       delete_selected
+    elsif e.control_down?
+      if e.code == KeyCode::R
+        @mode == :run ? design : run
+      end
     end
   end
 
