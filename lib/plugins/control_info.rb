@@ -106,6 +106,11 @@ module SD
         annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
         cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
         types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
+        group_annote = jclass.annotation(Java::dashfx.lib.controls.GroupType.java_class)
+        more_props = jclass.annotation(Java::dashfx.lib.controls.DashFXProperties.java_class)
+        if more_props
+          moar_info = YAML::load("{#{more_props.value}}").merge(moar_info)
+        end
         oi = annote.image if annote
         self.name = annote.value if annote
         self.description = annote.description if annote
@@ -120,6 +125,7 @@ module SD
         else
           nil
         end
+        self.group_types = group_annote.value if group_annote
         self.new = lambda { jclass.ruby_class.new }
 
         generic_init(loader, moar_info)
