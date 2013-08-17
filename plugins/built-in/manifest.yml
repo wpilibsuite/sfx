@@ -22,7 +22,7 @@ Controls:
   Category: General
   Save Children: false
   Sealed: true
-  Placeholders: [p, i, d, disabled]
+  Placeholders: [p, i, d, ff, set, disabled]
 -
   Name: Command
   Description: Default testing PID editor/viewer
