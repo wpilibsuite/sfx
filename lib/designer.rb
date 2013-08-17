@@ -150,7 +150,6 @@ class SD::Designer
       tab_select(main_tab)
 
       self.message = "Ready"
-      SD::DesignerSupport::Overlay.preparse_new(3)
     end
     @stage.on_close_request do |event|
       stop_it = false
@@ -186,9 +185,6 @@ class SD::Designer
       self.message = "Using #{ip == 0 ? "localhost" : ip } as team number"
       InitInfo.team_number = ip
     end
-
-    # pre-parse one item for speedy adding
-    SD::DesignerSupport::Overlay.preparse_new(1)
     # do this now so props are fast to load
     @properties = SD::DesignerSupport::PropertiesPopup.new
 
@@ -224,7 +220,7 @@ class SD::Designer
     @dnd_ids.index(val)
   end
 
-  # Scrounge around and find everything that should go in the toolbox. TODO: modularize this to use plugins
+  # Scrounge around and find everything that should go in the toolbox.
   def find_toolbox_parts
     unless @found_plugins # cache it as its expensive
       # TODO: exceptions
@@ -323,7 +319,7 @@ class SD::Designer
           type = @data_core.getObservable(id).type
           #open a popup and populate it
           tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
-          find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
+          find_toolbox_parts.each do |key, data|
             data.each do |i|
               next unless i.can_display? type
               ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
@@ -353,7 +349,6 @@ class SD::Designer
 
     event.consume()
   end
-
   # called to add a namable control to the items
   def drop_add(id,x, y, source)
     pare = source == current_vc.ui ? current_vc.pane : source.child
