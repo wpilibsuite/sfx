@@ -50,7 +50,9 @@ class SD::SettingsDialog
     prep_diff(@root_layout_pane, "root_canvas", :combo, root_types, SD::SSListCell, Proc.new{|dat|
         @main.root_canvas = dat[:raw_value].new})
 
-    prep_diff(@toolbox_icons, "toolbox_icons", :str_combo, ["Icons&Text", "IconsOnly", "TextOnly"])
+    prep_diff(@toolbox_icons, "toolbox_icons", :str_combo, ["Icons&Text", "IconsOnly", "TextOnly"], nil, proc{
+        @main.reload_toolbox_style
+      })
 
     @aa_regex.text = @prefs.aa_regex
     @aa_code_code = @prefs.aa_code
