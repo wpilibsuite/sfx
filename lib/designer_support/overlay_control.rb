@@ -249,11 +249,11 @@ module SD::DesignerSupport
       if e.click_count > 1 && can_nested_edit?
         # enable nested mode!
         if !editing_nested
-          self.editing_nested = true
-          @parent_designer.nested_edit(self)
-          # TODO: disable!
-          e.consume
-          @parent_designer.select()
+          if true == (self.editing_nested = @parent_designer.nested_edit(self))
+            # TODO: disable!
+            e.consume
+            @parent_designer.select()
+          end
         end
       else # this is somewhat of a hack...
         @parent_designer.canvas_click(e)

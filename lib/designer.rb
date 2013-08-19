@@ -220,6 +220,14 @@ class SD::Designer
     @dnd_ids.index(val)
   end
 
+  def reload_toolbox_style
+    @toolbox_group.each do |key, values|
+      values.children.each do |val|
+        val.reload_fxml
+      end
+    end
+  end
+
   # Scrounge around and find everything that should go in the toolbox.
   def find_toolbox_parts
     unless @found_plugins # cache it as its expensive
@@ -242,7 +250,7 @@ class SD::Designer
       @toolbox_bits = SD::Plugins.controls.group_by{|x| x.category}
       @toolbox_bits.keys.each do |key|
         lfp = nil
-        @accord.panes << (titled_pane(text: "Toolbox - #{key}") do
+        @accord.panes << (titled_pane(text: "Toolbox - #{key.nil? ? "Ungrouped" : key}") do
             sp = scroll_pane(fit_to_width: true, max_height: 1.0/0.0, max_width: 1.0/0.0) do
               setHbarPolicy Java::JavafxSceneControl::ScrollPane::ScrollBarPolicy::NEVER
               setPannable false
@@ -854,8 +862,10 @@ class SD::Designer
   end
 
   def nested_edit(octrl)
+    return false if @mode == :run
     show_wingmen(octrl)
     @nested_list << octrl
+    return true
   end
 
   def surrender_nest(e)
