@@ -20,8 +20,6 @@ module SD::DesignerSupport
 
     def initialize(parent)
       @popup = parent
-      #      @label.text = label
-      #      @label.setTooltip tooltip(label)
     end
 
 
@@ -31,7 +29,7 @@ module SD::DesignerSupport
       @prop_list.row_constraints.add_all (0...props.length).map{row_constraints(vgrow: :sometimes)}
       @prop_list.row_constraints.add row_constraints(vgrow: :always)
       col = 0
-      props.each do |prop|
+      props.sort{|a, b| a.name <=> b.name}.each do |prop|
         with(@prop_list) do
           add label!(prop.name + ": ", tooltip: tooltip!(prop.description)), 0, col
           add SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui, 1, col
