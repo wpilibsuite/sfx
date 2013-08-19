@@ -33,6 +33,18 @@ module SD
     end
   end
 
+  class PlaybackFormatter < Java::javafx.util.StringConverter
+    def initialize(&block)
+      @proc = block
+    end
+    def fromString(str)
+      raise str
+    end
+    def toString(dbl)
+      @proc.(dbl)
+    end
+  end
+
   class PlaybackController
     include JRubyFX::Controller
     fxml "PlaybackEditor.fxml"
@@ -45,6 +57,10 @@ module SD
       @filter.enter_playback
       @slider.max_property.bind @filter.length
       @slider.value_property.bind_bidirectional @filter.pointer
+      @slider.label_formatter = PlaybackFormatter.new {|d| core.date_at_index(d).to_s}
+      @slider.major_tick_unit = 50 # TODO: dynamic
+      @slider.show_tick_labels = true
+      @slider.show_tick_marks = true
       @playback_src.items.clear
       @playback_src.items.add_all("Live Data",
         *Dir[File.join(Dir.home, ".smartdashboard-playback", "*.sdfxplbk")].tap{|x| @original_src = x}.map{|x|

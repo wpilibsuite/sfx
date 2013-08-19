@@ -31,7 +31,7 @@
 	-fx-padding: 0;
 }
 #add_slider {
-		-fx-background-color: linear-gradient(to right, rgba(0,0,0,0) 99%, rgba(0,0,0,0.2) 99%, rgba(0,0,0,0.4));
+	-fx-background-color: linear-gradient(to right, rgba(0,0,0,0) 99%, rgba(0,0,0,0.2) 99%, rgba(0,0,0,0.4));
 }
 $bottom_size: 32px;
 #bottom_gutter {
@@ -57,6 +57,21 @@ $bottom_size: 32px;
 			-fx-background-color: transparent, linear-gradient(to bottom, white, white 10%, lighten($sfx-green, 20%) 100%);
 			-fx-text-fill: black;
 			-fx-font-weight: normal;
+		}
+		&.delete {
+			-fx-background-radius: 5px;
+			-fx-border-radius: 5px;
+			-fx-border-color: transparent;
+			-fx-border-width: 0;
+			-fx-background-color: transparent;
+			-fx-translate-x: 0px;
+			-fx-padding: 0 3px;
+			-fx-margin: 0;
+			-fx-translate-y: 0px;
+			&:hover {
+				-fx-background-color: $sfx-red;
+				-fx-text-fill: white;
+			}
 		}
 	}
 }

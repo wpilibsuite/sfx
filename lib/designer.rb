@@ -957,7 +957,27 @@ class SD::Designer
     @count ||= 0
     @count += 1
     new_vc = SD::Windowing::DefaultViewController.new("NewTab-#{@count}", false)
-    add_tab(new_vc)
+    btn = add_tab(new_vc)
+    delete_it = lambda{delete_tab btn}
+    btn.graphic = button("x"){
+      set_on_action do |e|
+        delete_it.call
+        e.consume
+      end
+      style_class << "delete"
+    }
+    btn.content_display = Java::javafx.scene.control.ContentDisplay::RIGHT
+  end
+
+  def delete_tab(tab)
+    vc = @view_controllers.find{|x| x.tab == tab}
+    @view_controllers.remove vc
+    @tab_box.children.remove(tab)
+    @aa_name_trees.delete(vc)
+    @aa_name_trees_threads.delete(vc) # TODO: kill thread
+    @ui2pmap.delete vc.pane
+    @ui2pmap.delete vc.ui
+    tab_select(@view_controllers[0].tab)
   end
 
   def add_tab(vc)

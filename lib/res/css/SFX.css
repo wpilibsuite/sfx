@@ -53,6 +53,21 @@
   -fx-text-fill: black;
   -fx-font-weight: normal;
 }
+#bottom_gutter #tab_box .button.delete {
+  -fx-background-radius: 5px;
+  -fx-border-radius: 5px;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-background-color: transparent;
+  -fx-translate-x: 0px;
+  -fx-padding: 0 3px;
+  -fx-margin: 0;
+  -fx-translate-y: 0px;
+}
+#bottom_gutter #tab_box .button.delete:hover {
+  -fx-background-color: #df0040;
+  -fx-text-fill: white;
+}
 
 .tab-switcher {
   -fx-background-color: #cccccc;
