@@ -187,16 +187,27 @@ class SD::Designer
     end
     # do this now so props are fast to load
     @properties = SD::DesignerSupport::PropertiesPopup.new
+    @locked_props = false
 
     # when we blur, hide the properties window. TODO: property window needs improvements
     @stage.focused_property.add_change_listener do |v, o, new|
-      unless new
-        @was_showing = @properties.showing?
-        @properties.hide
-      else
-        @properties.show(@stage) if @was_showing
+      unless @locked_props
+        unless new
+          @was_showing = @properties.showing?
+          @properties.hide
+        else
+          @properties.show(@stage) if @was_showing
+        end
       end
     end
+  end
+
+  def lock_props
+    @locked_props = true
+  end
+
+  def unlock_props
+    @locked_props = false
   end
 
   # iterate over all the interfaces on this computer and find one that matches 10.x.y.z, where x and y < 100
