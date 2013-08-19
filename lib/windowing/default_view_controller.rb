@@ -18,12 +18,12 @@ module SD
     class DefaultViewController
       attr_accessor :tab, :name
       attr_reader :layout_manager
-      def initialize(name = "SmartDashboard")
+      def initialize(name = "SmartDashboard", filter=true)
         @name = name
         self.root_canvas = SD::DesignerSupport::Preferences.root_canvas.new
         # load default prefs
         @filter = SD::DesignerSupport::AAFilter.new
-        @filter.parse_prefs
+        @filter.parse_prefs if filter
       end
 
       def pane

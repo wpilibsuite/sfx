@@ -17,6 +17,11 @@ module SD
   module DesignerSupport
     class AAFilter
 
+      def initialize
+        @regex = nil
+        @code = nil
+      end
+
       def parse_prefs
         props = SD::DesignerSupport::Preferences
         tmp = props.aa_policy

@@ -956,7 +956,7 @@ class SD::Designer
   def new_tab
     @count ||= 0
     @count += 1
-    new_vc = SD::Windowing::DefaultViewController.new("NewTab-#{@count}")
+    new_vc = SD::Windowing::DefaultViewController.new("NewTab-#{@count}", false)
     add_tab(new_vc)
   end
 
