@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="229.0" prefWidth="413.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <center>
+    <Label alignment="CENTER" text="SmartDashboard&#10;Version: $$VERSION$$" textAlignment="CENTER" BorderPane.alignment="CENTER">
+      <font>
+        <Font size="26.0" />
+      </font>
+      <BorderPane.margin>
+        <Insets top="6.0" />
+      </BorderPane.margin>
+    </Label>
+  </center>
+</BorderPane>

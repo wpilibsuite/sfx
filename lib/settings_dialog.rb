@@ -161,6 +161,15 @@ class SD::SettingsDialog
       show_and_wait
     end
   end
+
+  def about
+    stg = @stage
+    stage(init_style: :utility, init_modality: :app, title: "About") do
+      init_owner stg
+      fxml "About.fxml"
+      show_and_wait
+    end
+  end
 end
 
 
