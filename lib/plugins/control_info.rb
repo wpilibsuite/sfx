@@ -137,7 +137,9 @@ module SD
         info = Hash[info.map{|k,v| [k.to_s, v]}]
         generic_init(loader, info)
         self.sealed = true
-        require java.io.File.new(loader.(info["Source"]).to_uri).to_s # TODO: embedded jars
+        url = loader.(info["Source"])
+        raise "Not a file! Its a #{url}!" if url.protocol != "file"
+        require java.io.File.new(url.file).to_s # TODO: embedded jars
         @clz = constantize(info["Class"])
       end
 
