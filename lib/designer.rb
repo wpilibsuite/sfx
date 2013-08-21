@@ -44,6 +44,7 @@ class SD::Designer
     @data_core_sublist = []
     @aa_tree_list = []
     @aa_tree.root = tree_item("/")
+    @aa_tree_hash = {"/" => @aa_tree.root, "." => @aa_tree.root}
     @layout_managers = {}
     @view_controllers = FXCollections.observableArrayList
     @aa_name_trees = {}
@@ -69,8 +70,13 @@ class SD::Designer
         @aa_tree_list.each do |child|
           child[:fout] = child[:value].match(regx) == nil
         end
+        # clear all the children
         @aa_tree.root.children.clear
-        @aa_tree.root.children.add_all(@aa_tree_list.find_all{|x|!x[:fout]}.map{|x|tree_item(value: x)})
+        @aa_tree_hash.values.each do |v|
+          v.children.clear
+        end
+        # add anything that matches
+        @aa_tree_list.find_all{|x|!x[:fout]}.each{|x|add_known(x[:value])}
         @aa_regexer.style = "-fx-border-color: green;"
         @aa_regex_message.text = "Valid regex"
       rescue Exception => e
@@ -314,11 +320,21 @@ class SD::Designer
     tmp
   end
 
-  def add_known(item)
-    val = {value: item, fout: false}
-    @aa_tree_list << val
-    @aa_tree.root.children.add tree_item(value: val) #TODO: nested
+  def add_known(name)
+    return @aa_tree_hash[name] if name == "." || name == "/"
+    item = name.sub(/\/$/, '')
+    ti = if @aa_tree_hash.has_key? item
+      @aa_tree_hash[item]
+    else
+      val = {value: item, fout: false}
+      @aa_tree_list << val
+      @aa_tree_hash[item] = tree_item(value: val, expanded: true)
+    end
+    children = add_known(File.dirname(item)).children
+    children << ti unless children.contains ti
+    ti
   end
+
 
   def drag_over(event)
     if event.gesture_source != self && event.dragboard.hasString
