@@ -13,6 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+require "windowing/layout_manager"
+require "designer_support/aa_filter"
 module SD
   module Windowing
     class DefaultViewController

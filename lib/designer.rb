@@ -1,14 +1,4 @@
-require 'jrubyfx'
-%W[designer_support io_support plugins windowing designers utils].each do |x|
-  Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
-end
-require 'playback'
-require 'data_source_selector'
-require 'settings_dialog'
-require 'yaml'
-require 'zlib'
-require 'ostruct'
-require 'rubygems/package'
+require 'thread'
 
 class SD::Designer
   include JRubyFX::Controller
@@ -58,8 +48,6 @@ class SD::Designer
     @overlay_pod.min_width_property.bind(@spain.width_property.subtract(2.0))
     @overlay_pod.min_height_property.bind(@spain.height_property.subtract(2.0))
 
-    # Load preferences
-    @prefs = SD::DesignerSupport::Preferences
 
     # load the custom regexer
     @aa_regexer.text_property.add_change_listener do |ov, ol, new|
@@ -86,94 +74,72 @@ class SD::Designer
     end
     aa_hide_regex_panel() # it shows by default
 
-    # get all toolbox bits and add them to the ui toolbox
-    find_toolbox_parts.each do |key, data|
-      data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
-    end
+    # On shown and on closing handlers
+    @stage.set_on_shown { on_shown }
+  end
 
-    #load recent files
-    build_open_menu
+  def self.require_thread
+    Thread.new do
+      @@requires = [Mutex.new, Mutex.new, Mutex.new]
+      @@requires[0].synchronize do
+        require 'yaml'
+        q = Dir["#{File.dirname(__FILE__)}/plugins/*.rb"]
+        q.each {|file| require file}
+        require 'rubygems/package'
+      end
+      while @@singleton == nil
+        sleep 0.01
+      end
+      @@singleton.init_stage_1
+    end
+  end
+
+  def on_shown
+    require 'designer_support/aa_tree_cell'
 
     # Set the auto add tree cells
     @aa_tree.set_cell_factory do |q|
       SD::DesignerSupport::AATreeCell.new
     end
 
-    SD::DesignerSupport::AANameTree.observable = ->(name){@data_core.get_observable name}
-
-    # On shown and on closing handlers
-    @stage.set_on_shown do
-
-      # Create our data core. TODO: use preferences to configure it.
-      @data_core = Java::dashfx.lib.data.DataCore.new()
-      # when the data core finds about new names, let us know!
-      @data_core.known_names.add_change_listener do |change|
-        change.next # change is an "iterator" of stuff, so use next to get the added list
-        change.added_sub_list.each do |new_name|
-          next if @aa_ignores.include? new_name
-          add_known new_name
-          @view_controllers.each do |vc|
-            if tmp = vc.should_add?(new_name, @data_core.known_names.get)
-              bits = new_name.split('/').reject(&:empty?)
-              mutex, thread, time_func = @aa_name_trees_threads[vc]
-              mutex.synchronize do
-                root = @aa_name_trees[vc]
-                namepart = ""
-                bits.each do |namebit|
-                  namepart += "/" # Can't use << here or we modify the strings that are already in the treeview
-                  namepart << namebit
-                  child = root.children[namebit]
-                  unless child
-                    child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root, time_func)
-                  end
-                  root = child
+    require 'designer_support/preferences'
+    # Create our data core. TODO: use preferences to configure it.
+    @data_core = Java::dashfx.lib.data.DataCore.new()
+    # when the data core finds about new names, let us know!
+    @data_core.known_names.add_change_listener do |change|
+      change.next # change is an "iterator" of stuff, so use next to get the added list
+      change.added_sub_list.each do |new_name|
+        next if @aa_ignores.include? new_name
+        add_known new_name
+        @view_controllers.each do |vc|
+          if tmp = vc.should_add?(new_name, @data_core.known_names.get)
+            bits = new_name.split('/').reject(&:empty?)
+            mutex, thread, time_func = @aa_name_trees_threads[vc]
+            mutex.synchronize do
+              root = @aa_name_trees[vc]
+              namepart = ""
+              bits.each do |namebit|
+                namepart += "/" # Can't use << here or we modify the strings that are already in the treeview
+                namepart << namebit
+                child = root.children[namebit]
+                unless child
+                  child = root.children[namebit] = SD::DesignerSupport::AANameTree.new(namepart, root, time_func)
                 end
+                root = child
               end
-              thread.run
             end
+            thread.run
           end
         end
       end
-
-      #TODO: use preferences for this. DEMO.
-      @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
-      #TODO: use standard plugin arch for this
-      @playback = SD::Playback.new(@data_core, @stage)
-
-      # Add known tab and any plugin tabs
-      main_vc = SD::Windowing::DefaultViewController.new
-      main_vc.on_focus_request do |focus|
-        tab_auto_focus(main_vc, focus)
-      end
-      main_tab = add_tab(main_vc)
-      SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
-        vc = x.new
-        vc.on_focus_request do |focus|
-          tab_auto_focus(vc, focus)
-        end
-        add_tab(vc)
-      end
-      tab_select(main_tab)
-
-      self.message = "Ready"
     end
-    @stage.on_close_request do |event|
-      stop_it = false
-      # TODO: multi-windows
-      # TODO: I cant seem to prevent window from closing
-      if false && @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
-        answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
-        if answer == :cancel_oh_so_broken
-          event.consume
-          stop_it = true
-        elsif answer == :save
-          save
-        end
-      end
-      #@aa_name_trees_threads.each{|k, v|v[1].kill}
-      @data_core.dispose
-      @canvas.dispose unless true # stop_it
-    end
+#    now! "shown"
+    self.message = "Loading..."
+  end
+
+  def init_stage_1
+    # Load preferences
+    @prefs = SD::DesignerSupport::Preferences
 
     # get the team number
     # if the team number is set in prefs, use it
@@ -188,24 +154,97 @@ class SD::Designer
       end
     end
     if ip
-      self.message = "Using #{ip == 0 ? "localhost" : ip } as team number"
       InitInfo.team_number = ip
     end
-    # do this now so props are fast to load
-    @properties = SD::DesignerSupport::PropertiesPopup.new
-    @locked_props = false
-
-    # when we blur, hide the properties window. TODO: property window needs improvements
-    @stage.focused_property.add_change_listener do |v, o, new|
-      unless @locked_props
-        unless new
-          @was_showing = @properties.showing?
-          @properties.hide
-        else
-          @properties.show(@stage) if @was_showing
+    @@requires[1].synchronize do
+      # get all toolbox bits and add them to the ui toolbox
+      run_later do
+        pts = find_toolbox_parts
+        #load recent files
+        build_open_menu
+        @@requires[1].synchronize do
+          pts.each do |key, data|
+            data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
+          end
         end
+
+
+        SD::DesignerSupport::AANameTree.observable = ->(name){@data_core.get_observable name}
+
+        # do this now so props are fast to load
+        @properties = SD::DesignerSupport::PropertiesPopup.new
+        @locked_props = false
+
+        # when we blur, hide the properties window. TODO: property window needs improvements
+        @stage.focused_property.add_change_listener do |v, o, new|
+          unless @locked_props
+            unless new
+              @was_showing = @properties.showing?
+              @properties.hide
+            else
+              @properties.show(@stage) if @was_showing
+            end
+          end
+        end
+
+        @stage.on_close_request &method(:on_close_request)
+
+        # Add known tab and any plugin tabs
+        main_vc = SD::Windowing::DefaultViewController.new
+        main_vc.on_focus_request do |focus|
+          tab_auto_focus(main_vc, focus)
+        end
+        main_tab = add_tab(main_vc)
+        SD::Plugins.view_controllers.find_all{|x|x.default > 0}.each do |x|
+          vc = x.new
+          vc.on_focus_request do |focus|
+            tab_auto_focus(vc, focus)
+          end
+          add_tab(vc)
+        end
+        tab_select(main_tab)
+
+
+        #TODO: use preferences for this. DEMO.
+        @data_core.mountDataEndpoint(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
+
+        require 'playback'
+        #TODO: use standard plugin arch for this
+        @playback = SD::Playback.new(@data_core, @stage)
+
+        self.message = "Ready"
+#        now! "finished"
+      end
+      require 'designer_support/toolbox_item'
+      require 'designer_support/properties_popup'
+      require 'designer_support/aa_name_tree'
+      require "windowing/default_view_controller"
+    end
+    require 'designer_support/properties_popup'
+    require 'ostruct'
+    %W[designer_support plugins io_support windowing designers utils].each do |x|
+      Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
+    end
+  end
+
+  # END INIT AREA
+
+  def on_close_request(event)
+    stop_it = false
+    # TODO: multi-windows
+    # TODO: I cant seem to prevent window from closing
+    if false && @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
+      answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
+      if answer == :cancel_oh_so_broken
+        event.consume
+        stop_it = true
+      elsif answer == :save
+        save
       end
     end
+    #@aa_name_trees_threads.each{|k, v|v[1].kill}
+    @data_core.dispose
+    @canvas.dispose unless true # stop_it
   end
 
   def lock_props
@@ -916,6 +955,7 @@ class SD::Designer
 
   # Settings for the canvas TODO: add other canvas properties
   def show_data_sources
+    require 'data_source_selector'
     data_core = @data_core
     stg = @stage
     stage(init_style: :utility, init_modality: :app, title: "Data Source Selector") do
@@ -1080,6 +1120,7 @@ class SD::Designer
   # edit the smart dashboard settings
   def edit_settings
     hide_properties
+    require 'settings_dialog'
     stg = @stage
     this = self
     stage(init_style: :utility, init_modality: :app, title: "SmartDashboard Settings") do
@@ -1117,3 +1158,5 @@ class SD::Designer
     @@singleton
   end
 end
+# require stuff in the background
+SD::Designer.require_thread

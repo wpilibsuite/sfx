@@ -13,7 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-class SD::DesignerSupport::AATreeCell < Java::javafx.scene.control.TreeCell
+module SD
+  module DesignerSupport
+
+class AATreeCell < Java::javafx.scene.control.TreeCell
   def initialize(&block)
     super
     set_on_drag_detected do |e|
@@ -34,5 +37,7 @@ class SD::DesignerSupport::AATreeCell < Java::javafx.scene.control.TreeCell
       self.text = File.basename(item[:value].to_s)
       self.graphic = tree_item.graphic
     end
+  end
+end
   end
 end
