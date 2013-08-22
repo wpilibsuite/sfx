@@ -139,6 +139,8 @@ class SD::Designer
 
   def init_stage_1
     # Load preferences
+
+    require 'designer_support/preferences' # might not be loaded yet
     @prefs = SD::DesignerSupport::Preferences
 
     # get the team number
