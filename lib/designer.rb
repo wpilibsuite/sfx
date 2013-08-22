@@ -166,7 +166,7 @@ class SD::Designer
         build_open_menu
         @@requires[1].synchronize do
           pts.each do |key, data|
-            data.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
+            data.sort{|a, b| a.name <=> b.name }.each{|i| @toolbox_group[key].children.add SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))}
           end
         end
 
