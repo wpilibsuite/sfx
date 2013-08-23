@@ -392,12 +392,12 @@ class SD::Designer
         if db.string.start_with? "AutoAdd:"
           id = db.string[8..-1] #strip prefix
           # get the type that we are dealing with so we can filter for it
-          type = @data_core.getObservable(id).type
+          typeo = @data_core.getObservable(id)
           #open a popup and populate it
           tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
           find_toolbox_parts.each do |key, data|
             data.each do |i|
-              next unless i.can_display? type
+              next unless i.can_display? typeo.type, typeo.group_name
               ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id), :assign_name => id)
               ti.set_on_mouse_clicked do
                 drop_add associate_dnd_id(i, :assign_name => id), event.x, event.y, event.source

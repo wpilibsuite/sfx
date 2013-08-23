@@ -93,8 +93,11 @@ module SD
         @name
       end
 
-      def can_display?(type)
-        !!@types.find{|x|(x & type.mask) != 0}
+      def can_display?(type, gn="")
+        (if type
+          tm = type.mask
+          @types.any? {|x|(x & tm) != 0}
+        end) || @group_types == gn
       end
 
       protected
