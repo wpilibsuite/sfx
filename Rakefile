@@ -38,7 +38,7 @@ task :compile do
       target name: "jar"
     end
     # TODO: figure out how to safely re-do this
-    JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
+    JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
     ant(dir: "../livewindowplugin/", target: "jar")
   end
 end
@@ -59,5 +59,5 @@ task :clean do
   rm FileList["**/*.jar"]
   rm_rf "gems"
   rm FileList["*.zip"]
-  rm_rf FileList["../{livewindowplugin,sfx,sfxlib}/**/.jrubyfx_cache"]
+  rm_rf FileList["../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/.jrubyfx_cache"]
 end
