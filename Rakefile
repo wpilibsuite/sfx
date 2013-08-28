@@ -15,7 +15,7 @@ desc "Creates a single jar from all the other files"
 task "single-jar" => :compile do
   cp "../sfxlib/dist/sfxlib.jar", "lib/xsfxlib.jar"
   cp "../sfxmeta/dist/sfxmeta.jar", "lib/xsfxmeta.jar"
-  cp "../livewindowplugin/dist/LiveWindowPlugin.jar", "plugins/"
+  cp "../livewindowplugin/dist/livewindowplugin.jar", "plugins/"
   cp nwt_jar, "lib/networktables-desktop.jar"
 
   # now we stuff stuff together (ha ha)
@@ -59,5 +59,5 @@ task :clean do
   rm FileList["**/*.jar"]
   rm_rf "gems"
   rm FileList["*.zip"]
-  rm_rf FileList["../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/.jrubyfx_cache"]
+  rm_rf FileList["../**/.jrubyfx_cache"]
 end
