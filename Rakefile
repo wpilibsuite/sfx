@@ -1,6 +1,5 @@
 #!/usr/bin/env rake
 require 'ant'
-require 'jrubyfx_tasks'
 task :default => "single-jar"
 
 nwt_jar = "#{ENV['HOME']}/sunspotfrcsdk/desktop-lib/networktables-desktop.jar"
@@ -10,12 +9,13 @@ jrubyfx_fxmlloader_path = ENV['fxmlloader'] || "../FXMLLoader/lib/"
 $LOAD_PATH << jrubyfx_fxmlloader_path
 $LOAD_PATH << jrubyfx_path
 
+require 'jrubyfx_tasks'
 
 desc "Creates a single jar from all the other files"
 task "single-jar" => :compile do
   cp "../sfxlib/dist/sfxlib.jar", "lib/xsfxlib.jar"
   cp "../sfxmeta/dist/sfxmeta.jar", "lib/xsfxmeta.jar"
-  cp "../LiveWindowPlugin/dist/LiveWindowPlugin.jar", "plugins/"
+  cp "../livewindowplugin/dist/LiveWindowPlugin.jar", "plugins/"
   cp nwt_jar, "lib/networktables-desktop.jar"
 
   # now we stuff stuff together (ha ha)
@@ -38,8 +38,8 @@ task :compile do
       target name: "jar"
     end
     # TODO: figure out how to safely re-do this
-    JRubyFX::Tasks.compile(Dir['../{LiveWindowPlugin,SFX,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
-    ant(dir: "../LiveWindowPlugin/", target: "jar")
+    JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
+    ant(dir: "../livewindowplugin/", target: "jar")
   end
 end
 
@@ -52,12 +52,12 @@ task :clean do
     ant(dir: "../sfxmeta/") do
       target name: "clean"
     end
-    ant(dir: "../LiveWindowPlugin/") do
+    ant(dir: "../livewindowplugin/") do
       target name: "clean"
     end
   end
   rm FileList["**/*.jar"]
   rm_rf "gems"
   rm FileList["*.zip"]
-  rm_rf FileList["../{LiveWindowPlugin,SFX,sfxlib}/**/.jrubyfx_cache"]
+  rm_rf FileList["../{livewindowplugin,sfx,sfxlib}/**/.jrubyfx_cache"]
 end
