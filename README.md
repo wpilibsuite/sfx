@@ -22,6 +22,11 @@ Once the plugins are loaded, any `ViewController`s are activated (LiveWindow) an
 
 There are several built-in helpers for building FXML-only controls
 
+### Code
+sfxmeta contains annotation processors used to find all the controls in sfxlib and generate a list of them.
+sfxlib contains all the data processing stuff, some base control bases, and some base controls.
+SFX contains the designer/all the UI.
+LiveWindowPlugin contains, well, live window
 
 ## Netbeans Install
 Install http://plugins.netbeans.org/plugin/38549 into netbeans 7.3
@@ -31,3 +36,5 @@ Run `ant` (to rebuild, `ant fast`)
 if only using netbeans, edit the properties for running to point to gems/* instead of ../* (except ../sfx*)
 
 Or if you have a jruby install, clone jrubyfx and jrubyfx-fxmlloader (gem install jrubfyx)
+
+Then import all 3/4 projects, rebuild sfxlib and run SFX.
