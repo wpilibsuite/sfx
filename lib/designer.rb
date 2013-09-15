@@ -900,9 +900,17 @@ class SD::Designer
     if e.code == KeyCode::DELETE
       delete_selected
     elsif e.control_down?
-      if e.code == KeyCode::R
-        @mode == :run ? design : run
-      end
+      
+      callback = {
+        KeyCode::R => lambda{@mode == :run ? design : run} , 
+        KeyCode::S => lambda{save},
+        KeyCode::O => lambda{open},
+        KeyCode::N => lambda{new_document},
+        KeyCode::F => lambda{show_toolbox; aa_show_regex_panel},
+        KeyCode::TAB => lambda{focus_related_tab(e.shift_down? ? -1 : 1)}
+        
+      }[e.code]
+      callback.call if callback
     end
   end
 
@@ -1007,6 +1015,7 @@ class SD::Designer
   def aa_show_regex_panel
     @aa_ctrl_panel.children.add(@aa_ctrl_regex)
     @aa_expand_panel.text = "^"
+    @aa_regexer.request_focus
   end
 
   def aa_toggle_panel
@@ -1075,6 +1084,11 @@ class SD::Designer
     @ui2pmap[vc.ui] = vc.pane
     tab_select(vc.tab)
     return vc.tab
+  end
+  
+  
+  def focus_related_tab(which)
+    tab_select(@view_controllers[(vc_index + which) % @view_controllers.length].tab)
   end
 
   def tab_select(tab)
