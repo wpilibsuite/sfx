@@ -31,31 +31,20 @@ end
 
 desc "Compiles a bunch of other files"
 task :compile do
-  ant do
-    ant(dir: "../sfxmeta/", target: "jar")
-    ant(dir: "../sfxlib/") do
-      target name: "clean" # must clean or the annotation processors will fail
-      target name: "jar"
-    end
-    # TODO: figure out how to safely re-do this
-    JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
-    ant(dir: "../livewindowplugin/", target: "jar")
-  end
+  Dir.chdir("../sfxmeta/") {ant "jar"}
+  Dir.chdir("../sfxlib/") {ant ["clean", "jar"]} # must clean or the annotation processors will fail
+
+  JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/*.fxml'] + %w{-- ../sfxlib/dist/sfxlib.jar})
+
+  Dir.chdir("../sfxlib/") {ant ["clean", "jar"]} # must clean or the annotation processors will fail
+  Dir.chdir("../livewindowplugin/"){ant "jar"}
 end
 
 desc "Removes all build files"
 task :clean do
-  ant do
-    ant(dir: "../sfxlib/") do
-      target name: "clean"
-    end
-    ant(dir: "../sfxmeta/") do
-      target name: "clean"
-    end
-    ant(dir: "../livewindowplugin/") do
-      target name: "clean"
-    end
-  end
+  Dir.chdir("../sfxlib/"){ant "clean"}
+  Dir.chdir("../sfxmeta/"){ant "clean"}
+  Dir.chdir("../livewindowplugin/"){ant "clean"}
   rm FileList["**/*.jar"]
   rm_rf "gems"
   rm FileList["*.zip"]
