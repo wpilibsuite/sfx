@@ -28,20 +28,19 @@ class SD::Designers::FileDesigner
     @text = TextField.new
     @btn = Button.new("...")
     @btn.set_on_action do
-
       dialog = FileChooser.new
       dialog.title = "Pick an image, any image..."
       dialog.add_extension_filter("All Images", %w{*.png *.jpg *.jpeg *.gif *.bmp})
       dialog.add_extension_filter("All Files", %w{*.*})
-      SD::Designer.instance.lock_props
-      file = dialog.showSaveDialog(find_stage)
-      SD::Designer.instance.unlock_props
+      # Prevents the properties dialog from going away
+      file = SD::Designer.instance.lock_props { dialog.show_open_dialog(find_stage) }
       unless file == nil
         @text.text = file.path
       end
     end
     HBox.setHgrow(@text, Java::javafx.scene.layout.Priority::ALWAYS)
-    @ui.children.add_all(@text, @btn)
+    @ui.children.add(@text)
+    @ui.children.add(@btn)
   end
 
   def find_stage(root=@ui)

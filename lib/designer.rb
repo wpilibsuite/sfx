@@ -251,6 +251,11 @@ class SD::Designer
 
   def lock_props
     @locked_props = true
+    if block_given?
+      q = yield
+      unlock_props
+      return q
+    end
   end
 
   def unlock_props
@@ -900,15 +905,15 @@ class SD::Designer
     if e.code == KeyCode::DELETE
       delete_selected
     elsif e.control_down?
-      
+
       callback = {
-        KeyCode::R => lambda{@mode == :run ? design : run} , 
+        KeyCode::R => lambda{@mode == :run ? design : run} ,
         KeyCode::S => lambda{save},
         KeyCode::O => lambda{open},
         KeyCode::N => lambda{new_document},
         KeyCode::F => lambda{show_toolbox; aa_show_regex_panel},
         KeyCode::TAB => lambda{focus_related_tab(e.shift_down? ? -1 : 1)}
-        
+
       }[e.code]
       callback.call if callback
     end
@@ -1085,8 +1090,8 @@ class SD::Designer
     tab_select(vc.tab)
     return vc.tab
   end
-  
-  
+
+
   def focus_related_tab(which)
     tab_select(@view_controllers[(vc_index + which) % @view_controllers.length].tab)
   end
