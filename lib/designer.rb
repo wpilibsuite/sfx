@@ -686,6 +686,7 @@ class SD::Designer
     add_designable_control(obj, MousePoint.new(cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], false), parent, desc)
     cdesc.props.each do |prop, val|
       nom = "set#{prop}"
+      next if prop == "Value"
       if obj.respond_to? nom
         obj
       else
