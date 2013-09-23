@@ -1,6 +1,20 @@
 #import javafx.scene.paint.Color;
 
 module SD::Designers
+  # default "designer"
+  class UnknownDesigner
+    include JRubyFX
+    attr_reader :ui
+
+    def initialize(type)
+      @ui = Label.new("Unknown [#{type}]!")
+    end
+
+    def design(prop)
+      # do nothing!
+    end
+  end
+
   @@designer_types = {}
 
 	def designer_for(*types)
@@ -17,7 +31,7 @@ module SD::Designers
     if type.enum?
       dznrClz = @@designer_types[java.lang.Enum.java_class]
     end
-    return nil unless dznrClz
+    return UnknownDesigner.new(type) unless dznrClz
     begin
       pd = dznrClz.ruby_class.new
       if (type.enum?)
