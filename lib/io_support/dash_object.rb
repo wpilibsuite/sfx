@@ -32,7 +32,7 @@ module SD
 
       # TODO: I don't like this special casing
       def self.parse_scene_graph(roots, data_core)
-        DataObject.new data_core, roots.map{|vc| DashRoot.new(vc.class, vc.pane.children.map{|x|self.parse_object x})}
+        DataObject.new data_core, roots.map{|vc| DashRoot.new(vc.class, vc.name, vc.pane.children.map{|x|self.parse_object x})}
       end
 
       def self.parse_object(elt)
@@ -40,14 +40,17 @@ module SD
       end
     end
     class DashRoot
-      attr_accessor :vc_class, :children
-      def initialize(vc_class, children)
+      attr_accessor :vc_class, :name, :children
+      def initialize(vc_class, name, children)
         @vc_class = vc_class
         @children = children
+        @name = name
       end
 
       def new
-        @vc_class.new
+        tmp = @vc_class.new
+        tmp.name = @name if @name && tmp.name != @name
+        tmp
       end
     end
     class DataObject
