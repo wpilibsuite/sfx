@@ -896,7 +896,8 @@ class SD::Designer
 
   def delete_selected
     @selected_items.each do |si|
-      current_vc.pane.children.remove(si)
+      # Remove the item from its parent, this supports nesting ad-infinitum
+      si.parent.children.remove(si)
     end
     @selected_items = []
     hide_properties
@@ -905,6 +906,7 @@ class SD::Designer
   def canvas_keyup(e)
     if e.code == KeyCode::DELETE
       delete_selected
+      e.consume
     elsif e.control_down?
 
       callback = {
