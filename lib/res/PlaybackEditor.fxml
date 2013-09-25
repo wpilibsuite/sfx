@@ -26,8 +26,8 @@
               </items>
             </ComboBox>
             <Button mnemonicParsing="false" onAction="#save" text="Save" />
-            <Button mnemonicParsing="false" text="Edit" />
-            <Button mnemonicParsing="false" text="Delete" />
+          <!--  <Button mnemonicParsing="false" text="Edit" />
+            <Button mnemonicParsing="false" text="Delete" />-->
             <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
             <Label text="Speed:" />
             <Slider fx:id="log_scale" majorTickUnit="50.0" max="100.0" min="0.0" minorTickCount="0" showTickMarks="true" value="50.0" />
