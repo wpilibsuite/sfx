@@ -92,7 +92,7 @@ module SD
         desc
       end
       def expired?
-        Time.now - data[:time] > 0.2
+        return true; #Time.now - data[:time] > 0.2
       end
       def self.observable=(obs)
         @@observable = obs
