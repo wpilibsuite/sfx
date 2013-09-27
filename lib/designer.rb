@@ -1044,6 +1044,7 @@ class SD::Designer
     @count += 1
     new_vc = SD::Windowing::DefaultViewController.new("NewTab-#{@count}", false)
     btn = add_tab(new_vc)
+    tab_select(btn)
     delete_it = lambda{delete_tab btn}
     btn.graphic = button("x"){
       set_on_action do |e|
@@ -1090,7 +1091,8 @@ class SD::Designer
       end, lambda{|x| @aa_name_trees_threads[vc][3] = x}, Time.now]
     @ui2pmap[vc.pane] = vc
     @ui2pmap[vc.ui] = vc.pane
-    tab_select(vc.tab)
+    @layout_managers[vc.pane] = vc.layout_manager
+    @layout_managers[vc.ui] = vc.layout_manager
     return vc.tab
   end
 
