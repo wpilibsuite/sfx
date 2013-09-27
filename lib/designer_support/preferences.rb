@@ -31,7 +31,7 @@ module SD
         team_number: {type: int},
         root_canvas: {type: control, default: "Canvas"},
         aa_policy: {type: string, default: "regex"},
-        aa_regex: {type: string, default: "SmartDashboard"},
+        aa_regex: {type: string, default: "^SmartDashboard"},
         aa_code: {type: string, default: "return false;"},
         toolbox_icons: {type: string, default: "Icons&Text"},
         defaults_type_number: {type: control, default: "Raw Slider"},
