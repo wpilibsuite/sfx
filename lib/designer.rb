@@ -1093,6 +1093,7 @@ class SD::Designer
     @ui2pmap[vc.ui] = vc.pane
     @layout_managers[vc.pane] = vc.layout_manager
     @layout_managers[vc.ui] = vc.layout_manager
+    vc.pane.registered(@data_core)
     return vc.tab
   end
 
@@ -1158,7 +1159,6 @@ class SD::Designer
 
   # Assign the designer surface and set up handlers
   def root_canvas=(cvs)
-    cvs.pane.registered(@data_core)
     @overlay_pod.children.remove @cur_canvas.ui if @cur_canvas
     @overlay_pod.children.add 0, cvs.ui
     raise "overlay pod has #{@overlay_pod.children.length} children instead of expected 5" unless @overlay_pod.children.length == 5
