@@ -27,6 +27,7 @@ class SD::Designer
     @savedSelection = 1
     @preparsed = 0
     @ui2pmap = {}
+    @wingman = {}
     @selSem = false
     @mode = :design
     @toolbox_status = :hidden
@@ -43,7 +44,7 @@ class SD::Designer
     @aa_ignores = []
     @vc_focus = []
     @vc_index = simple_integer_property(self, "vc_index", 0)
-    @nested_list = []
+    @nested_list = {}
 
     @overlay_pod.min_width_property.bind(@spain.width_property.subtract(2.0))
     @overlay_pod.min_height_property.bind(@spain.height_property.subtract(2.0))
@@ -857,7 +858,7 @@ class SD::Designer
     #      end
     #    end
     #    puts "--"
-    try_reparent_cc([SD::DesignerSupport::OverlayRootWrapper.new(current_vc.ui, !@nested_list.last)], child, x, y)
+    try_reparent_cc([SD::DesignerSupport::OverlayRootWrapper.new(current_vc.ui, !@nested_list[current_vc].last)], child, x, y)
   end
 
   def try_reparent_cc(ui, child, x, y)
@@ -931,6 +932,7 @@ class SD::Designer
 
   def show_wingmen(child)
     nesting = !!child
+    @wingman[current_vc] = child
     @north_wing.visible = @south_wing.visible = @east_wing.visible = @west_wing.visible = nesting
 
     if nesting
@@ -948,14 +950,14 @@ class SD::Designer
   def nested_edit(octrl)
     return false if @mode == :run
     show_wingmen(octrl)
-    @nested_list << octrl
+    @nested_list[current_vc] << octrl
     return true
   end
 
   def surrender_nest(e)
     if e.click_count > 1 # Run away!
-      @nested_list.length > 0 && @nested_list.pop.exit_nesting
-      show_wingmen(@nested_list.last)
+      @nested_list[current_vc].length > 0 && @nested_list[current_vc].pop.exit_nesting
+      show_wingmen(@nested_list[current_vc].last)
     end
   end
 
@@ -1094,6 +1096,7 @@ class SD::Designer
     @layout_managers[vc.pane] = vc.layout_manager
     @layout_managers[vc.ui] = vc.layout_manager
     vc.pane.registered(@data_core)
+    @nested_list[vc] = []
     return vc.tab
   end
 
@@ -1112,7 +1115,8 @@ class SD::Designer
     vc.tab.style_class.add("active")
     self.root_canvas = vc
     @vc_index.value = @view_controllers.index(vc)
-    vc.ui.request_layout # force layout to avoid extra blank screen + click
+    vc.ui.request_layout # force layout to avoid extra blank screen + click? is this needed?
+    show_wingmen @wingman[current_vc]
   end
 
   def tab_clicked(e)
