@@ -56,7 +56,7 @@ module SD
                 @root.children.each do |child|
                   bip = child.bounds_in_parent
                   # don't add "hidden" ones
-                  pm.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y) unless bip.min_y == 0 and bip.min_x == 0
+                  pm.occupy_rectangle(bip.min_x, bip.max_x, bip.min_y, bip.max_y) unless (-0.5..0.5).include? bip.min_y and (-0.5..0.5).include? bip.min_x
                 end
               end
             end
