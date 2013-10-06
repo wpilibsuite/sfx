@@ -15,7 +15,11 @@ module SD::Designers
     end
   end
 
-  @@designer_types = {}
+  @@designer_types ||= {}
+  
+  if @@designer_types.length > 0
+    puts "WARNING! Double loading detected! Please make note of this if you report bugs!"
+  end
 
 	def designer_for(*types)
     types.each do |type|
