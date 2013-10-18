@@ -52,6 +52,9 @@ module SD::DesignerSupport
         expando.set_on_action do
           show_all
         end
+        SD::Utils::TitledFormPane.setExpand(expando, true)
+        expando.alignment = Pos::CENTER
+        GridPane.setHalignment(expando, HPos::CENTER)
         @prop_list.children.add expando
       end
     end

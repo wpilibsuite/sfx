@@ -157,10 +157,11 @@ class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
   end
 
 	def defaultHPos(i, node)
+    eResult = GridPane.getHalignment(node) == nil ? HPos::LEFT : GridPane.getHalignment(node);
 		if i == 0
-			getExpand(node) ? HPos::LEFT : HPos::RIGHT;
+			getExpand(node) ? eResult : HPos::RIGHT;
     else
-      GridPane.getHalignment(node) == nil ? HPos::LEFT : GridPane.getHalignment(node);
+      eResult
     end
   end
 
