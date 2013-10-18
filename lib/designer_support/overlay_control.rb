@@ -106,10 +106,14 @@ module SD::DesignerSupport
             # TODO: fake properties for PC
             camel = src.name.gsub(/^(get|set)/, '').gsub(/Property$/, '')
             type = jc.java_method("get" + camel.gsub(/^([a-z])/){|x|x.upcase}).return_type
+            category = "General"
             if dznr = src.annotation(Java::dashfx.lib.controls.Designer.java_class)
               type = dznr.value.ruby_class.java_class
             end
-            props << SD::DesignerSupport::Property.new(camel, annote.value, annote.description, type, q, child, src) if q.is_a? Java::JavafxBeansValue::WritableValue
+            if dznr = src.annotation(Java::dashfx.lib.controls.Category.java_class)
+              category = dznr.value
+            end
+            props << SD::DesignerSupport::Property.new(camel, annote.value, annote.description, type, q, child, src, category) if q.is_a? Java::JavafxBeansValue::WritableValue
           elsif annote.is_a? Java::dashfx.lib.controls.DesignableProperty and src != pc
             annote.value.length.times do |i|
               prop_name = annote.value[i] + "Property"

@@ -16,9 +16,9 @@
 module SD
   module DesignerSupport
     class Property
-      attr_accessor :camel, :name, :description, :type, :property, :object, :method, :related_props
-      def initialize(camel, name, description, type, property, object, method)
-        @camel, @name, @description, @type, @property, @object, @method = camel, name, description, type, property, object, method
+      attr_accessor :camel, :name, :description, :type, :property, :object, :method, :related_props, :category
+      def initialize(camel, name, description, type, property, object, method, category="General")
+        @camel, @name, @description, @type, @property, @object, @method, @category = camel, name, description, type, property, object, method, category
       end
 
       def find(name)
