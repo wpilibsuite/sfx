@@ -733,8 +733,8 @@ class SD::Designer
       @properties.properties = @selected_items[0].properties
       sic = @selected_items[0].child
       name = sic.name if sic.respond_to? :name
-      name = @selected_items[0].original_name unless name
-      name = sic.java_class.name.split(".").last unless name
+      name = @selected_items[0].original_name unless name && name != ""
+      name = sic.java_class.name.split(".").last unless name && name != ""
       @properties.title = name
       properties_show_around @selected_items[0]
     end

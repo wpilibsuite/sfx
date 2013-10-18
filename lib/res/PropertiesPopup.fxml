@@ -10,22 +10,13 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<fx:root type="javafx.scene.layout.BorderPane" prefHeight="257.0000999999975" prefWidth="295.999977929685" style="-fx-background-color: linear-gradient(to top, #bbb 85%, #eee);&#10;-fx-background-radius: 5;&#10;-fx-border-radius: 5;" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.BorderPane" minWidth="300" style="-fx-background-color: linear-gradient(to top, #bbb 85%, #eee);&#10;-fx-background-radius: 5;&#10;-fx-border-radius: 5;" xmlns:fx="http://javafx.com/fxml">
   <center>
-    <GridPane fx:id="prop_list" hgap="12.0" vgap="9.0">
-      <columnConstraints>
-        <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="NEVER" minWidth="10.0" prefWidth="-1.0" />
-        <ColumnConstraints fillWidth="true" hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-      </columnConstraints>
+    <SD.Utils.TitledFormPane prefHeight="257.0" minWidth="297" fx:id="prop_list" hgap="12.0">
       <padding>
-        <Insets left="12.0" right="12.0" />
+        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
       </padding>
-      <rowConstraints>
-        <RowConstraints vgrow="SOMETIMES" />
-        <RowConstraints vgrow="SOMETIMES" />
-        <RowConstraints vgrow="ALWAYS" />
-      </rowConstraints>
-    </GridPane>
+	</SD.Utils.TitledFormPane>
   </center>
   <stylesheets>
     <URL value="@css/general.css" />

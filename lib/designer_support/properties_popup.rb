@@ -25,14 +25,16 @@ module SD::DesignerSupport
 
     def properties=(props)
       @prop_list.children.clear
-      @prop_list.row_constraints.clear
-      @prop_list.row_constraints.add_all (0...props.length).map{row_constraints(vgrow: :sometimes)}
-      @prop_list.row_constraints.add row_constraints(vgrow: :always)
+      @prop_list.children.add label("General") {
+        self.font = font!("System Bold", 14)
+        SD::Utils::TitledFormPane.setExpand(self, true)
+      }
       col = 0
+      # TODO: sort in wrong now with titles
       props.sort{|a, b| a.name <=> b.name}.each do |prop|
         with(@prop_list) do
-          add label!(prop.name + ": ", tooltip: tooltip!(prop.description)), 0, col
-          add SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui, 1, col
+          children.add label!(prop.name + ": ", tooltip: tooltip!(prop.description))
+          children.add SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui
           col += 1
         end
       end
