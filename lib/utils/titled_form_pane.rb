@@ -36,6 +36,7 @@ class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
 	EXPAND_TAG = "titled-form-pane-expand"
 
   fxml_accessor :hgap, SimpleDoubleProperty
+  fxml_accessor :maxRightWidth, SimpleDoubleProperty
 
   def self.setExpand(child, value)
 		setConstraint(child, EXPAND_TAG, value)
@@ -128,12 +129,16 @@ class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
 		widths = []
     # computes ths widths of the columns
 		cols.each do |pair|
+      onLeft = true
 			pair.each do |tmp|
 				wmax = [0]
         tmp.each do |node|
           wmax << computeChildPrefAreaWidth(node, Insets::EMPTY, -1) if node
         end
-				widths << wmax.max
+        maxr = getMaxRightWidth || Float::MAX
+        maxr = Float::MAX if onLeft or maxr < 1
+				widths << [wmax.max, maxr].min
+        onLeft = false
       end
     end
 		#now we can set stuff
