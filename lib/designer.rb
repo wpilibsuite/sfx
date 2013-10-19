@@ -134,7 +134,7 @@ class SD::Designer
         end
       end
     end
-#    now! "shown"
+    #    now! "shown"
     self.message = "Loading..."
   end
 
@@ -216,7 +216,7 @@ class SD::Designer
         @playback = SD::Playback.new(@data_core, @stage)
 
         self.message = "Ready"
-#        now! "finished"
+        #        now! "finished"
       end
       require 'designer_support/toolbox_item'
       require 'designer_support/properties_popup'
@@ -728,9 +728,14 @@ class SD::Designer
 
   def update_properties
     if @selected_items.length < 1 or @selected_items.find_all { |i| !i.editing_nested }.length != 1
+      @propertiesFor = @selected_items[0]
       hide_properties
     else
-      @properties.properties = @selected_items[0].properties
+      # don't clobber open/close stats
+      if @propertiesFor != @selected_items[0]
+        @propertiesFor = @selected_items[0]
+        @properties.properties = @selected_items[0].properties
+      end
       sic = @selected_items[0].child
       name = sic.name if sic.respond_to? :name
       name = @selected_items[0].original_name unless name && name != ""

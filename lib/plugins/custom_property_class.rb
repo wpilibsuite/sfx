@@ -40,6 +40,7 @@ module SD
                 DEFAULT_MAP[type]
               end,
               var: v["Var"],
+              category: v['Category'] || "General",
               description: v["Description"]
             }
           end
@@ -65,7 +66,7 @@ module SD
           add_method_signature :property_for, [java.lang.Object.java_class, java.lang.String.java_class]
           def property_for(name)
             pdesc = @full_map.find{|x|x[:var] == name}
-            SD::DesignerSupport::Property.new(name, pdesc[:name], pdesc[:description], pdesc[:type].java_class, send("#{name}Property"), nil, nil)
+            SD::DesignerSupport::Property.new(name, pdesc[:name], pdesc[:description], pdesc[:type].java_class, send("#{name}Property"), nil, nil, pdesc[:category])
           end
         end
         c.become_java!
