@@ -23,7 +23,6 @@ module SD
           # TODO: ?
         end
         generic_init(url_resolver, info)
-        @sealed = info['Sealed'] || false
         @new = lambda { |source, placeholders, pholder_override, defaults,custom_props|
           lambda {
             fx = FxmlLoader.new
@@ -55,6 +54,7 @@ module SD
       end
 
       def generic_init(url_resolver, info)
+        @sealed = info['Sealed'] || false
         @name = info['Name'] if info['Name']
         @description = info['Description'] if info['Description']
         @category = info['Category'] if info['Category']
