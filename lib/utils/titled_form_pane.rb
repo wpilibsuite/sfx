@@ -90,13 +90,19 @@ class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
 
 		managed.each { |node|
 			if (onLeft)
-				col[0] << node
-				length +=1
 				if (getExpand(node))
+          if (length + 3 >= colLength)
+            # are we the last item? if so, bump to next row
+            cols << col
+            col = [[],[]]
+            length = 0
+          end
           length +=1
 					onLeft = false
 					col[1] << nil
         end
+				length +=1
+        col[0] << node
       else
 				length+=1
 				if (getExpand(node))
