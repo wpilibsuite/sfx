@@ -109,7 +109,6 @@ module SD::DesignerSupport
       end
       # add the "add button" if we can
       bits = SD::Plugins.decorators - @dm.decorator_types
-      p bits, SD::Plugins.decorators, @dm.decorator_types
       return if bits.length < 1
       expando = menu_button("Add Decorator")
       bits.each do |clzz|
