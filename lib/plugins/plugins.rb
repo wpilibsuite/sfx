@@ -23,6 +23,7 @@ module SD
     @@plugins = {}
     @@controls = {}
     @@view_ctrls = []
+    @@decorators = []
 
     module_function
     def load(location, loader)
@@ -47,12 +48,20 @@ module SD
         end
       end.flatten
 
+      yml["Decorators"] = (yml["Decorators"] || []).map do |cdesc|
+        if cdesc.keys.include? "Listed Decorators"
+          cdesc["Listed Decorators"].map{|x|JavaUtilities.get_proxy_class(x)}
+        end
+      end.flatten
+
       yml["View Controllers"] = (yml['View Controllers'] || []).map { |cdesc| ViewControllerInfo.new(cdesc) }
 
       plug = PluginInfo.new(loader, location, yml)
       @@plugins[plug.plugin_id] = plug
       plug.controls.each{|x|@@controls[x.name]= x}
       @@view_ctrls += plug.view_controllers
+      @@decorators += plug.decorators
+      # TODO: why is it adding it to the toolbox?
     end
 
     def plugin(uuid)
@@ -61,6 +70,10 @@ module SD
 
     def plugins
       @@plugins.values
+    end
+
+    def decorators
+      @@decorators
     end
 
     def control(id)

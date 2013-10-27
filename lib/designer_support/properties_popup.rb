@@ -13,6 +13,9 @@ module SD::DesignerSupport
     def title=(props)
       @ppane.title = props
     end
+    def decor_manager=(dm)
+      @ppane.decor_manager = dm
+    end
     def focus_default?
       scene.focus_owner == @ppane.raw_title
     end
@@ -28,6 +31,10 @@ module SD::DesignerSupport
       @popup = parent
     end
 
+    def decor_manager=(dm)
+      # TODO: evaluate better ways to do this
+      @dm = dm
+    end
 
     def properties=(props)
       @prop_list.children.clear
@@ -62,6 +69,8 @@ module SD::DesignerSupport
         expando.alignment = Pos::CENTER
         GridPane.setHalignment(expando, HPos::CENTER)
         @prop_list.children.add expando
+      else
+        show_decorators
       end
     end
 
@@ -70,16 +79,54 @@ module SD::DesignerSupport
       lastType = ""
       @allprops.each do |prop|
         if lastType != prop.category
-          @prop_list.children.add label(lastType = prop.category) {
-            self.font = font!("System Bold", 14)
-            SD::Utils::TitledFormPane.setExpand(self, true)
-          }
+          add_title(lastType = prop.category)
         end
-        with(@prop_list) do
-          children.add label!(prop.name + ": ", tooltip: tooltip!(prop.description))
-          children.add SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui
+        show_prop(prop)
+      end
+      show_decorators
+    end
+
+    def add_title(value)
+      @prop_list.children.add label(value) {
+        self.font = font!("System Bold", 14)
+        SD::Utils::TitledFormPane.setExpand(self, true)
+      }
+    end
+    def show_prop(prop)
+      @prop_list.children.add label!(prop.name + ": ", tooltip: tooltip!(prop.description))
+      @prop_list.children.add SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui
+    end
+
+    def show_decorators
+      # add the decorators with a header for each
+      add_title("Decorators")
+      dmprops = @dm.properties
+      dmprops.each do |name, keys|
+        add_title(name) # TODO: add a delete button
+        keys.each do |prop|
+          show_prop(prop)
         end
       end
+      # add the "add button" if we can
+      bits = SD::Plugins.decorators - @dm.decorator_types
+      p bits, SD::Plugins.decorators, @dm.decorator_types
+      return if bits.length < 1
+      expando = menu_button("Add Decorator")
+      bits.each do |clzz|
+        clz = clzz.ruby_class.java_class
+        desc = clz.annotation(Java::dashfx.lib.controls.Designable.java_class)
+        mi = menu_item(desc.value)
+        # TODO: install tooltips
+        mi.set_on_action do
+          @dm.add(clz)
+          show_all
+        end
+        expando.items.add mi
+      end
+      SD::Utils::TitledFormPane.setExpand(expando, true)
+      expando.alignment = Pos::CENTER
+      GridPane.setHalignment(expando, HPos::CENTER)
+      @prop_list.children.add expando
     end
 
     def title=(props)

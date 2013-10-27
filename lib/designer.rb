@@ -358,6 +358,10 @@ class SD::Designer
     designer
   end
 
+  def ui2p_add(ui, control)
+    @ui2pmap[ui] = control
+  end
+
   def ui2p(ui)
     tmp = @ui2pmap[ui]
     until tmp
@@ -734,6 +738,7 @@ class SD::Designer
       # don't clobber open/close stats
       if @propertiesFor != @selected_items[0]
         @propertiesFor = @selected_items[0]
+        @properties.decor_manager = @selected_items[0].decor_manager
         @properties.properties = @selected_items[0].properties
       end
       sic = @selected_items[0].child

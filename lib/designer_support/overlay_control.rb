@@ -5,7 +5,7 @@ module SD::DesignerSupport
     include Java::dashfx::lib::controls::Control
     java_import 'dashfx.lib.controls.ResizeDirections'
     fxml "DesignerOverlayControl.fxml"
-    attr_reader :child, :parent_designer, :original_name
+    attr_reader :child, :parent_designer, :original_name, :decor_manager
     #Observable
     property_accessor :editing_nested, :running, :disabled
 
@@ -31,11 +31,13 @@ module SD::DesignerSupport
 
     def initialize(child, parent_designer, parent, ctrl_info)
       @child = child
+      @original_child = child
       @childContainer.setCenter(child.getUi);
       @parent_designer = parent_designer
       @parent = parent
       @drag_action = nil
       @selected = false
+      @decor_manager = DecoratorManager.new(method(:scan_properties), @child)
       #
       @selected_ui.opacity = 0
       @running = SimpleBooleanProperty.new(false)
@@ -48,6 +50,16 @@ module SD::DesignerSupport
       @original_name = ctrl_info.id
 
       self.focus_traversable = true
+    end
+
+    def scan_properties(val)
+      @parent_designer.ui2p_add(val.getUi, @original_child)
+      @childContainer.setCenter(val.getUi)
+
+      props = []
+      jc = val.java_class
+      _properties_for([jc, *jc.java_instance_methods], val, props, nil, jc)
+      return props
     end
 
     def control_bounds
@@ -100,7 +112,19 @@ module SD::DesignerSupport
       props = []
       jc = child.java_class
       pc = @parent.java_class
-      [jc, *jc.java_instance_methods, pc, *pc.java_class_methods].each do |src|
+      _properties_for([jc, *jc.java_instance_methods, pc, *pc.java_class_methods], child, props, pc, jc)
+
+      if child.respond_to? :custom and child.custom
+        child.custom.all_methods.each do |mname|
+          props << child.custom.property_for(mname)
+        end
+      end
+      props.each{|x|x.related_props = props}
+      return props
+    end
+
+    def _properties_for(allbits, child, props, pc, jc)
+      allbits.each do |src|
         src.annotations.each do |annote|
           if annote.is_a? Java::dashfx.lib.controls.Designable and src != jc and src != pc
             q = src.invoke(child).to_java
@@ -146,13 +170,6 @@ module SD::DesignerSupport
           end
         end
       end
-      if child.respond_to? :custom and child.custom
-        child.custom.all_methods.each do |mname|
-          props << child.custom.property_for(mname)
-        end
-      end
-      props.each{|x|x.related_props = props}
-      return props
     end
 
     def prop_names
@@ -356,6 +373,24 @@ module SD::DesignerSupport
 
     def scene_to_local(x, y)
       @child.scene_to_local(x, y)
+    end
+  end
+  class DecoratorManager
+    attr_reader :properties, :decorator_types
+    def initialize(p2call, child)
+      @child, @p2call =  child, p2call
+      @properties = {}
+      @decorator_types = []
+      # TODO: make them deleteable
+    end
+    def add(jclass)
+      val = jclass.ruby_class.new
+      val.decorate(@child.getUi)
+#      @decorators << val # TODO: keep track of them and be able to delete them
+      @decorator_types << jclass.ruby_class
+      name = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class).value
+      @properties[name] = @p2call.call(val)
+      @child = val
     end
   end
 end
