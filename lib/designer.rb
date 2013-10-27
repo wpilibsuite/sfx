@@ -849,6 +849,10 @@ class SD::Designer
     end
     @selected_items = new_selections
     update_properties
+    if @selected_items.length > 0
+      @selected_items[0].request_focus
+      @properties.focus_default!
+    end
   end
 
   def try_reparent(child, x, y)
@@ -911,8 +915,10 @@ class SD::Designer
 
   def canvas_keyup(e)
     if e.code == KeyCode::DELETE
-      delete_selected
-      e.consume
+      if @properties.focus_default?
+        delete_selected
+        e.consume
+      end
     elsif e.control_down?
 
       callback = {

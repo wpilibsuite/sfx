@@ -3,15 +3,21 @@ module SD::DesignerSupport
   class PropertiesPopup < Java::javafx::stage::Popup
     def initialize
       super()
-      content.add(PropertiesPane.new self)
+      content.add(@ppane = PropertiesPane.new(self))
       self.hide_on_escape = true
     end
 
     def properties=(props)
-      content[0].properties = props
+      @ppane.properties = props
     end
     def title=(props)
-      content[0].title = props
+      @ppane.title = props
+    end
+    def focus_default?
+      scene.focus_owner == @ppane.raw_title
+    end
+    def focus_default!
+      @ppane.raw_title.request_focus
     end
   end
   class PropertiesPane < Java::javafx::scene::layout::BorderPane
@@ -78,6 +84,9 @@ module SD::DesignerSupport
 
     def title=(props)
       @title.text = props
+    end
+    def raw_title
+      @title
     end
     def move(e)
       if @drag_info

@@ -25,7 +25,7 @@
     <HBox fx:id="titlebar" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" onMouseDragged="#move" onMousePressed="#begin_move" onMouseReleased="#finish_move" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" style="">
       <children>
         <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
-        <Label fx:id="title" alignment="TOP_LEFT" text="Awesome Control 9000">
+        <Label fx:id="title" alignment="TOP_LEFT" text="Awesome Control 9000" focusTraversable="true">
           <font>
             <Font name="System Bold" size="13.0" />
           </font>

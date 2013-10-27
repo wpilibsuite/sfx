@@ -46,6 +46,8 @@ module SD::DesignerSupport
       @selected_ui.visibleProperty.bind(@editing_nested.or(@running.or(@disabled)).not)
       @ctrl_info = ctrl_info
       @original_name = ctrl_info.id
+
+      self.focus_traversable = true
     end
 
     def control_bounds
