@@ -42,7 +42,7 @@
 			<Label text=": " />
 			<CollapsableHBox>
 				<Label text="None" fx:id="nonelbl" />
-				<Placeholder fx:id="command" controlPath="Label" propList="name: command, showLabel: false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+				<Placeholder fx:id="command" controlPath="Label" propList="name: command" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
 			</CollapsableHBox>
 		</children>
 	</ui>

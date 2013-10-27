@@ -73,7 +73,7 @@
 					</Button>
 				</children>
 			</dashfx.lib.controls.fxmlutils.CollapsableHBox>
-			<Placeholder fx:id="Name" controlPath="Label" propList="name: name, showLabel: false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+			<Placeholder fx:id="Name" controlPath="Label" propList="name: name" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
 		</children>
 	</ui>
 </DataHBox>

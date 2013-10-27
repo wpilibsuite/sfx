@@ -19,12 +19,6 @@
 	<ui>
 		<HBox alignment="CENTER_LEFT" prefHeight="-1.0" prefWidth="-1.0" onMouseClicked="moused(event)">
 			<children>
-				<dashfx.lib.controls.fxmlutils.CollapsableHBox alignment="CENTER_LEFT">
-					<children>
-						<Label text="${base.label}" visible="${base.showLabel}" />
-						<Label text=": " visible="${base.showLabel}" />
-					</children>
-				</dashfx.lib.controls.fxmlutils.CollapsableHBox>
 				<StackPane prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: #df0040;" HBox.hgrow="ALWAYS">
 					<children>
 						<StackPane prefHeight="16.0" prefWidth="16.0" style="-fx-background-color: #60dc00;" visible="${base.value}" />

@@ -61,7 +61,6 @@ module SD
       plug.controls.each{|x|@@controls[x.name]= x}
       @@view_ctrls += plug.view_controllers
       @@decorators += plug.decorators
-      # TODO: why is it adding it to the toolbox?
     end
 
     def plugin(uuid)
