@@ -61,7 +61,7 @@ module SD::DesignerSupport
         end
       end
       if bits != props
-        expando = button("V More V")
+        expando = button("More")
         expando.set_on_action do
           show_all
         end
