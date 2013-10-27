@@ -80,7 +80,7 @@ class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
 		managed.each do |node|
 			itemHeight << computeChildPrefAreaHeight(node, Insets::EMPTY, -1)
     end
-    itemHeight = itemHeight.max
+    itemHeight = itemHeight.max || 12
 
     # now build up columns
     cols = []
