@@ -205,7 +205,7 @@ class SD::Designer
           end
           add_tab(vc)
         end
-        tab_select(main_tab)
+        tab_select(main_tab) unless @cur_canvas # don't override any auto_focus requests
 
 
         #TODO: use preferences for this. DEMO.
@@ -1131,7 +1131,6 @@ class SD::Designer
     vc.tab.style_class.add("active")
     self.root_canvas = vc
     @vc_index.value = @view_controllers.index(vc)
-    vc.ui.request_layout # force layout to avoid extra blank screen + click? is this needed?
     show_wingmen @wingman[current_vc]
   end
 
