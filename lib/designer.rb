@@ -452,11 +452,20 @@ class SD::Designer
   end
 
   def morph_child(overlay, event) #TODO: drip drip drip leakage
-    # TODO: filter for types
+    tmp = overlay.child
+    id = if tmp.respond_to? :getName
+      tmp.getName
+    elsif tmp.respond_to? :getPath
+      tmp.getPath
+    else
+      nil
+    end
+    typeo = @data_core.getObservable(id) if id
     tbx_popup = SD::DesignerSupport::ToolboxPopup.new # TODO: cache these items so we don't have to reparse fxml
-    find_toolbox_parts.each do |key, data| # TODO: grouping and sorting
-      next if key == "Grouping"
+    find_toolbox_parts.each do |key, data|
       data.each do |i|
+        # find controls that could possibly replace this control
+        next unless !i or i.can_display? typeo.type, typeo.group_name or i === overlay.ctrl_info
         ti = SD::DesignerSupport::ToolboxItem.new(i, method(:associate_dnd_id))
         ti.set_on_mouse_clicked do
           obj = i.new

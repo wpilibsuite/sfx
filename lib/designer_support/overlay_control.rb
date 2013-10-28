@@ -5,7 +5,7 @@ module SD::DesignerSupport
     include Java::dashfx::lib::controls::Control
     java_import 'dashfx.lib.controls.ResizeDirections'
     fxml "DesignerOverlayControl.fxml"
-    attr_reader :child, :parent_designer, :original_name, :decor_manager
+    attr_reader :child, :parent_designer, :original_name, :decor_manager, :ctrl_info
     #Observable
     property_accessor :editing_nested, :running, :disabled
 

@@ -100,6 +100,11 @@ module SD
         end) || @group_types == gn
       end
 
+      # aka loose comparsion aka switch statement
+      def ===(rhs)
+        rhs.is_a? self.class and (@grup_types == rhs.group_types || !(rhs.types & @types).empty?)
+      end
+
       protected
       attr_writer :name, :description, :category, :group_types, :types, :new, :image_proc, :save_children, :sealed
     end
