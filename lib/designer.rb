@@ -701,11 +701,17 @@ class SD::Designer
     cdesc.props.each do |prop, val|
       nom = "set#{prop}"
       next if prop == "Value"
-      if obj.respond_to? nom
-        obj
-      else
-        obj.ui
-      end.send(nom, (val.kind_of?(SD::IOSupport::ComplexObject) ? val.to_value : val))
+      # TODO: fix old/new values
+      begin
+        if obj.respond_to? nom
+          obj
+        else
+          obj.ui
+        end.send(nom, (val.kind_of?(SD::IOSupport::ComplexObject) ? val.to_value : val))
+      rescue NoMethodError
+        puts $!
+        puts "unable to call #{nom} on #{obj}"
+      end
     end
     cdesc.children.each {|x| open_visitor(x, obj) }
   end
