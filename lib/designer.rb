@@ -608,7 +608,7 @@ class SD::Designer
 
   def save_file(file)
     file += ".fxsdash" unless file.end_with? ".fxsdash"
-    File.open(file, "w") do |io|
+    File.open(file, "wb") do |io|
       Gem::Package::TarWriter.new(io) do |tar|
         tar.add_file("version", 0644) {|f|f.write("0.1")}
         tar.add_file("data.yml", 0644) do |yml|
@@ -663,7 +663,7 @@ class SD::Designer
     update_recent_opens(file)
     build_open_menu
     data = {} # TODO: very memory inefficient
-    File.open(file, "r") do |io|
+    File.open(file, "rb") do |io|
       Gem::Package::TarReader.new(io) do |tar|
         tar.each do |entry|
           data[entry.full_name] = entry.read
