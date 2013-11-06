@@ -37,7 +37,7 @@ module SD::DesignerSupport
       @parent = parent
       @drag_action = nil
       @selected = false
-      @decor_manager = DecoratorManager.new(method(:scan_properties), @child)
+      @decor_manager = DecoratorManager.new(@childContainer, method(:scan_properties), @child)
       #
       @selected_ui.opacity = 0
       @running = SimpleBooleanProperty.new(false)
@@ -378,16 +378,16 @@ module SD::DesignerSupport
   end
   class DecoratorManager
     attr_reader :properties, :decorator_types
-    def initialize(p2call, child)
-      @child, @p2call =  child, p2call
+    def initialize(childc, p2call, child)
+      @child, @p2call, @childContainer=  child, p2call, childc
       @properties = {}
       @decorator_types = []
       @decorators = {}
+      @original_child = child
     end
     def add(jclass)
       val = jclass.ruby_class.new
       val.decorate(@child.getUi)
-#      @decorators << val # TODO: keep track of them and be able to delete them
       @decorator_types << jclass.ruby_class
       name = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class).value
       @properties[name] = @p2call.call(val)
@@ -396,9 +396,23 @@ module SD::DesignerSupport
     end
     def remove(name)
       original_ui, val = @decorators[name]
-#      kys = @decorators.keys
-#      if kys. TODO
-#      next_ui, val = @decorators[kys[kys.index(:c) + 1]]
+      kys = @decorators.keys
+      @properties.delete(name)
+      @decorator_types.delete(val.class)
+      val.undecorate
+      if kys.last == name
+        # nothing to re-do
+        @child = if kys.first == name
+          @original_child
+        else
+          @decorators[kys[kys.index(name) - 1]][1]
+        end
+        @childContainer.setCenter(original_ui)
+      else
+        # this works because hashmaps are ordered
+        next_ui, nval = @decorators[kys[kys.index(name) + 1]]
+        nval.decorate(original_ui)
+      end
     end
   end
 end

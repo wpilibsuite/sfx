@@ -102,7 +102,18 @@ module SD::DesignerSupport
       add_title("Decorators")
       dmprops = @dm.properties
       dmprops.each do |name, keys|
-        add_title(name) # TODO: add a delete button
+        btn = nil
+        @prop_list.children.add hbox {
+          label(name, max_height: 1e308, max_width: 1e308) {
+            HBox.setHgrow(self, Java::javafx::scene::layout::Priority::ALWAYS)
+            self.font = font!("System Bold", 14)
+          }
+          btn = button("X", max_height: 1e308, text_fill: Java::javafx::scene::paint::Color::RED)
+          SD::Utils::TitledFormPane.setExpand(self, true)
+        }
+        btn.set_on_action do
+          @dm.remove(name)
+        end
         keys.each do |prop|
           show_prop(prop)
         end
