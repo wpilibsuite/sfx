@@ -292,6 +292,7 @@ module SD::DesignerSupport
     end
 
     def request_ctx_menu(e)
+      @parent_designer.hide_properties_ctx(@context_menu)
       @context_menu.show(@selected_ui, e.screen_x, e.screen_y)
       e.consume
     end
@@ -381,7 +382,7 @@ module SD::DesignerSupport
       @child, @p2call =  child, p2call
       @properties = {}
       @decorator_types = []
-      # TODO: make them deleteable
+      @decorators = {}
     end
     def add(jclass)
       val = jclass.ruby_class.new
@@ -390,7 +391,14 @@ module SD::DesignerSupport
       @decorator_types << jclass.ruby_class
       name = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class).value
       @properties[name] = @p2call.call(val)
+      @decorators[name] = [@child.getUi, val] # this will retain order
       @child = val
+    end
+    def remove(name)
+      original_ui, val = @decorators[name]
+#      kys = @decorators.keys
+#      if kys. TODO
+#      next_ui, val = @decorators[kys[kys.index(:c) + 1]]
     end
   end
 end

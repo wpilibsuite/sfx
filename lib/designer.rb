@@ -741,10 +741,14 @@ class SD::Designer
     tab_select(main_tab)
   end
 
+  def hide_properties_ctx(ctx)
+    @properties.hide if @properties
+    @ctx_menu_open = ctx
+  end
+
   def hide_properties
-    if @properties
-      @properties.hide
-    end
+    @properties.hide if @properties
+    @ctx_menu_open.hide if @ctx_menu_open
   end
 
   def update_properties
@@ -843,6 +847,7 @@ class SD::Designer
   end
 
   def canvas_click(e)
+    return if e.button != MouseButton::PRIMARY
     hide_properties
     if @just_dragged
       @just_dragged  = false
