@@ -181,9 +181,10 @@
                     </HBox>
                   </children>
                   <padding>
-                    <Insets left="24.0" />
+                    <Insets bottom="16.0" left="24.0" />
                   </padding>
                 </VBox>
+                <CheckBox fx:id="aa_label" mnemonicParsing="false" text="Label controls" />
               </children>
               <padding>
                 <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />

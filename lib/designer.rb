@@ -443,9 +443,11 @@ class SD::Designer
     if @dnd_opts[dnd_obj]
       # TODO: check for other options
       obj.name = @dnd_opts[dnd_obj][:assign_name] if obj.respond_to? :name=
-      obj.label = File.basename(@dnd_opts[dnd_obj][:assign_name]) if obj.respond_to? :label=
     end
-    add_designable_control obj, MousePoint.new(x, y), pare, @dnd_ids[id]
+    dcrl = add_designable_control(obj, MousePoint.new(x, y), pare, @dnd_ids[id])
+    if @dnd_opts[dnd_obj] && SD::DesignerSupport::Preferences.add_labels
+      dcrl.decor_manager.add(Java::dashfx.lib.decorators.LabelDecorator.java_class).label = "#{File.basename(@dnd_opts[dnd_obj][:assign_name])}: "
+    end
     hide_toolbox
     @clickoff_fnc.call if @clickoff_fnc
     @on_mouse.call(nil) if @on_mouse
@@ -1117,7 +1119,13 @@ class SD::Designer
           end
           run_later do
             @aa_name_trees_threads[vc][0].synchronize do
-              @aa_name_trees[vc].process method(:add_designable_control)
+              @aa_name_trees[vc].process lambda { |ctrl, np, nd, ci|
+                dcrl = add_designable_control(ctrl, np, nd, ci)
+                if SD::DesignerSupport::Preferences.add_labels && vc.should_label?(ctrl)
+                  dcrl.decor_manager.add(Java::dashfx.lib.decorators.LabelDecorator.java_class).label = "#{File.basename(ctrl.name)}: "
+                end
+                dcrl
+              }
             end
           end
         }

@@ -29,6 +29,7 @@ module SD
       vm :add_others
       vm :add_new
       vm :global_matched
+      vm :should_label?
     end
   end
 end

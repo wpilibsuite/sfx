@@ -40,6 +40,10 @@ module SD
         @filter.filter(name, all)
       end
 
+      def should_label?(ctrl)
+        true
+      end
+
       def on_focus_request
         # don't care about focus
       end

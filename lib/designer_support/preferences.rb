@@ -38,6 +38,7 @@ module SD
         defaults_type_string: {type: control, default: "Label"},
         defaults_type_bool: {type: control, default: "RedGreen"},
         recently_open: {type: array},
+        add_labels: {type: bool, default: true}
       }.each do |key, value|
         # getters
         define_method key do

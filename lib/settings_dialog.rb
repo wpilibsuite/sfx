@@ -35,6 +35,7 @@ class SD::SettingsDialog
       end
       @team_number.disabled = value
     end
+    prep_diff(@aa_label, "add_labels", :bool)
     prep_diff(@team_number, "team_number", :int_1)
 
     std_parts = SD::Plugins.controls
