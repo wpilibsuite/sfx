@@ -30,7 +30,8 @@
 #import javafx.scene.layout.*;
 #import javafx.util.Pair;
 
-class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
+module SD::Utils
+class TitledFormPane < Java::javafx.scene.layout.Pane
   include JRubyFX
 
 	EXPAND_TAG = "titled-form-pane-expand"
@@ -235,4 +236,5 @@ class SD::Utils::TitledFormPane < Java::javafx.scene.layout.Pane
       return paramNode.getProperties().get(paramObject)
     end
   end
+end
 end

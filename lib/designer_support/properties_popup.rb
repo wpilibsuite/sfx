@@ -3,6 +3,7 @@ module SD::DesignerSupport
   class PropertiesPopup < Java::javafx::stage::Popup
     def initialize
       super()
+      require 'utils/titled_form_pane'
       content.add(@ppane = PropertiesPane.new(self))
       self.hide_on_escape = true
     end
