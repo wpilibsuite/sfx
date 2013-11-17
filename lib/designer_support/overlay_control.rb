@@ -37,7 +37,7 @@ module SD::DesignerSupport
       @parent = parent
       @drag_action = nil
       @selected = false
-      @decor_manager = DecoratorManager.new(@childContainer, method(:scan_properties), @child)
+      @decor_manager = DecoratorManager.new(self, @childContainer, method(:scan_properties), @child)
       #
       @selected_ui.opacity = 0
       @running = SimpleBooleanProperty.new(false)
@@ -194,18 +194,31 @@ module SD::DesignerSupport
     end
 
     # Used for YAML export
-    def export_props
+    def export_props(pnames=prop_names)
       # TODO: COlors and complex classes won't work like this
-      Hash[prop_names.map{|x|[x[1].gsub(/^set/, ""),
-            if x[0].value.is_a? java.lang.Enum
-              SD::IOSupport::EnumObject.new(x[0].value)
+      Hash[pnames.map{|(prop, name)|[name.gsub(/^set/, ""),
+            if prop.value.is_a? java.lang.Enum
+              SD::IOSupport::EnumObject.new(prop.value)
             else
-              x[0].value
+              prop.value
             end]}]
     end
     def export_static_props
       Hash[%w{LayoutX LayoutY}.map {|prop| [prop, send("get#{prop}")] } +
           %w{Width Height}.map {|prop| [prop, child.ui.send("get#{prop}")] }]
+    end
+
+    def export_extra
+      {v: 1, decorations: @decor_manager.export}
+    end
+
+    def load_extra(obj)
+      if obj[:v] == 1
+        @decor_manager.load(obj[:decorations])
+      else
+        puts "Warning: not loading extra! Invaid object!"
+        p obj
+      end
     end
 
     def selected
@@ -378,13 +391,35 @@ module SD::DesignerSupport
   end
   class DecoratorManager
     attr_reader :properties, :decorator_types
-    def initialize(childc, p2call, child)
-      @child, @p2call, @childContainer=  child, p2call, childc
+    def initialize(oc, childc, p2call, child)
+      @oc, @child, @p2call, @childContainer= oc, child, p2call, childc
       @properties = {}
       @decorator_types = []
       @decorators = {}
       @original_child = child
     end
+
+    # saving to file
+    def export
+      results = {}
+      # TODO: this does not save order in some cases
+      @decorators.each do |name, (ui, val)|
+        results[name] = {rclass: val.class, properties: @oc.export_props(@properties[name].map{|obj| [obj.property, obj.name]})}
+      end
+      return results
+    end
+
+    # loading from file
+    def load(results)
+      # TODO: do we need to clear everything?
+      results.each do |name, info|
+        inst = add(info[:rclass].java_class)
+        info[:properties].each do |pname, val|
+          @properties[name].find{|x|x.name == pname}.property.value = (val.kind_of?(SD::IOSupport::ComplexObject) ? val.to_value : val)
+        end
+      end
+    end
+
     def add(jclass)
       val = jclass.ruby_class.new
       val.decorate(@child.getUi)

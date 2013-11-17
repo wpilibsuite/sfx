@@ -16,17 +16,18 @@
 module SD
   module IOSupport
     class DashObject
-      attr_accessor :object, :children, :props, :sprops
-      def initialize(obj, children, props, sprops)
+      attr_accessor :object, :children, :props, :sprops, :extra
+      def initialize(obj, children, props, sprops, extra)
         @object = obj
         @children = children
         @props = props
         @sprops = sprops
+        @extra = extra
       end
 
       def ==(rhs)
-        if rhs.respond_to? :object and rhs.respond_to? :children and rhs.respond_to? :props and rhs.respond_to? :sprops
-          @object == rhs.object && @children.sort == rhs.children.sort && @props.sort == rhs.props.sort && @sprops.sort == rhs.sprops.sort\
+        if rhs.respond_to? :object and rhs.respond_to? :children and rhs.respond_to? :props and rhs.respond_to? :sprops and rhs.respond_to? :extra
+          @object == rhs.object && @children.sort == rhs.children.sort && @props.sort == rhs.props.sort && @sprops.sort == rhs.sprops.sort && @extra == rhs.extra
         end
       end
 
@@ -36,7 +37,7 @@ module SD
       end
 
       def self.parse_object(elt)
-        self.new(elt.original_name, elt.save_children? ? elt.child.children.map{|x|parse_object x} : [], elt.export_props, elt.export_static_props)
+        self.new(elt.original_name, elt.save_children? ? elt.child.children.map{|x|parse_object x} : [], elt.export_props, elt.export_static_props, elt.export_extra)
       end
     end
     class DashRoot

@@ -612,7 +612,7 @@ class SD::Designer
     file += ".fxsdash" unless file.end_with? ".fxsdash"
     File.open(file, "wb") do |io|
       Gem::Package::TarWriter.new(io) do |tar|
-        tar.add_file("version", 0644) {|f|f.write("0.1")}
+        tar.add_file("version", 0644) {|f|f.write("0.2")}
         tar.add_file("data.yml", 0644) do |yml|
           psg = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core)
           yml.write YAML.dump(psg)
@@ -672,8 +672,8 @@ class SD::Designer
         end
       end
     end
-    if data["version"].to_f != 0.1
-      self.message = "Unknown file version '#{data["version"]}'"
+    if data["version"].to_f != 0.2
+      self.message = "Unknown file version '#{data["version"]}'!"
       return
     end
     doc =  YAML.load(data['data.yml'])
@@ -699,7 +699,7 @@ class SD::Designer
     obj = desc.new
     obj.ui.setPrefWidth cdesc.sprops["Width"] if cdesc.sprops["Width"] > 0
     obj.ui.setPrefHeight cdesc.sprops["Height"] if cdesc.sprops["Height"] > 0
-    add_designable_control(obj, MousePoint.new(cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], false), parent, desc)
+    add_designable_control(obj, MousePoint.new(cdesc.sprops["LayoutX"], cdesc.sprops["LayoutY"], false), parent, desc).load_extra(cdesc.extra)
     cdesc.props.each do |prop, val|
       nom = "set#{prop}"
       next if prop == "Value"
