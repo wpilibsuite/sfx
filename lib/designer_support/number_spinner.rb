@@ -15,7 +15,7 @@
 module SD::DesignerSupport
   class NumberSpinner < Java::JavafxSceneLayout::HBox
     include JRubyFX
-    property_accessor :value
+    property_accessor :value, :show_buttons
 
     def initialize(min, step, max, log_style=true)
       super()
@@ -27,8 +27,9 @@ module SD::DesignerSupport
       @value.add_change_listener do |new|
         @field.text = new.to_s unless @noback
       end
-      font = Font.new("System Bold", 13)
+      @show_buttons = simple_boolean_property(self, "showButtons", true)
 
+      font = Font.new("System Bold", 13)
       @field = Java::JavafxSceneControl::TextField.new("0.0")
       @field.setAlignment(Java::javafx::geometry::Pos::CENTER_RIGHT)
       @field.setMaxHeight(1.7976931348623157e+308)
@@ -61,6 +62,14 @@ module SD::DesignerSupport
       @plus.getStyleClass.add("plus")
       @plus.on_mouse_pressed &method(:plus_press)
       @plus.on_mouse_released &method(:released)
+
+      @show_buttons.add_change_listener do |t1|
+				if t1 # if show
+					getChildren.add_all(@plus, @minus);
+				else
+					getChildren.remove_all(@plus, @minus);
+        end
+      end
 
       getChildren.add_all(@field, @minus, @plus)
       getStyleClass.add("number-spinner")
@@ -130,7 +139,7 @@ module SD::DesignerSupport
         @min
       end
     end
-    
+
     def max
       if @max.is_a? ObservableValue
         @max.value

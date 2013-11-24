@@ -35,8 +35,10 @@ class SD::Designers::NumberDesigner
         try_bind(@qui.max_property, max)
         try_bind(@qui.min_property, min)
         @ui.center = @qui
-        lbl = Label.new
-        lbl.textProperty().bind(@qui.valueProperty().asString("%.2f"));
+        lbl = SD::DesignerSupport::NumberSpinner.new(min, nil, max, false) # default way
+        lbl.value_property.bindBidirectional(prop.property)
+        lbl.max_width = lbl.pref_width = 50
+        lbl.show_buttons = false
         @ui.right = lbl
       else
         @qui = @ui = SD::DesignerSupport::NumberSpinner.new(min, nil, max, false) # default way
