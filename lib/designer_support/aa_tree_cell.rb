@@ -22,10 +22,12 @@ class AATreeCell < Java::javafx.scene.control.TreeCell
     set_on_drag_detected do |e|
         # This block is called when we launch the toolbox, currently a begining of a drop
         db = startDragAndDrop(TransferMode::COPY);
-
         content = ClipboardContent.new
         content.putString("AutoAdd:#{tree_item.value[:value]}");
         db.setContent(content);
+
+        # hide the toolbox
+        block.call
 
         e.consume();
     end

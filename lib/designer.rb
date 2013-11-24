@@ -100,7 +100,9 @@ class SD::Designer
 
     # Set the auto add tree cells
     @aa_tree.set_cell_factory do |q|
-      SD::DesignerSupport::AATreeCell.new
+      SD::DesignerSupport::AATreeCell.new do
+        hide_toolbox
+      end
     end
 
     require 'designer_support/preferences'
