@@ -304,6 +304,12 @@ class SD::Designer
       plugin_yaml = $PLUGIN_DIR
       if Dir.exist? plugin_yaml
         Dir["#{plugin_yaml}/*"].each do |plugin_path|
+          if plugin_path.end_with? ".css" # overload styles
+            olss = @GridPane.stylesheets.to_a
+            @GridPane.stylesheets.clear # required to cause refresh
+            @GridPane.stylesheets.add_all(*olss, "file:" + plugin_path)
+            next
+          end
           SD::Plugins.load(plugin_path, if plugin_path.end_with? ".jar"
               require plugin_path
               class_loader = java.net.URLClassLoader.new([java.net.URL.new("file:#{plugin_path}")].to_java(java.net.URL))
@@ -1059,12 +1065,12 @@ class SD::Designer
 
   def aa_hide_regex_panel
     @aa_ctrl_panel.children.remove(@aa_ctrl_regex)
-    @aa_expand_panel.text = "V"
+    @aa_expand_panel.text = "Search"
   end
 
   def aa_show_regex_panel
     @aa_ctrl_panel.children.add(@aa_ctrl_regex)
-    @aa_expand_panel.text = "^"
+    @aa_expand_panel.text = "Hide search"
     @aa_regexer.request_focus
   end
 

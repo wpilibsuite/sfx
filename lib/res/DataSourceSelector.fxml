@@ -24,7 +24,7 @@
                 </FXCollections>
               </items>
             </ComboBox>
-            <ComboBox fx:id="root_sink" disable="true" editable="false" maxWidth="1.7976931348623157E308" promptText="None" GridPane.columnIndex="3" GridPane.rowIndex="0">
+<!--            <ComboBox fx:id="root_sink" disable="true" editable="false" maxWidth="1.7976931348623157E308" promptText="None" GridPane.columnIndex="3" GridPane.rowIndex="0">
               <items>
                 <FXCollections fx:factory="observableArrayList">
                   <String fx:value="None" />
@@ -41,14 +41,14 @@
               <tooltip>
                 <Tooltip text="You can't remove the root" />
               </tooltip>
-            </Button>
+            </Button>-->
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
             <ColumnConstraints hgrow="NEVER" minWidth="1.0" prefWidth="-1.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints fillWidth="true" hgrow="NEVER" minWidth="-1.0" />
+<!--            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints fillWidth="true" hgrow="NEVER" minWidth="-1.0" />-->
           </columnConstraints>
           <padding>
             <Insets bottom="7.0" left="7.0" right="5.0" top="7.0" />
@@ -63,7 +63,11 @@
           <content>
             <VBox alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" style="">
               <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" font="$x1" text="Data Properties" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+                <Label alignment="CENTER" contentDisplay="CENTER" text="Data Properties" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+              <font>
+                <Font size="18.0" fx:id="x1" />
+              </font>
+				</Label>
                 <GridPane hgap="7.0">
                   <children>
                     <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />

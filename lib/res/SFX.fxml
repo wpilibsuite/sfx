@@ -203,9 +203,9 @@
                         <children>
                           <Label text="Add: " />
                           <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
-                          <ToggleButton disable="true" mnemonicParsing="false" onAction="#aa_add_new" text="Dont" />
-                          <Button disable="true" mnemonicParsing="false" text="Click" />
-                          <Button fx:id="aa_expand_panel" mnemonicParsing="false" onAction="#aa_toggle_panel" text="V" />
+<!--                          <ToggleButton disable="true" mnemonicParsing="false" onAction="#aa_add_new" text="Dont" />
+                          <Button disable="true" mnemonicParsing="false" text="Click" />-->
+                          <Button fx:id="aa_expand_panel" mnemonicParsing="false" onAction="#aa_toggle_panel" text="Search" />
                         </children>
                       </HBox>
                       <HBox fx:id="aa_ctrl_regex" alignment="CENTER" disable="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" visible="true">
