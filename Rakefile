@@ -19,7 +19,7 @@ task "single-jar" => :compile do
   cp nwt_jar, "lib/networktables-desktop.jar"
 
   # now we stuff stuff together (ha ha)
-  JRubyFX::Tasks::download_jruby("1.7.4") # TODO: should we use JRUBY_VERSION instead? downside => must be same jar as current
+  JRubyFX::Tasks::download_jruby("1.7.9") # TODO: should we use JRUBY_VERSION instead? downside => must be same jar as current
   JRubyFX::Tasks::jarify_jrubyfx("lib/*", "lib/main.rb", nil, "sfx.jar")
   ant do
     zip(destfile: "sfx.zip") do

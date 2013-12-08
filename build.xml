@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <project name="SFX" basedir="." default="main">
-	<property name="jruby.dest" value="${user.home}/.jruby-jar/jruby-complete-1.7.4.jar" />
+	<property name="jruby.dest" value="${user.home}/.jruby-jar/jruby-complete-1.7.9.jar" />
 	<target name="main">
 		<delete dir="gems" />
 		<mkdir dir="${user.home}/.jruby-jar" />
-		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.4/jruby-complete-1.7.4.jar"
+		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.9/jruby-complete-1.7.9.jar"
 			 dest="${jruby.dest}"
 			 verbose="false"
 			 skipexisting="true" />
@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<target name="fast">
 		<delete dir="gems" />
 		<mkdir dir="${user.home}/.jruby-jar" />
-		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.4/jruby-complete-1.7.4.jar"
+		<get src="http://jruby.org.s3.amazonaws.com/downloads/1.7.9/jruby-complete-1.7.9.jar"
 			 dest="${jruby.dest}"
 			 verbose="false"
 			 skipexisting="true" />
