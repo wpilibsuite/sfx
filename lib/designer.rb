@@ -344,12 +344,11 @@ class SD::Designer
   # called to wrap the control in an overlay and to place in a control
   def add_designable_control(control, xy, parent, oobj)
     ovl = SD::DesignerSupport::Overlay
-    designer = if control.is_a? ovl then
-      # control.parent TODO: re-register
-      control
+    designer = ovl.new(if control.is_a? ovl then
+      control = control.child
     else
-      ovl.new(control, self, parent, oobj)
-    end
+      control
+    end, self, parent, oobj)
 
     # if its designable, add hooks for nested editing to work
     if control.is_a? Java::dashfx.lib.controls.DesignablePane
@@ -925,7 +924,8 @@ class SD::Designer
 
   def reparent!(child, x, y)
     child.parent.children.remove(child)
-    add_designable_control(child, MousePoint.new(*@last_reparent_try.scene_to_local(x, y), false), @last_reparent_try.child, nil)
+    pare = @last_reparent_try.child == current_vc.ui ? current_vc.pane : @last_reparent_try.child
+    add_designable_control(child, MousePoint.new(*@last_reparent_try.scene_to_local(x, y), false), pare, child.ctrl_info)
     @last_reparent_try.hide_nestable
     @last_reparent_try = nil
   end
