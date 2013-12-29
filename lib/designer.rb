@@ -239,13 +239,13 @@ class SD::Designer
     stop_it = false
     # TODO: multi-windows
     # TODO: I cant seem to prevent window from closing
-    if false && SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core) != @current_save_data
+    if YAML.dump(SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core)) != YAML.dump(@current_save_data)
       answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
       if answer == :cancel
         event.consume
         stop_it = true
       elsif answer == :save
-        save
+        event.consume if true == (stop_it = !save)
       end
     end
     #@aa_name_trees_threads.each{|k, v|v[1].kill}
@@ -611,7 +611,7 @@ class SD::Designer
       add_extension_filter("-fx:SmartDashboard save files (*.fxsdash)")
     end
     file = dialog.showSaveDialog(@stage)
-    return unless file
+    return false unless file
     save_file file.path
   end
 
@@ -632,6 +632,7 @@ class SD::Designer
     @currently_open_file = file
     update_recent_opens(file)
     build_open_menu
+    return true ## TODO: detect failures
   end
 
   def update_recent_opens(new)
