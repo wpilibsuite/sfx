@@ -63,6 +63,12 @@ $LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
 require 'sfxlib.jar'
 require 'sfxmeta.jar'
 require "networktables-desktop.jar" # TODO: file.join
+require 'version.rb'
+
+# Make sure the same version was in the jars
+if SD::Version::Comparable && SD::Version::Value != Java::dashfx.Version.BUILD
+  fail "versions differ"
+end
 
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"
 resource_root :images, File.join(File.dirname(__FILE__), "res", "img"), "res/img"
