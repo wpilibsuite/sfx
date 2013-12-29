@@ -216,6 +216,7 @@ class SD::Designer
         require 'playback'
         #TODO: use standard plugin arch for this
         @playback = SD::Playback.new(@data_core, @stage)
+        @current_save_data = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core)
 
         self.message = "Ready"
         #        now! "finished"
@@ -238,9 +239,9 @@ class SD::Designer
     stop_it = false
     # TODO: multi-windows
     # TODO: I cant seem to prevent window from closing
-    if false && @canvas.children.length > 0 && SD::IOSupport::DashObject.parse_scene_graph(@canvas) != @current_save_data
+    if false && SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core) != @current_save_data
       answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
-      if answer == :cancel_oh_so_broken
+      if answer == :cancel
         event.consume
         stop_it = true
       elsif answer == :save
@@ -248,8 +249,7 @@ class SD::Designer
       end
     end
     #@aa_name_trees_threads.each{|k, v|v[1].kill}
-    @data_core.dispose
-    @canvas.dispose unless true # stop_it
+    @data_core.dispose unless stop_it
   end
 
   def lock_props
@@ -746,6 +746,7 @@ class SD::Designer
       add_tab(vc)
     end
     tab_select(main_tab)
+    @current_save_data = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core)
   end
 
   def hide_properties_ctx(ctx)

@@ -30,6 +30,10 @@ module SD
           @object == rhs.object && @children.sort == rhs.children.sort && @props.sort == rhs.props.sort && @sprops.sort == rhs.sprops.sort && @extra == rhs.extra
         end
       end
+      
+      def !=(rhs)
+        !(self == rhs)
+      end
 
       # TODO: I don't like this special casing
       def self.parse_scene_graph(roots, data_core)
