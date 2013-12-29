@@ -13,24 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#/*
-# * To change this template, choose Tools | Templates
-# * and open the template in the editor.
-# */
-#package viewpane;
-#
-#import java.util.*;
-#import javafx.beans.property.DoubleProperty;
-#import javafx.beans.property.SimpleDoubleProperty;
-#import javafx.geometry.HPos;
-#import javafx.geometry.Insets;
-#import javafx.geometry.Orientation;
-#import javafx.geometry.VPos;
-#import javafx.scene.*;
-#import javafx.scene.layout.*;
-#import javafx.util.Pair;
+require 'jrubyfx'
 
-module SD::Utils
+module SD
+  module Utils
 class TitledFormPane < Java::javafx.scene.layout.Pane
   include JRubyFX
 
@@ -236,5 +222,6 @@ class TitledFormPane < Java::javafx.scene.layout.Pane
       return paramNode.getProperties().get(paramObject)
     end
   end
+end
 end
 end

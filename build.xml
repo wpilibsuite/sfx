@@ -64,6 +64,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<arg line="-S rake single-jar"/>
 		</java>
 	</target>
+	<target name="redo">
+		<java jar="${jruby.dest}" fork="true" failonerror="true">
+			<env key="jrubyfx" value="gems/jrubyfx/lib" />
+			<env key="fxmlloader" value="gems/jrubyfx-fxmlloader/lib" />
+			<arg line="-S rake single-jar"/>
+		</java>
+	</target>
 
 	<target name="single-jar">
 		<exec executable="rake" failonerror="true">

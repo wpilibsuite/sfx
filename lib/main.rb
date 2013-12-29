@@ -26,34 +26,39 @@ Only Java 7u6 is supported. Java 6 and Java 8 are not supported.",
     exit -1
   end
 end
+
+# extracts the embedded jars
+def extract(sq, xx)
+  ["sfxlib.jar", "sfxmeta.jar"].each do |filen|
+    is = java.net.URL.new("jar:#{sq}!/x#{filen}").open_stream
+    File.open(File.join(xx, filen),"wb") do |f|
+      ar = Java::byte[40960].new
+      loop do
+        r = is.read(ar, 0, 40960)
+        if r == 40960
+          f << ar.to_s
+        elsif r == -1
+          break
+        else
+          f << ar.to_s[0...r]
+        end
+      end
+    end
+  end
+end
 # TODO: reload toolbox on icon style change
 # set up load path
 $LOAD_PATH << "."
 $PLUGIN_DIR = File.join(File.dirname(File.dirname(File.expand_path __FILE__)), "plugins")
 q = $LOAD_PATH.find { |i| i.include?(".jar!/META-INF/jruby.home/lib/ruby/")}
+xx = File.dirname(q[0..(2 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]).gsub(/^file\:/, '')
+sq = q[0..(3 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]
 if q
-  xx = File.dirname(q[0..(2 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]).gsub(/^file\:/, '')
   $PLUGIN_DIR = File.join(xx, "plugins")
   $LOAD_PATH << xx
   unless File.exist? File.join(xx, "sfxlib.jar")
     # extract them to avoid double double trouble trouble
-    sq = q[0..(3 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]
-    ["sfxlib.jar", "sfxmeta.jar"].each do |filen|
-      is = java.net.URL.new("jar:#{sq}!/x#{filen}").open_stream
-      File.open(File.join(xx, filen),"wb") do |f|
-        ar = Java::byte[40960].new
-        loop do
-          r = is.read(ar, 0, 40960)
-          if r == 40960
-            f << ar.to_s
-          elsif r == -1
-            break
-          else
-            f << ar.to_s[0...r]
-          end
-        end
-      end
-    end
+    extract(sq, xx)
   end
 end
 
@@ -67,7 +72,15 @@ require 'version.rb'
 
 # Make sure the same version was in the jars
 if SD::Version::Comparable && SD::Version::Value != Java::dashfx.Version.BUILD
-  fail "versions differ"
+  jop = javax.swing.JOptionPane
+  jop.show_message_dialog(nil,
+    "An old jar file (version #{Java::dashfx.Version.BUILD}) was found that differs from 
+the current version (#{SD::Version::Value}).
+Please re-launch SmartDashboard to overwrite this old file.",
+    "Mixed Version", # title
+    jop::ERROR_MESSAGE)
+  extract(sq, xx)
+  exit -2
 end
 
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"
