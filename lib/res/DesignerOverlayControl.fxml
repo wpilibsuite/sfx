@@ -20,7 +20,9 @@
             <MenuItem mnemonicParsing="false" onAction="#z_send_top" text="Send to Top" />
           </items>
         </Menu>
+        <!--
         <MenuItem mnemonicParsing="false" onAction="#morph_into" text="Morph Into..." />
+		-->
         <MenuItem mnemonicParsing="false" onAction="#delete" text="Delete" />
       </items>
     </ContextMenu>
