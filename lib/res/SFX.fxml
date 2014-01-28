@@ -86,11 +86,11 @@
               <Tooltip text="Save" />
             </tooltip>
           </SplitMenuButton>
-          <ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.42" pickOnBounds="true" preserveRatio="true">
+          <!--<ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.42" pickOnBounds="true" preserveRatio="true">
             <image>
               <Image url="@img/edit-undo.png" />
             </image>
-          </ImageView>
+          </ImageView>-->
           <HBox fx:id="tab_box" prefHeight="-1.0" prefWidth="-1.0" spacing="2.0">
             <children>
               <Button mnemonicParsing="false" onAction="#new_tab" text="+" />
