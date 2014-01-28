@@ -217,8 +217,12 @@ class SD::Designer
         #TODO: use standard plugin arch for this
         @playback = SD::Playback.new(@data_core, @stage)
         @current_save_data = SD::IOSupport::DashObject.parse_scene_graph(@view_controllers.to_a, @data_core)
-
-        self.message = "Ready"
+        if ARGV.length > 0 && File.exist?(ARGV[0])
+          self.message = "Opening #{ARGV[0]}"
+          open_file(ARGV[0])
+        else
+          self.message = "Ready"
+        end
         #        now! "finished"
       end
       require 'designer_support/toolbox_item'
