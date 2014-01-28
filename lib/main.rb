@@ -10,6 +10,7 @@ Only Java 7 after update 6 is supported. Java 6 and Java 8 are not supported.",
     jop::ERROR_MESSAGE)
   exit -1
 end
+puts "Using Java #{jre} and JRuby #{JRUBY_VERSION}"
 begin
   require 'jrubyfx'
 rescue SystemExit
@@ -74,7 +75,7 @@ require 'version.rb'
 if SD::Version::Comparable && SD::Version::Value != Java::dashfx.Version.BUILD
   jop = javax.swing.JOptionPane
   jop.show_message_dialog(nil,
-    "An old jar file (version #{Java::dashfx.Version.BUILD}) was found that differs from 
+    "An old jar file (version #{Java::dashfx.Version.BUILD}) was found that differs from
 the current version (#{SD::Version::Value}).
 Please re-launch SmartDashboard to overwrite this old file.",
     "Mixed Version", # title
@@ -82,6 +83,8 @@ Please re-launch SmartDashboard to overwrite this old file.",
   extract(sq, xx)
   exit -2
 end
+
+puts "Release/Built? #{SD::Version::Comparable} Version Identifier: #{SD::Version::Value}"
 
 fxml_root File.join(File.dirname(__FILE__), "res"), "res"
 resource_root :images, File.join(File.dirname(__FILE__), "res", "img"), "res/img"
