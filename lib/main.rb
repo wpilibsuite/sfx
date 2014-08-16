@@ -5,7 +5,7 @@ if jre[:minor].to_i != 8 or (jre[:minor].to_i == 7 and jre[:update].to_i < 6)
   jop = javax.swing.JOptionPane
   jop.show_message_dialog(nil,
     "Your version of the JVM (#{jre[:minor]} with update #{jre[:update]}) is unsupported.
-Only Java 7 after update 6 is supported. Java 6 and Java 8 are not supported.",
+Only Java 7 after update 6 is supported. Java 6 and Java 9 are not supported.",
     "Java Platform Unsupported", # title
     jop::ERROR_MESSAGE)
   exit -1
@@ -21,7 +21,7 @@ rescue SystemExit
     jop = javax.swing.JOptionPane
     jop.show_message_dialog(nil,
       "JavaFX not found.
-Only Java 7u6 is supported. Java 6 and Java 8 are not supported.",
+Only Java 7u6+ is supported. Java 6 and Java 9 are not supported.",
       "JavaFX not found", # title
       jop::ERROR_MESSAGE)
     exit -1
