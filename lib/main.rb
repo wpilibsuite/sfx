@@ -28,25 +28,6 @@ Only Java 7u6+ is supported. Java 6 and Java 9 are not supported.",
   end
 end
 
-# extracts the embedded jars
-def extract(sq, xx)
-  ["sfxlib.jar", "sfxmeta.jar"].each do |filen|
-    is = java.net.URL.new("jar:#{sq}!/x#{filen}").open_stream
-    File.open(File.join(xx, filen),"wb") do |f|
-      ar = Java::byte[40960].new
-      loop do
-        r = is.read(ar, 0, 40960)
-        if r == 40960
-          f << ar.to_s
-        elsif r == -1
-          break
-        else
-          f << ar.to_s[0...r]
-        end
-      end
-    end
-  end
-end
 # TODO: reload toolbox on icon style change
 # set up load path
 $LOAD_PATH << "."
@@ -57,10 +38,6 @@ sq = q && q[0..(3 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]
 if q
   $PLUGIN_DIR = File.join(xx, "plugins")
   $LOAD_PATH << xx
-  unless File.exist? File.join(xx, "sfxlib.jar")
-    # extract them to avoid double double trouble trouble
-    extract(sq, xx)
-  end
 end
 
 $LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
