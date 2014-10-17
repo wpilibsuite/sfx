@@ -23,6 +23,7 @@ module SD
     @@plugins = {}
     @@controls = {}
     @@view_ctrls = []
+    @@data_sources = []
     @@decorators = []
 
     module_function
@@ -54,12 +55,15 @@ module SD
         end
       end.flatten
 
+      yml["Data Sources"] = (yml['Data Sources'] || []).map { |cdesc| DataSourceInfo.new(cdesc) }
+
       yml["View Controllers"] = (yml['View Controllers'] || []).map { |cdesc| ViewControllerInfo.new(cdesc) }
 
       plug = PluginInfo.new(loader, location, yml)
       @@plugins[plug.plugin_id] = plug
       plug.controls.each{|x|@@controls[x.name]= x}
       @@view_ctrls += plug.view_controllers
+      @@data_sources += plug.data_sources
       @@decorators += plug.decorators
     end
 
@@ -69,6 +73,10 @@ module SD
 
     def plugins
       @@plugins.values
+    end
+
+    def data_sources
+      @@data_sources
     end
 
     def decorators

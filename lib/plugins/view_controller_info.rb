@@ -37,6 +37,15 @@ module SD
         @pclass.new
       end
     end
+    class DataSourceInfo
+      def self.new(hash)
+        JavaUtilities.get_proxy_class(hash["Class"]).tap{|x| p x}.java_class
+      end
+
+      def new
+        @pclass.new
+      end
+    end
   end
 end
 

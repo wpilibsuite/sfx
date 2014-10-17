@@ -49,7 +49,7 @@ module SD
       load_info_pane url
       @all_data_sources.items.clear
       # Search for all types
-      Java::dashfx.lib.registers.DataProcessorRegister.get_all.each do |e|
+      (Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a + SD::Plugins.data_sources).each do |e|
         @all_data_sources.items.add DSSMenuItem.new(DataBuilder.new(e)) {|db| create_url(db)}
       end
       # always show the current team-number induced value
