@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<fx:root type="javafx.scene.layout.VBox" alignment="TOP_CENTER" prefHeight="-1.0" prefWidth="-1.0" style="" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <Label alignment="CENTER" contentDisplay="CENTER" text="Data Properties" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+      <font>
+        <Font size="18.0" fx:id="x1" />
+      </font>
+    </Label>
+    <GridPane alignment="BASELINE_LEFT" hgap="7.0" vgap="4.0">
+      <children>
+        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <TextField fx:id="name" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label alignment="TOP_LEFT" text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.valignment="BASELINE" />
+        <Label fx:id="type_info" alignment="BASELINE_LEFT" text="Test Data (built-in)&#10;Generates sin/cos waves" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="BASELINE">
+          <tooltip>
+            <Tooltip text="smartdashfx.data.endpoints.TestDataSource" fx:id="type_classname" />
+          </tooltip>
+        </Label>
+        <Label text="Host:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+        <TextField fx:id="host" prefWidth="200.0" promptText="10.xx.yy.2" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <Label text="Port:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+        <TextField fx:id="port" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <Label text="Options:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+        <Label text="Path:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+        <TextField fx:id="path" prefWidth="200.0" promptText="/" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Label text="URL:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <TextField id="url_path" fx:id="url" editable="false" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="SOMETIMES" minWidth="60.0" prefWidth="65.0" />
+        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="-1.0" prefWidth="-1.0" />
+      </columnConstraints>
+      <padding>
+        <Insets right="10.0" top="10.0" />
+      </padding>
+      <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-1.0" minHeight="-Infinity" prefHeight="-1.0" valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-1.0" minHeight="-Infinity" prefHeight="-1.0" valignment="CENTER" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-1.0" minHeight="-Infinity" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-1.0" minHeight="-Infinity" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-1.0" minHeight="-Infinity" prefHeight="-1.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="-1.0" minHeight="-Infinity" prefHeight="-1.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <VBox.margin>
+        <Insets />
+      </VBox.margin>
+    </GridPane>
+  </children>
+</fx:root>

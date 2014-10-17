@@ -233,7 +233,7 @@ class SD::Designer
     require 'designer_support/properties_popup'
     require 'ostruct'
     %W[designer_support plugins io_support windowing designers utils].each do |x|
-      Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
+      Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file|require file; }
     end
   end
 

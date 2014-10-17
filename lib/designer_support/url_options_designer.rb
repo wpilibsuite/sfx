@@ -13,37 +13,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'jrubyfx'
-
-fxml_root File.join(File.dirname(__FILE__), "../res"), "res"
-#resource_root :images, File.join(File.dirname(__FILE__), "res", "img"), "res/img"
-
 module SD
-  class App < JRubyFX::Application
-    def start(stage)
-      with(stage, :title => "SmartDashboard") do
-        layout_scene(fill: :pink) do
-          url_designer
-        end
-        #fxml SD::Designer
-        #icons.add image(resource_url(:images, "16-fxicon.png").to_s)
-        #icons.add image(resource_url(:images, "32-fxicon.png").to_s)
-        #fxml SD::URLDesigner
-        show
-      end
-    end
-  end
-
   class OptionPair
     include JRubyFX
     fxml_accessor :name
     fxml_accessor :value
+    def initialize(name, value)
+      self.name = name
+      self.value = value
+    end
   end
 
-  class InitInfoDesigner
+  class InitInfoDesigner < javafx.scene.layout.VBox
+    include JRubyFX::Controller
+    fxml "UrlFragment.fxml"
+    register_type self, "url_designer"
 
-    def initialize
-      observable_array_list()
+    def initialize(url)
+      @urlo = url
+      @protocol = "http"
+      @options = observable_array_list()
       @options.add_change_listener do |change|
         while change.next
           if change.wasAdded
@@ -55,16 +44,76 @@ module SD
         end
         re_url
       end
+      @host.text = url.host
+      @port.text = url.port.to_s
+      @path.text = "" # TODO:
+      url.options.each do |kv|
+        (key, value) = kv
+        @options.add(OptionPair.new(key, value))
+      end
+      # always show the current team-number induced value
+      @host.prompt_text = Java::dashfx.lib.data.InitInfo.new.host
+      # TODO: bindings?
+      @host.text_property.add_change_listener { re_url }
+      @port.text_property.add_change_listener { re_url }
+      @path.text_property.add_change_listener { re_url }
+      children << OptionDesigner.new(@options, ["corn", "brady", "port"])
     end
 
-    def re_url
-      puts @options.map { |itm|
+    def init_bindings(name, type_info, classname)
+      @par_name = name
+      @name.text_property.bind_bidirectional @par_name
+      @type_info.text = type_info
+      @type_classname.text = classname
+    end
+
+    def uninit_bindings
+      @name.text_property.unbind_bidirectional @par_name
+      @urlo.host = @host.text
+      @urlo.port = @port.text.to_i
+      @options.each do |op|
+        @urlo.set_option(op.name, op.value)
+      end
+    end
+
+    def options
+      str = @options.map { |itm|
         if itm.name && itm.name != ""
           itm.name + "=" + (itm.value || "")
         else
           nil
         end
       }.find_all {|x| !x.nil?}.join("&")
+      if str.length > 0
+        "?" + str
+      else
+        ""
+      end
+    end
+
+    def hostfix
+      if @host.text and @host.text.include? "://"
+        @host.text
+      else
+        "#{@protocol}://#{"#{@host.text}" != "" ? @host.text : "10.xx.yy.2"}"
+      end
+    end
+
+    def port
+      if @port.text.length > 0
+        ":#{@port.text}"
+      else
+        ""
+      end
+    end
+
+    def path
+      "/#{@path.text}".sub(/^\/\//, "/")
+    end
+
+    def re_url
+      # TODO: bindings and url parsing
+      @url.text = hostfix + port + path + options
     end
 
   end
@@ -72,17 +121,22 @@ module SD
   class OptionDesigner < javafx.scene.layout.GridPane
     include JRubyFX::Controller
     fxml "OptionFragment.fxml"
-    register_type self, "url_designer"
 
     def initialize(list, known)
       @list = observable_array_list(*known)
       @options = list
+      @options.each {|pair| add_row pair}
     end
 
     def add_pair
+      pair = OptionPair.new
+      add_row(pair)
+      @options << pair
+    end
+
+    def add_row(pair)
       rowid = row_constraints.length - 1
       with(self) do
-        pair = OptionPair.new
         tf = text_field(promptText: "Value")
         tf.text_property.bind_bidirectional(pair.value_property)
 
@@ -97,7 +151,6 @@ module SD
         row_constraints.add(rowid, build(RowConstraints, minHeight: -Float::INFINITY, prefHeight: -1.0, vgrow: Priority::SOMETIMES))
         GridPane.setRowIndex(@add_btn, rowid + 1)
         self.addRow(rowid, cb, tf, x)
-        @options << pair
       end
     end
 
@@ -119,5 +172,3 @@ module SD
     end
   end
 end
-
-SD::App.launch
