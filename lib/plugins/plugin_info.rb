@@ -31,6 +31,7 @@ module SD
           raise ArgumentError.new("Required field '#{rf}' not found in plugin manifest") unless info.has_key?(rf)
           instance_variable_set("@#{rf.downcase.gsub(" ", "_")}", info[rf])
         end
+        @version = @version.to_s # ensure that 1.0 works as a string
         OPTIONAL_FIELDS.each do |of, default|
           instance_variable_set("@#{of.downcase.gsub(" ", "_")}", info[of] || default)
         end
