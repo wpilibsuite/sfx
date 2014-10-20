@@ -14,22 +14,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 module SD
-  class OptionPair
-    include JRubyFX
-    fxml_accessor :name
-    fxml_accessor :value
-    def initialize(name, value)
-      self.name = name
-      self.value = value
-    end
-  end
+#  class OptionPair
+#    include JRubyFX
+#    fxml_accessor :name
+#    fxml_accessor :value
+#    def initialize(name, value)
+#      self.name = name
+#      self.value = value
+#    end
+#  end
 
   class InitInfoDesigner < javafx.scene.layout.VBox
     include JRubyFX::Controller
     fxml "UrlFragment.fxml"
-    register_type self, "url_designer"
 
-    def initialize(url)
+    def initialize(dil)
       @urlo = url
       @protocol = "http"
       @options = observable_array_list()

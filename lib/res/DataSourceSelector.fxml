@@ -10,38 +10,25 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="342.999977929685" prefWidth="684.999977929685" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<BorderPane prefHeight="342.999977929685" prefWidth="684.999977929685" xmlns:fx="http://javafx.com/fxml">
+  <bottom>
+    <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
+      <children>
+        <Button mnemonicParsing="false" text="Cancel" />
+        <Button mnemonicParsing="false" onAction="#save_it" text="Save &amp; Reload" />
+      </children>
+      <BorderPane.margin>
+        <Insets top="6.0" />
+      </BorderPane.margin>
+    </HBox>
+  </bottom>
   <center>
-    <SplitPane dividerPositions="0.5373352855051244" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0">
+    <SplitPane dividerPositions="0.40238450074515647" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0">
       <items>
-        <GridPane hgap="7.0" vgap="7.0">
-          <children>
-            <TextField fx:id="root_url" editable="false" minWidth="30.0" prefColumnCount="1" prefWidth="30.0" text="/" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <ComboBox fx:id="root_source" editable="false" maxWidth="1.7976931348623157E308" promptText="None" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
-              <items>
-                <FXCollections fx:factory="observableArrayList">
-                  <String fx:value="None" />
-                </FXCollections>
-              </items>
-            </ComboBox>
-          </children>
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="-1.0" />
-            <ColumnConstraints hgrow="NEVER" minWidth="1.0" prefWidth="-1.0" />
-          </columnConstraints>
-          <padding>
-            <Insets bottom="7.0" left="7.0" right="5.0" top="7.0" />
-          </padding>
-          <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="-1.0" valignment="TOP" vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          </rowConstraints>
-        </GridPane>
+        <SD.DataSourceFragDesigner fx:id="ds_list" />
         <ScrollPane fx:id="url_content" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="-1.0" prefWidth="-1.0" style="-fx-background-color: white;">
           <content>
-			  <!-- -->
+            <!--  -->
           </content>
         </ScrollPane>
       </items>
@@ -50,18 +37,7 @@
       </stylesheets>
     </SplitPane>
   </center>
-  <top>
-    <ToolBar>
-      <items>
-        <MenuButton fx:id="all_data_sources" mnemonicParsing="false" text="Add Data Source">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Action 1" />
-            <MenuItem mnemonicParsing="false" text="Action 2" />
-          </items>
-        </MenuButton>
-        <Pane fx:id="panes" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" />
-        <Button mnemonicParsing="false" onAction="#save_it" text="Save &amp; Reload" />
-      </items>
-    </ToolBar>
-  </top>
+  <padding>
+    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+  </padding>
 </BorderPane>
