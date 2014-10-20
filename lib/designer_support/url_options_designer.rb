@@ -14,22 +14,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 module SD
-#  class OptionPair
-#    include JRubyFX
-#    fxml_accessor :name
-#    fxml_accessor :value
-#    def initialize(name, value)
-#      self.name = name
-#      self.value = value
-#    end
-#  end
+  class OptionPair
+    include JRubyFX
+    fxml_accessor :name
+    fxml_accessor :value
+    def initialize(name, value)
+      self.name = name
+      self.value = value
+    end
+  end
 
   class InitInfoDesigner < javafx.scene.layout.VBox
     include JRubyFX::Controller
     fxml "UrlFragment.fxml"
 
     def initialize(dil)
-      @urlo = url
+			@dil = dil
+      @urlo = dil.init_info
       @protocol = "http"
       @options = observable_array_list()
       @options.add_change_listener do |change|
@@ -43,76 +44,44 @@ module SD
         end
         re_url
       end
-      @host.text = url.host
-      @port.text = url.port.to_s
-      @path.text = "" # TODO:
-      url.options.each do |kv|
-        (key, value) = kv
+      @host.text = @urlo.host
+      @port.text = @urlo.port.to_s
+      @path.text = @urlo.path
+      @urlo.all_options.each do |(key, value)|
         @options.add(OptionPair.new(key, value))
       end
+			#tc = dil.class_type
+			#annote = tc.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+			#init_bindings("#{annote.name}\n#{annote.description}", tc.name)
       # always show the current team-number induced value
-      @host.prompt_text = Java::dashfx.lib.data.InitInfo.new.host
+      #@host.prompt_text = Java::dashfx.lib.data.InitInfo.new.host
+      @name.text_property.bind_bidirectional @dil.path_property
       # TODO: bindings?
       @host.text_property.add_change_listener { re_url }
       @port.text_property.add_change_listener { re_url }
       @path.text_property.add_change_listener { re_url }
-      children << OptionDesigner.new(@options, ["corn", "brady", "port"])
+      children << OptionDesigner.new(@options, ["corn", "brady", "port"]) # TODO: real suggestions
+			re_url
     end
 
-    def init_bindings(name, type_info, classname)
-      @par_name = name
-      @name.text_property.bind_bidirectional @par_name
+    def init_bindings(type_info, classname)
       @type_info.text = type_info
       @type_classname.text = classname
     end
 
     def uninit_bindings
-      @name.text_property.unbind_bidirectional @par_name
-      @urlo.host = @host.text
-      @urlo.port = @port.text.to_i
-      @options.each do |op|
-        @urlo.set_option(op.name, op.value)
-      end
-    end
-
-    def options
-      str = @options.map { |itm|
-        if itm.name && itm.name != ""
-          itm.name + "=" + (itm.value || "")
-        else
-          nil
-        end
-      }.find_all {|x| !x.nil?}.join("&")
-      if str.length > 0
-        "?" + str
-      else
-        ""
-      end
-    end
-
-    def hostfix
-      if @host.text and @host.text.include? "://"
-        @host.text
-      else
-        "#{@protocol}://#{"#{@host.text}" != "" ? @host.text : "10.xx.yy.2"}"
-      end
-    end
-
-    def port
-      if @port.text.length > 0
-        ":#{@port.text}"
-      else
-        ""
-      end
-    end
-
-    def path
-      "/#{@path.text}".sub(/^\/\//, "/")
+      @name.text_property.unbind_bidirectional @dil.path_property
     end
 
     def re_url
-      # TODO: bindings and url parsing
-      @url.text = hostfix + port + path + options
+      @urlo.host = @host.text
+      @urlo.path = @path.text
+      @urlo.port = @port.text.to_i
+			# TODO: delete options
+      @options.each do |op|
+        @urlo.set_option(op.name, op.value)
+      end
+      @url.text = @urlo.url
     end
 
   end

@@ -13,14 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #require 'utils/url'
-#require 'designer_support/url_options_designer'
+require 'designer_support/url_options_designer'
+
 
 module SD
   class DataSourceSelector
     include JRubyFX::Controller
     fxml "DataSourceSelector.fxml"
     #java_import 'dashfx.lib.data.DataInitDescriptor'
-    #java_import 'dashfx.lib.data.InitInfo'
 
     def initialize(endpoints, &on_save)
       @endpoints = endpoints

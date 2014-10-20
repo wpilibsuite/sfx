@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+require 'sfxlib.jar'
 require 'java'
 require 'jrubyfx'
 require 'data_source_selector'
 
-$DEBUG_IT_FXML = true
 fxml_root File.join(File.dirname(__FILE__), "../res"), "res"
 
 module SD
@@ -55,13 +55,20 @@ module SD
     fxml_accessor :class_type, SimpleObjectProperty, java.lang.Class
     fxml_accessor :init_info, SimpleObjectProperty, java.lang.Object
 		attr_reader :index
+		java_import 'dashfx.lib.data.InitInfo'
+		
     def initialize(base = nil, index = nil)
 			@index = index
-			return unless base
-      self.name = base.name
-      self.path = base.path
-      self.init_info = base.init_info
-      self.class_type = base.class_type
+			if base
+				self.name = base.name
+				self.path = base.path
+				self.init_info = base.init_info
+				self.class_type = base.class_type
+			else
+				self.name = ""
+				self.path = ""
+				self.init_info = InitInfo.new
+			end
     end
   end
 	# required for java lookup via prop value factory
