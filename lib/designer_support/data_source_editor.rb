@@ -79,7 +79,10 @@ module SD
     fxml "DataSourceFragment.fxml"
 		
 		def initialize
-			# TODO: this must be present. Why?
+			# TODO: initialize must be present. Why?
+			
+			# this avoids a bug in jfx7
+			@hack_update = SimpleStringProperty.new
 		end
 		
 		def selection_model
@@ -90,21 +93,26 @@ module SD
 			@points = points
 			@path_list.items = @points
 			@path_list.cell_factory = lambda do |x|
-				DSSCombo.new(@points)
+				DSSCombo.new(@points, @hack_update)
 			end
 		end
 
     def add_pair
       @points << BindableDilItem.new
     end
+		
+		def hack_update_all(url)
+			@hack_update.value = url
+		end
   end
 	
   class DSSCombo < Java::javafx.scene.control.ListCell
     include JRubyFX
 		
-		def initialize(pts)
+		def initialize(pts, updater)
 			super()
 			@points = pts
+			(@updater = updater).add_change_listener{ updateItem(item, empty?)}
 			# TODO: delete button?
 			@btn = button("x", textFill: javafx.scene.paint.Color::RED) # TODO: red
 			@btn.set_on_action do
@@ -120,7 +128,7 @@ module SD
         self.graphic = nil
         self.text = nil
 			else
-				self.text = "#{item.path} - #{item.name}"
+				self.text = "#{item.path} - #{item.init_info.url}"
 				self.graphic = @btn
       end
     end

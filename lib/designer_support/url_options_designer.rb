@@ -82,7 +82,12 @@ module SD
         @urlo.set_option(op.name, op.value)
       end
       @url.text = @urlo.url
+			@on_url_update.(@url.text) if @on_url_update
     end
+		
+		def on_url &block
+			@on_url_update = block
+		end
 
   end
 
