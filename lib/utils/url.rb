@@ -18,7 +18,8 @@ module SD
   module Utils
     class Url
       include JRubyFX::DSL
-      property_accessor :name, :class_name, :host, :port, :mount, :options
+      property_accessor :name, :class_name, :host, :port, :mount
+      attr_accessor :options
 
       URL_REGEX = /dashfx:\/\/(?<class_name>[\w\.:]+)@(?<host>[^:]*)(:(?<port>[0-9]*))?(?<mount>\/([\w\+%]*))(\?(?<args>.*))?/
       MAGIC_HOST = "xn--mxam4bc95czbc7b6hubbgd"
@@ -29,6 +30,11 @@ module SD
         @host = simple_string_property(self, "host", (host.nil? or host.empty? or host == MAGIC_HOST) ? nil : host)
         @port = simple_integer_property(self, "port", (port.nil? or port == "") ? 0 : port.to_i)
         @mount = simple_string_property(self, "mount", mount)
+        @options = options
+      end
+
+      def set_option(name, value)
+        @options[name] = value
       end
 
       def find_class
@@ -40,7 +46,9 @@ module SD
 
       def to_did
         iii = build(Java::dashfx.lib.data.InitInfo, host: host, port: port)
-        # TODO: options
+        @options.each do |(key,value)|
+          iii.set_option(key, value)
+        end
         Java::dashfx.lib.data.DataInitDescriptor.new(find_class.new, name, iii, mount)
       end
 

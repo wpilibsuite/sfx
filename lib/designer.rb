@@ -233,7 +233,7 @@ class SD::Designer
     require 'designer_support/properties_popup'
     require 'ostruct'
     %W[designer_support plugins io_support windowing designers utils].each do |x|
-      Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file| require file }
+      Dir["#{File.dirname(__FILE__)}/#{x}/*.rb"].each {|file|require file; }
     end
   end
 
@@ -1028,12 +1028,25 @@ class SD::Designer
   # Settings for the canvas TODO: add other canvas properties
   def show_data_sources
     require 'data_source_selector'
-    data_core = @data_core
+		# convert all the endpoints so we can use bindings
     stg = @stage
+		points = observable_array_list()
+		@data_core.getAllDataEndpoints.each do |ep|
+			points << SD::BindableDilItem.new(ep)
+		end
+		get_meta = lambda{|clz| clz && clz.annotation(Java::dashfx.lib.controls.DesignableData.java_class) }
+		possible = (Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a + SD::Plugins.data_sources)
+		on_save = lambda{|pts|
+			@data_core.clearAllDataEndpoints
+			pts.each do |pt|
+				did = Java::dashfx.lib.data.DataInitDescriptor.new(pt.class_type.ruby_class.new, pt.name, pt.init_info, pt.path)
+				@data_core.mountDataEndpoint(did)
+			end
+		}
     stage(init_style: :utility, init_modality: :app, title: "Data Source Selector") do
       init_owner stg
       center_on_screen
-      fxml SD::DataSourceSelector, :initialize => [data_core]
+      fxml SD::DataSourceSelector, :initialize => [points, possible, get_meta, on_save]
     end.show_and_wait
   end
 

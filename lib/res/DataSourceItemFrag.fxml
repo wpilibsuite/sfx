@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<fx:root type="javafx.scene.layout.HBox" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="6.0" xmlns:fx="http://javafx.com/fxml">
+  <children>
+    <TextField fx:id="root_url" editable="false" minWidth="30.0" prefColumnCount="1" prefWidth="60.0" text="/" HBox.hgrow="ALWAYS" />
+    <ComboBox fx:id="root_source" editable="false" maxWidth="1.7976931348623157E308" onAction="#source_changed" prefWidth="75.0" promptText="None" HBox.hgrow="ALWAYS">
+      <items>
+        <FXCollections fx:factory="observableArrayList">
+          <String fx:value="None" />
+        </FXCollections>
+      </items>
+    </ComboBox>
+    <Button mnemonicParsing="false" onAction="#rm_this_row" text="x" textFill="RED" />
+  </children>
+  <padding>
+    <Insets bottom="3.0" left="6.0" right="6.0" top="3.0" />
+  </padding>
+</fx:root>
