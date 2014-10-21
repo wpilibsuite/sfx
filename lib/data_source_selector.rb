@@ -20,16 +20,18 @@ module SD
     include JRubyFX::Controller
     fxml "DataSourceSelector.fxml"
 
-    def initialize(endpoints, &on_save)
+    def initialize(endpoints, types, get_meta, &on_save)
       @endpoints = endpoints
 			@on_save = on_save
-			@ds_list.points = endpoints
+			@types = types
+			@get_meta = get_meta
+			@ds_list.cinit(endpoints, get_meta)
 			@ds_list.selection_model.selected_item_property.add_change_listener {|new| load_info_pane new }
     end
 
     def load_info_pane(did)
       @url_content.content.uninit_bindings if @url_content.content
-      @url_content.content = InitInfoDesigner.new(did)
+      @url_content.content = InitInfoDesigner.new(did, @types, @get_meta)
 			
 			# TODO: bindings are a better idea
 			@url_content.content.on_url do |url|

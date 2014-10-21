@@ -28,8 +28,9 @@ module SD
     include JRubyFX::Controller
     fxml "UrlFragment.fxml"
 
-    def initialize(dil)
+    def initialize(dil, list, get_meta)
 			@dil = dil
+			@get_meta = get_meta
       @urlo = dil.init_info
       @protocol = "http"
       @options = observable_array_list()
@@ -51,12 +52,9 @@ module SD
         @options.add(OptionPair.new(key, value))
       end
 			
-			@type_chooser.button_cell = DTSCell.new
-			@type_chooser.set_cell_factory { DTSCell.new }
-			#+ SD::Plugins.data_sources
-			(Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a).each do |e|
-        @type_chooser.items.add e
-      end
+			@type_chooser.button_cell = DTSCell.new(@get_meta)
+			@type_chooser.set_cell_factory { DTSCell.new(@get_meta) }
+			@type_chooser.items.add_all(*list)
 			@known = observable_array_list()
 			@type_chooser.selection_model.selected_item = dil.class_type
 			update_known
@@ -80,7 +78,7 @@ module SD
 		
 		def update_known
 			@known.clear
-			prefx = @dil.class_type && @dil.class_type.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+			prefx = @get_meta.(@dil.class_type)
 			prefx = prefx && prefx.option_names
 			@known.add_all(*prefx) if prefx
 		end
@@ -97,7 +95,7 @@ module SD
       @options.each do |op|
         @urlo.set_option(op.name, op.value)
       end
-			prefx = @dil.class_type && @dil.class_type.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+			prefx = @get_meta.(@dil.class_type)
 			prefx = prefx && prefx.protocols
 			prefx = prefx && prefx[0]
       @url.text = @urlo.url(prefx || "???")
@@ -167,13 +165,18 @@ module SD
   class DTSCell < Java::javafx.scene.control.ListCell
     include JRubyFX
 		
+		def initialize(get_meta)
+			super()
+			@get_meta = get_meta
+		end
+		
     def updateItem(item, empty)
       super
       if empty?
         self.graphic = nil
         self.text = nil
 			else
-				annote = item.ruby_class.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+				annote = @get_meta.(item)
 				self.text = annote.name
 				self.tooltip = Tooltip.new("#{annote.description}\n#{item.name}")
 				self.graphic = nil

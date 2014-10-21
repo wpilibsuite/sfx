@@ -37,11 +37,14 @@ module SD
 			bdi.name = "whoosh2"
 			bdi.path = "/"
 			points << bdi
+			get_meta = lambda{|clz| clz && clz.annotation(Java::dashfx.lib.controls.DesignableData.java_class) }
+			list = #+ SD::Plugins.data_sources
+			list = (Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a)
       with(stage, :title => "SmartDashboard") do
         #layout_scene(fill: :pink) do
           
         #end
-				fxml SD::DataSourceSelector, initialize: [points]
+				fxml SD::DataSourceSelector, initialize: [points, list, get_meta]
         #fxml SD::Designer
         #icons.add image(resource_url(:images, "16-fxicon.png").to_s)
         #icons.add image(resource_url(:images, "32-fxicon.png").to_s)
@@ -93,11 +96,11 @@ module SD
 			@path_list.selection_model
 		end
 		
-		def points=(points)
+		def cinit(points, get_meta)
 			@points = points
 			@path_list.items = @points
 			@path_list.cell_factory = lambda do |x|
-				DSSCombo.new(@points, @hack_update)
+				DSSCombo.new(@points, get_meta, @hack_update)
 			end
 		end
 
@@ -113,9 +116,10 @@ module SD
   class DSSCombo < Java::javafx.scene.control.ListCell
     include JRubyFX
 		
-		def initialize(pts, updater)
+		def initialize(pts, get_meta, updater)
 			super()
 			@points = pts
+			@get_meta = get_meta
 			(@updater = updater).add_change_listener{ updateItem(item, empty?)}
 			# TODO: delete button?
 			@btn = button("x", textFill: javafx.scene.paint.Color::RED) # TODO: red
@@ -132,7 +136,7 @@ module SD
         self.graphic = nil
         self.text = nil
 			else
-				prefx = item.class_type && item.class_type.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+				prefx = @get_meta.(item.class_type)
 				prefx = prefx && prefx.protocols
 				prefx = prefx && prefx[0]
 				self.text = "#{item.path} - #{item.init_info.url(prefx || "???")}"
