@@ -46,10 +46,10 @@ module SD
 		
 		def save_it
 			@on_save.(@endpoints)
-			close_it
+			cancel_it
 		end
 		
-		def close_it
+		def cancel_it
 			@stage.hide
 		end
   end
