@@ -1035,7 +1035,7 @@ class SD::Designer
 			points << SD::BindableDilItem.new(ep)
 		end
 		get_meta = lambda{|clz| clz && clz.annotation(Java::dashfx.lib.controls.DesignableData.java_class) }
-		possible = (Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a + SD::Plugins.data_sources)
+		possible = SD::Plugins.data_sources.find_all{|x| get_meta.(x).types.include? Java::dashfx.lib.data.DataProcessorType::DataSource}
 		on_save = lambda{|pts|
 			@data_core.clearAllDataEndpoints
 			pts.each do |pt|
