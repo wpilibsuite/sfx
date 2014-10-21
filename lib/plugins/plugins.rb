@@ -55,7 +55,13 @@ module SD
         end
       end.flatten
 
-      yml["Data Sources"] = (yml['Data Sources'] || []).map { |cdesc| DataSourceInfo.new(cdesc) }
+      yml["Data Sources"] = (yml['Data Sources'] || []).map do |cdesc|
+        if cdesc.keys.include? "List Class"
+          JavaUtilities.get_proxy_class(cdesc["List Class"]).all
+				else
+					JavaUtilities.get_proxy_class(cdesc["Class"]).java_class
+				end
+			end.flatten
 
       yml["View Controllers"] = (yml['View Controllers'] || []).map { |cdesc| ViewControllerInfo.new(cdesc) }
 
