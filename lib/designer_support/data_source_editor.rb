@@ -132,7 +132,10 @@ module SD
         self.graphic = nil
         self.text = nil
 			else
-				self.text = "#{item.path} - #{item.init_info.url}"
+				prefx = item.class_type && item.class_type.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+				prefx = prefx && prefx.protocols
+				prefx = prefx && prefx[0]
+				self.text = "#{item.path} - #{item.init_info.url(prefx || "???")}"
 				self.graphic = @btn
       end
     end

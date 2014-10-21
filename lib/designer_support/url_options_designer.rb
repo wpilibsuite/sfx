@@ -18,7 +18,7 @@ module SD
     include JRubyFX
     fxml_accessor :name
     fxml_accessor :value
-    def initialize(name, value)
+    def initialize(name="", value="")
       self.name = name
       self.value = value
     end
@@ -57,7 +57,9 @@ module SD
 			(Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a).each do |e|
         @type_chooser.items.add e
       end
+			@known = observable_array_list()
 			@type_chooser.selection_model.selected_item = dil.class_type
+			update_known
 			
       # always show the current team-number induced value
       @host.prompt_text = Java::dashfx.lib.data.InitInfo.new.host
@@ -66,13 +68,21 @@ module SD
       @host.text_property.add_change_listener { re_url }
       @port.text_property.add_change_listener { re_url }
       @path.text_property.add_change_listener { re_url }
-      children << OptionDesigner.new(@options, ["corn", "brady", "port"]) # TODO: real suggestions
+      children << OptionDesigner.new(@options, @known)
 			re_url
     end
 		
 		def change_type
 			@dil.class_type = @type_chooser.selection_model.selected_item
 			re_url
+			update_known
+		end
+		
+		def update_known
+			@known.clear
+			prefx = @dil.class_type && @dil.class_type.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+			prefx = prefx && prefx.option_names
+			@known.add_all(*prefx) if prefx
 		end
 
     def uninit_bindings
@@ -80,14 +90,17 @@ module SD
     end
 
     def re_url
+			@urlo = @dil.init_info = Java::dashfx.lib.data.InitInfo.new
       @urlo.host = @host.text
       @urlo.path = @path.text
       @urlo.port = (@port.text.to_i == 0 ? nil : @port.text.to_i)
-			# TODO: delete options
       @options.each do |op|
         @urlo.set_option(op.name, op.value)
       end
-      @url.text = @urlo.url
+			prefx = @dil.class_type && @dil.class_type.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+			prefx = prefx && prefx.protocols
+			prefx = prefx && prefx[0]
+      @url.text = @urlo.url(prefx || "???")
 			@on_url_update.(@url.text) if @on_url_update
     end
 		
@@ -102,7 +115,7 @@ module SD
     fxml "OptionFragment.fxml"
 
     def initialize(list, known)
-      @list = observable_array_list(*known)
+      @list = known
       @options = list
       @options.each {|pair| add_row pair}
     end
