@@ -13,64 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'sfxlib.jar'
-require 'java'
-require 'jrubyfx'
-require 'data_source_selector'
-$LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
-require 'sfxmeta.jar'
-require "networktables-desktop.jar"
-
-
-fxml_root File.join(File.dirname(__FILE__), "../res"), "res"
-
 module SD
-  class App < JRubyFX::Application
-    def start(stage)
-			
-			points = observable_array_list()
-			bdi = BindableDilItem.new
-			bdi.name = "whoosh"
-			bdi.path = "/ding/a/ling"
-			points << bdi
-			bdi = BindableDilItem.new
-			bdi.name = "whoosh2"
-			bdi.path = "/"
-			points << bdi
-			get_meta = lambda{|clz| clz && clz.annotation(Java::dashfx.lib.controls.DesignableData.java_class) }
-			list = #+ SD::Plugins.data_sources
-			list = (Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a)
-      with(stage, :title => "SmartDashboard") do
-        #layout_scene(fill: :pink) do
-          
-        #end
-				fxml SD::DataSourceSelector, initialize: [points, list, get_meta]
-        #fxml SD::Designer
-        #icons.add image(resource_url(:images, "16-fxicon.png").to_s)
-        #icons.add image(resource_url(:images, "32-fxicon.png").to_s)
-        #fxml SD::URLDesigner
-        show
-      end
-    end
-		
-	end
-
   class BindableDilItem
     include JRubyFX
     fxml_accessor :name
 		fxml_accessor :path
     fxml_accessor :class_type, SimpleObjectProperty, java.lang.Class
     fxml_accessor :init_info, SimpleObjectProperty, java.lang.Object
-		attr_reader :index
 		java_import 'dashfx.lib.data.InitInfo'
 		
-    def initialize(base = nil, index = nil)
-			@index = index
+    def initialize(base = nil)
 			if base
 				self.name = base.name
-				self.path = base.path
+				self.path = base.mount_point
 				self.init_info = base.init_info
-				self.class_type = base.class_type
+				self.class_type = base.object.class.java_class
 			else
 				self.name = ""
 				self.path = ""
@@ -145,6 +102,3 @@ module SD
     end
   end
 end
-
-SD::App.launch
-

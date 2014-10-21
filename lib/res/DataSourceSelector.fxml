@@ -14,8 +14,8 @@
   <bottom>
     <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" spacing="6.0" BorderPane.alignment="CENTER_RIGHT">
       <children>
-        <Button cancelButton="true" mnemonicParsing="false" text="Cancel" />
-        <Button defaultButton="true" mnemonicParsing="false" text="Save" />
+        <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel_it" text="Cancel" />
+        <Button defaultButton="true" mnemonicParsing="false" onAction="#save_it" text="Save" />
       </children>
       <BorderPane.margin>
         <Insets top="6.0" />

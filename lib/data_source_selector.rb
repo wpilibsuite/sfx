@@ -14,13 +14,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'designer_support/url_options_designer'
+require 'designer_support/data_source_editor'
 
 module SD
   class DataSourceSelector
     include JRubyFX::Controller
     fxml "DataSourceSelector.fxml"
 
-    def initialize(endpoints, types, get_meta, &on_save)
+    def initialize(endpoints, types, get_meta, on_save)
       @endpoints = endpoints
 			@on_save = on_save
 			@types = types
@@ -31,12 +32,25 @@ module SD
 
     def load_info_pane(did)
       @url_content.content.uninit_bindings if @url_content.content
-      @url_content.content = InitInfoDesigner.new(did, @types, @get_meta)
-			
-			# TODO: bindings are a better idea
-			@url_content.content.on_url do |url|
-				@ds_list.hack_update_all(url) #bug in jfx7 that we must work around in regard to list updates, so just do it manually
+			if did
+				@url_content.content = InitInfoDesigner.new(did, @types, @get_meta)
+
+				# TODO: bindings are a better idea
+				@url_content.content.on_url do |url|
+					@ds_list.hack_update_all(url) #bug in jfx7 that we must work around in regard to list updates, so just do it manually
+				end
+			else
+				@url_content.content = nil
 			end
     end
+		
+		def save_it
+			@on_save.(@endpoints)
+			close_it
+		end
+		
+		def close_it
+			@stage.hide
+		end
   end
 end
