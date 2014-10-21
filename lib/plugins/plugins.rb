@@ -33,6 +33,9 @@ module SD
       unless SUPPORTED_API.include? yml['API']
         raise VersionError, "Manifest API is not compatible with this version. Expecting #{SUPPORTED_API} but got #{yml['API']}", caller
       end
+			if yml['InitScript']
+				require yml['InitScript']
+			end
       yml["Controls"] = (yml['Controls'] || []).map do |cdesc|
         if cdesc.keys.include? "List Class"
           JavaUtilities.get_proxy_class(cdesc["List Class"]).all.map{|x|JavaControlInfo.new loader, x}
