@@ -50,11 +50,17 @@ module SD
       @urlo.all_options.each do |(key, value)|
         @options.add(OptionPair.new(key, value))
       end
-			#tc = dil.class_type
-			#annote = tc.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
-			#init_bindings("#{annote.name}\n#{annote.description}", tc.name)
+			
+			@type_chooser.button_cell = DTSCell.new
+			@type_chooser.set_cell_factory { DTSCell.new }
+			#+ SD::Plugins.data_sources
+			(Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a).each do |e|
+        @type_chooser.items.add e
+      end
+			@type_chooser.selection_model.selected_item = dil.class_type
+			
       # always show the current team-number induced value
-      #@host.prompt_text = Java::dashfx.lib.data.InitInfo.new.host
+      @host.prompt_text = Java::dashfx.lib.data.InitInfo.new.host
       @name.text_property.bind_bidirectional @dil.path_property
       # TODO: bindings?
       @host.text_property.add_change_listener { re_url }
@@ -63,11 +69,11 @@ module SD
       children << OptionDesigner.new(@options, ["corn", "brady", "port"]) # TODO: real suggestions
 			re_url
     end
-
-    def init_bindings(type_info, classname)
-      @type_info.text = type_info
-      @type_classname.text = classname
-    end
+		
+		def change_type
+			@dil.class_type = @type_chooser.selection_model.selected_item
+			re_url
+		end
 
     def uninit_bindings
       @name.text_property.unbind_bidirectional @dil.path_property
@@ -142,6 +148,23 @@ module SD
       the_row.each{|x| children.remove x}
       row_constraints.remove idx
       @options.remove(pair)
+    end
+  end
+	
+  class DTSCell < Java::javafx.scene.control.ListCell
+    include JRubyFX
+		
+    def updateItem(item, empty)
+      super
+      if empty?
+        self.graphic = nil
+        self.text = nil
+			else
+				annote = item.ruby_class.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
+				self.text = annote.name
+				self.tooltip = Tooltip.new("#{annote.description}\n#{item.name}")
+				self.graphic = nil
+      end
     end
   end
 end

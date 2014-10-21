@@ -17,6 +17,10 @@ require 'sfxlib.jar'
 require 'java'
 require 'jrubyfx'
 require 'data_source_selector'
+$LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
+require 'sfxmeta.jar'
+require "networktables-desktop.jar"
+
 
 fxml_root File.join(File.dirname(__FILE__), "../res"), "res"
 
@@ -133,49 +137,7 @@ module SD
       end
     end
   end
-	
-	
-	# MenuItem Adapter for DataBuilder
-  class DSSMenuItem < Java::JavafxSceneControl::MenuItem
-    def initialize(db, &on_action)
-      super()
-      self.text = db.name
-      @db = db
-      on_action {|e| on_action.call(db, e)}
-    end
-  end
-
-	##
-	# This is used for displaying all the possible new data source types in the
-	# Drop down menu
-  class DataBuilder
-    def initialize(e)
-      @rclass = e.ruby_class
-      @annote = e.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
-    end
-    def new
-      SD::Utils::Url.new("New #{name}", @rclass, nil, nil, "/")
-    end
-    def name
-      @annote.name
-    end
-    def description
-      @annote.description
-    end
-    def to_s
-      @annote.to_s
-    end
-  end
-	
 end
 
 SD::App.launch
-#            <TextField fx:id="root_url" editable="false" minWidth="30.0" prefColumnCount="1" prefWidth="30.0" text="/" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-#            <ComboBox fx:id="root_source" editable="false" maxWidth="1.7976931348623157E308" promptText="None" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
-#              <items>
-#                <FXCollections fx:factory="observableArrayList">
-#                  <String fx:value="None" />
-#                </FXCollections>
-#              </items>
-#            </ComboBox>
 

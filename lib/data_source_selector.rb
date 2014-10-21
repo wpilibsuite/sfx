@@ -15,7 +15,6 @@
 
 require 'designer_support/url_options_designer'
 
-
 module SD
   class DataSourceSelector
     include JRubyFX::Controller
@@ -26,25 +25,16 @@ module SD
 			@on_save = on_save
 			@ds_list.points = endpoints
 			@ds_list.selection_model.selected_item_property.add_change_listener {|new| load_info_pane new }
-
-      # Search for all types
-#      (Java::dashfx.lib.registers.DataProcessorRegister.get_all.to_a + SD::Plugins.data_sources).each do |e|
-#        @all_data_sources.items.add DSSMenuItem.new(DataBuilder.new(e)) {|db| create_url(db)}
-#      end
-
     end
 
     def load_info_pane(did)
       @url_content.content.uninit_bindings if @url_content.content
-     # annote = url.find_class.java_class.annotation(Java::dashfx.lib.controls.DesignableData.java_class)
       @url_content.content = InitInfoDesigner.new(did)
+			
 			# TODO: bindings are a better idea
 			@url_content.content.on_url do |url|
 				@ds_list.hack_update_all(url) #bug in jfx7 that we must work around in regard to list updates, so just do it manually
 			end
-			#.init_bindings(url.name_property, "#{annote.name}\n#{annote.description}", url.class_name)
     end
-
   end
-
 end
