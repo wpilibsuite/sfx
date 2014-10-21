@@ -44,7 +44,7 @@ module SD
         end
         re_url
       end
-      @host.text = @urlo.host
+      @host.text = @urlo.raw_host
       @port.text = @urlo.port.to_s
       @path.text = @urlo.path
       @urlo.all_options.each do |(key, value)|
@@ -76,7 +76,7 @@ module SD
     def re_url
       @urlo.host = @host.text
       @urlo.path = @path.text
-      @urlo.port = @port.text.to_i
+      @urlo.port = (@port.text.to_i == 0 ? nil : @port.text.to_i)
 			# TODO: delete options
       @options.each do |op|
         @urlo.set_option(op.name, op.value)
