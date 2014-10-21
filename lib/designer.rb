@@ -1031,16 +1031,22 @@ class SD::Designer
 		# convert all the endpoints so we can use bindings
     stg = @stage
 		points = observable_array_list()
-		@data_core.getAllDataEndpoints.each do |ep|
+		(@data_core.all_data_endpoints.to_a + @data_core.video_core.all_video_endpoints.to_a).uniq.each do |ep|
 			points << SD::BindableDilItem.new(ep)
 		end
 		get_meta = lambda{|clz| clz && clz.annotation(Java::dashfx.lib.controls.DesignableData.java_class) }
-		possible = SD::Plugins.data_sources.find_all{|x| get_meta.(x).types.include? Java::dashfx.lib.data.DataProcessorType::DataSource}
+		possible = SD::Plugins.data_sources
 		on_save = lambda{|pts|
 			@data_core.clearAllDataEndpoints
+			@data_core.video_core.clearAllVideoEndpoints
 			pts.each do |pt|
 				did = Java::dashfx.lib.data.DataInitDescriptor.new(pt.class_type.ruby_class.new, pt.name, pt.init_info, pt.path)
-				@data_core.mountDataEndpoint(did)
+				if get_meta.(pt.class_type).types.include? Java::dashfx.lib.data.DataProcessorType::DataSource
+					@data_core.mountDataEndpoint(did)
+				end
+				if get_meta.(pt.class_type).types.include? Java::dashfx.lib.data.DataProcessorType::VideoSource
+					@data_core.video_core.mountVideoEndpoint(did)
+				end
 			end
 		}
     stage(init_style: :utility, init_modality: :app, title: "Data Source Selector") do
