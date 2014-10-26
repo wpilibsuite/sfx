@@ -24,6 +24,7 @@ module SD
         init_owner parent_win
       end
       @core.add_data_filter Java::dashfx.lib.data.endpoints.PlaybackFilter.new.tap{|x| @filter = x}
+      @core.video_core.video_filter = @filter
     end
 
     def launch
