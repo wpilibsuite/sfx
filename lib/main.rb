@@ -32,9 +32,9 @@ end
 # set up load path
 $LOAD_PATH << "."
 $PLUGIN_DIR = File.join(File.dirname(File.dirname(File.expand_path __FILE__)), "plugins")
-q = $LOAD_PATH.find { |i| i.include?(".jar!/META-INF/jruby.home/lib/ruby/")}
-xx = q && File.dirname(q[0..(2 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]).gsub(/^file\:/, '')
-sq = q && q[0..(3 + q.index(".jar!/META-INF/jruby.home/lib/ruby/"))]
+q = $LOAD_PATH.find { |i| i.include?(".jar!/gems/jrubyfx")}
+xx = q && File.dirname(q[0..(2 + q.index(".jar!/gems/jrubyfx"))]).gsub(/^file\:/, '')
+sq = q && q[0..(3 + q.index(".jar!/gems/jrubyfx"))]
 if q
   $PLUGIN_DIR = File.join(xx, "plugins")
   $LOAD_PATH << xx
@@ -53,18 +53,16 @@ if SD::Version::Comparable && SD::Version::Value != Java::dashfx.Version.BUILD
   jop = javax.swing.JOptionPane
   jop.show_message_dialog(nil,
     "An old jar file (version #{Java::dashfx.Version.BUILD}) was found that differs from
-the current version (#{SD::Version::Value}).
-Please re-launch SmartDashboard to overwrite this old file.",
+the current version (#{SD::Version::Value}).",
     "Mixed Version", # title
     jop::ERROR_MESSAGE)
-  extract(sq, xx)
   exit -2
 end
 
 puts "Release/Built? #{SD::Version::Comparable} Version Identifier: #{SD::Version::Value}"
 
-fxml_root File.join(File.dirname(__FILE__), "res"), "res"
-resource_root :images, File.join(File.dirname(__FILE__), "res", "img"), "res/img"
+fxml_root File.join(File.dirname(__FILE__), "..", "lib", "res"), "sfx/lib/res", (Java::JarMain.is_a? Class and Java::JarMain.java_class.method("resource"))
+resource_root :images, File.join(File.dirname(__FILE__), "..", "lib", "res", "img"), "sfx/lib/res/img"
 
 module SD
   class App < JRubyFX::Application
