@@ -2,7 +2,7 @@
 require 'ant'
 task :default => "single-jar"
 
-nwt_jar = "#{ENV['HOME']}/sunspotfrcsdk/desktop-lib/networktables-desktop.jar"
+nwt_jar = "target/dependency/NetworkTables-0.1.0-SNAPSHOT.jar"
 nwt_jar = ENV['NWT_JAR'] if ENV['NWT_JAR']
 jrubyfx_path = ENV['jrubyfx'] || "../jrubyfx/lib/"
 jrubyfx_fxmlloader_path = ENV['fxmlloader'] || "../FXMLLoader/lib/"
@@ -43,12 +43,9 @@ end
 task wt.name => "single-jar2"
 
 task "single-jar" => wt.name do
-  ant do
-    zip(destfile: "sfx.zip") do
-      fileset dir: ".", includes: "plugins/"
-      fileset dir: ".", includes: "sfx.jar"
-    end
-  end
+  mkdir_p "target/zip"
+  cp "sfx.jar", "target/zip/sfx.jar"
+  cp_r "plugins", "target/zip/plugins"
 end
 
 desc "Compiles a bunch of other files"
@@ -64,7 +61,7 @@ task :compile do
   # to compile the fxml, we need the TFP in memory
   require_relative 'lib/utils/titled_form_pane'
   require '../sfxlib/dist/sfxlib.jar'
-  require 'lib/designer_support/data_source_editor'
+  require_relative 'lib/designer_support/data_source_editor'
   require 'jrubyfx'
 fxml_root File.join(File.dirname(__FILE__),  "lib", "res")
   JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/*.fxml'] + %W{-- ../sfxlib/dist/sfxlib.jar} + extralib)

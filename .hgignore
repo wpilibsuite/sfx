@@ -12,3 +12,5 @@ gems/*
 *.fxsdash
 .sass-cache/*
 */.jrubyfx_cache/*
+target/
+.jbundler/classpath.rb
