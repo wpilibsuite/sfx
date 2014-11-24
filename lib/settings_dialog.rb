@@ -113,29 +113,39 @@ class SD::SettingsDialog
   end
 
   def diff_and_save(e)
-    @diffs.each do |prop, dat|
-      case dat[:type]
-      when :bool
-        @prefs.send(prop + "=", dat[:value])
-      when :int_1
-        if dat[:value] == ""
-          @prefs.delete!(prop)
-        else
-          @prefs.send(prop + "=", dat[:value].to_i)
+    begin
+      @diffs.each do |prop, dat|
+        case dat[:type]
+        when :bool
+          @prefs.send(prop + "=", dat[:value])
+        when :int_1
+          if dat[:value] == ""
+            @prefs.delete!(prop)
+          else
+            @prefs.send(prop + "=", dat[:value].to_i)
+          end
+        when :combo
+          @prefs.send(prop + "=", dat[:value])
+          dat[:on_save].call(dat) if dat[:on_save]
+        when :aa_radio
+          @prefs.send(prop + "=", dat[:value])
+          @prefs.send("aa_regex=", @aa_regex.text)
+          @prefs.send("aa_code=", @aa_code_code) if @aa_code_code != "return false;"
+          SD::DesignerSupport::AAFilter.new.parse_prefs # try to make sure we are good          
         end
-      when :combo
-        @prefs.send(prop + "=", dat[:value])
-        dat[:on_save].call(dat) if dat[:on_save]
-      when :aa_radio
-        @prefs.send(prop + "=", dat[:value])
-        @prefs.send("aa_regex=", @aa_regex.text)
-        @prefs.send("aa_code=", @aa_code_code) if @aa_code_code != "return false;"
-        SD::DesignerSupport::AAFilter.parse_prefs
       end
+    rescue => er
+      SD::DesignerSupport::WarningDialog.show(@stage, "Error while saving", er.to_s)
+      e.consume # don't close the window
     end
   end
 
   def close
+    @stage.hide
+  end
+  
+  def cancel
+    @stage.set_on_hiding nil
     @stage.hide
   end
 
