@@ -30,22 +30,20 @@ end
 
 # TODO: reload toolbox on icon style change
 # set up load path
+q = File.dirname(File.expand_path __FILE__)
 $LOAD_PATH << "."
-$PLUGIN_DIR = File.join(File.dirname(File.dirname(File.expand_path __FILE__)), "plugins")
-q = $LOAD_PATH.find { |i| i.include?(".jar!/gems/jrubyfx")}
-xx = q && File.dirname(q[0..(2 + q.index(".jar!/gems/jrubyfx"))]).gsub(/^file\:/, '')
-sq = q && q[0..(3 + q.index(".jar!/gems/jrubyfx"))]
-if q
+if q.include? ".jar!/sfx"
+  xx = q.gsub(/^file:(.*)[\/\\][^\/\\]*\.jar!\/sfx.*$/, '\1')
   $PLUGIN_DIR = File.join(xx, "plugins")
   $LOAD_PATH << xx
+else
+  $PLUGIN_DIR = File.join(File.dirname(File.dirname(File.expand_path __FILE__)), "plugins")
 end
-
-$LOAD_PATH << "#{Dir.home}/sunspotfrcsdk/desktop-lib/"
 
 # require in all the jars
 require 'sfxlib.jar'
 require 'sfxmeta.jar'
-require "networktables-desktop.jar" # TODO: file.join
+require "networktables-desktop.jar"
 require 'version.rb'
 
 # Make sure the same version was in the jars

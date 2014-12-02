@@ -45,7 +45,7 @@ task wt.name => "single-jar2"
 task "single-jar" => wt.name do
   mkdir_p "target/zip"
   cp "sfx.jar", "target/zip/sfx.jar"
-  cp_r "plugins", "target/zip/plugins"
+  cp_r "plugins", "target/zip/"
 end
 
 desc "Compiles a bunch of other files"
