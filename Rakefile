@@ -11,6 +11,7 @@ $LOAD_PATH << jrubyfx_path
 
 require 'jrubyfx_tasks'
 
+require 'jbundler'
 require 'warbler'
 JBundler.install unless File.exist? ".jbundler/classpath.rb"
 wt = Warbler::Task.new
