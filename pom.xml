@@ -93,8 +93,8 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>sfx.zip</file>
-                  <type>jar</type>
+                  <file>target/sfx-2014.11.01-zip.zip</file>
+                  <type>zip</type>
                 </artifact>
               </artifacts>
             </configuration>
@@ -191,17 +191,17 @@
                 <configuration>
                   <scope>compile</scope>
                   <gems>
-                    <jbundler>0.6.4</jbundler>
-                    <jar-dependencies>0.1.4</jar-dependencies>
-                    <ruby-maven>3.1.1.0.8</ruby-maven>
-                    <maven-tools>1.0.5</maven-tools>
+                    <jbundler>0.7.1</jbundler>
+                    <jar-dependencies>0.1.7</jar-dependencies>
+                    <maven-tools>1.0.7</maven-tools>
                     <virtus>1.0.3</virtus>
                     <axiom-types>0.1.1</axiom-types>
                     <descendants_tracker>0.0.4</descendants_tracker>
                     <thread_safe>0.3.4</thread_safe>
-                    <ice_nine>0.11.0</ice_nine>
+                    <ice_nine>0.11.1</ice_nine>
                     <coercible>1.0.0</coercible>
                     <equalizer>0.0.9</equalizer>
+                    <ruby-maven>3.1.1.0.8</ruby-maven>
                     <ruby-maven-libs>3.1.1</ruby-maven-libs>
                     <jrubyfx>1.1.1</jrubyfx>
                     <jrubyfx-fxmlloader>0.4</jrubyfx-fxmlloader>
@@ -218,9 +218,9 @@
                   <scope>provided</scope>
                   <gems>
                     <warbler>1.4.4</warbler>
-                    <jruby-jars>1.7.16.1</jruby-jars>
+                    <jruby-jars>1.7.17</jruby-jars>
                     <jruby-rack>1.1.16</jruby-rack>
-                    <rake>10.3.2</rake>
+                    <rake>10.4.2</rake>
                     <rubyzip>1.1.6</rubyzip>
                   </gems>
                 </configuration>

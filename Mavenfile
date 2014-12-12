@@ -18,7 +18,7 @@ plugin('de.saumya.mojo:rake-maven-plugin') do
 end
 
 plugin("org.codehaus.mojo:build-helper-maven-plugin", "1.9.1") do
-	execute_goals("attach-artifact", phase: :package, id: "attach-artifacts", artifacts: {artifact: {file: "sfx.zip", type: :jar}})
+	execute_goals("attach-artifact", phase: :package, id: "attach-artifacts", artifacts: {artifact: {file: "target/sfx-#{Version}-zip.zip", type: :zip}})
 end
 
 plugin "dependency" do
