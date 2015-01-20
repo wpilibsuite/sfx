@@ -733,6 +733,14 @@ class SD::Designer
   def new_document
     # TODO: check for unsaved changes
     # assign the root canvas node from preferences
+    answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
+    
+    if answer == :save then 
+      return unless save
+    end
+    
+    return if answer == :cancel
+    
     @current_save_data = @currently_open_file = nil
     @stage.title = "SmartDashboard : Untitled"
     clear_tabs()
