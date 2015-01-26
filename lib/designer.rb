@@ -731,11 +731,10 @@ class SD::Designer
   end
 
   def new_document
-    # TODO: check for unsaved changes
     # assign the root canvas node from preferences
     answer = SD::DesignerSupport::SaveQuestion.ask(@stage)
     
-    if answer == :save then 
+    if answer == :save
       return unless save
     end
     
