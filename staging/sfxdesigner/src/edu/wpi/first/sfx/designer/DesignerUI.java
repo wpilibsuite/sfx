@@ -16,13 +16,18 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.event.*;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 
 /**
  *
@@ -118,16 +123,85 @@ public class DesignerUI
 	@FXML
 	private HBox msg_carrier;
 
+	private boolean toolbox_status_visible = false;
+
+	private Timeline toolbox_hider;
+
+	@FXML
+	void initialize()
+	{
+		Timeline t = toolbox_hider = new Timeline();
+		t.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(left_gutter.translateXProperty(), -266.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(left_gutter.translateXProperty(), 0.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(add_slider.minWidthProperty(), 0.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(add_slider.minWidthProperty(), 268.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(gutter_shadow.translateXProperty(), 0.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(gutter_shadow.translateXProperty(), 266.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(gutter_shadow.minWidthProperty(), 0.0)));
+		t.getKeyFrames().add(new KeyFrame(Duration.millis(400), new KeyValue(gutter_shadow.minWidthProperty(), 30.0)));
+
+		GridPane.addEventFilter(MouseEvent.MOUSE_PRESSED, (e) ->
+						{
+							if (clickoff_tbx == null)
+							{
+								return;
+							}
+							boolean cont = e != null;
+							EventTarget q = e == null ? null : e.getTarget();
+
+							while (q != null && cont)
+							{
+								if (q == left_gutter)
+								{
+									cont = false;
+								}
+								else
+								{
+									q = ((Node) q).getParent();
+								}
+
+							}
+							if (q == null) // no parents found
+							{
+								clickoff_tbx.run();
+							}
+
+		});
+	}
+
 	@FXML
 	void canvas_keyup(KeyEvent event)
 	{
 
 	}
 
+	void hide_properties()
+	{
+		// TODO
+	}
+
 	@FXML
 	void show_toolbox(ActionEvent event)
 	{
+		hide_properties();
+		if (toolbox_status_visible)
+		{
+			return;
+		}
+		else
+		{
+			toolbox_status_visible = true;
+		}
+		toolbox_hider.setRate(1);
+		toolbox_hider.playFromStart();
+		register_toolbox_clickoff(() -> hide_toolbox(null));
+	}
 
+	private Runnable clickoff_tbx = null;
+
+	void register_toolbox_clickoff(Runnable fnc)
+	{
+		clickoff_tbx = fnc;
 	}
 
 	@FXML
@@ -142,13 +216,11 @@ public class DesignerUI
 
 	}
 
-
 	@FXML
 	void save(ActionEvent event)
 	{
 
 	}
-
 
 	@FXML
 	void save_as(ActionEvent event)
@@ -231,6 +303,11 @@ public class DesignerUI
 	@FXML
 	void hide_toolbox(ActionEvent event)
 	{
-
+		if (toolbox_status_visible == false)
+			return;
+		toolbox_status_visible = false;
+		clickoff_tbx = null;
+		toolbox_hider.setRate(-1);
+		toolbox_hider.playFrom(toolbox_hider.getTotalDuration());
 	}
 }
