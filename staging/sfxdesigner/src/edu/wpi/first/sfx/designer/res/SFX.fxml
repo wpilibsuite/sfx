@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import dashfx.controls.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+
+<GridPane fx:id="GridPane" fx:controller="edu.wpi.first.sfx.designer.DesignerUI" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+
+  <BorderPane fx:id="BorderPane" pickOnBounds="false" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <bottom>
+      <HBox fx:id="bottom_gutter" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" spacing="6.0" style="" translateY="0.0">
+        <children>
+          <HBox fx:id="add_slider" minWidth="32.0" prefHeight="-1.0" prefWidth="32.0" style="">
+            <children>
+              <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+              <Pane fx:id="hack_corner" prefHeight="32.0" prefWidth="32.0" style="" styleClass="corner_gutter">
+                <children>
+                  <Button alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" minHeight="0.0" minWidth="32.0" mnemonicParsing="false" onAction="#show_toolbox" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Add">
+                    <graphic>
+                      <ImageView id="add_image_view" fx:id="add_tab_icon" fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                          <Image url="@img/list-add.png" fx:id="add_tab_plus" />
+                        </image>
+                      </ImageView>
+                    </graphic>
+                    <tooltip>
+                      <Tooltip text="Add" />
+                    </tooltip>
+                  </Button>
+                </children>
+              </Pane>
+            </children>
+          </HBox>
+          <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#new_document" text="New">
+            <graphic>
+              <ImageView disable="false" fitHeight="32.0" fitWidth="32.0" opacity="1.0" pickOnBounds="true" preserveRatio="true" style="">
+                <image>
+                  <Image url="@img/document-new.png" />
+                </image>
+              </ImageView>
+            </graphic>
+          </Button>
+          <SplitMenuButton fx:id="open_btn" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#open" style="" text="Open">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@img/document-open.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#open" style="-fx-font-weight: bold;" text="Open..." />
+              <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" text="recent1" />
+              <MenuItem mnemonicParsing="false" text="recent2" />
+            </items>
+            <tooltip>
+              <Tooltip text="Open" />
+            </tooltip>
+          </SplitMenuButton>
+          <SplitMenuButton contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#save" text="Save">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" opacity="1.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@img/document-save.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#save" style="-fx-font-weight: bold;" text="Save" />
+              <MenuItem mnemonicParsing="false" onAction="#save_as" text="Save As..." />
+            </items>
+            <tooltip>
+              <Tooltip text="Save" />
+            </tooltip>
+          </SplitMenuButton>
+          <!--<ImageView fitHeight="32.0" fitWidth="32.0" opacity="0.42" pickOnBounds="true" preserveRatio="true">
+            <image>
+              <Image url="@img/edit-undo.png" />
+            </image>
+          </ImageView>-->
+          <HBox fx:id="tab_box" prefHeight="-1.0" prefWidth="-1.0" spacing="2.0">
+            <children>
+              <Button mnemonicParsing="false" onAction="#new_tab" text="+" />
+            </children>
+          </HBox>
+          <HBox alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" prefHeight="32.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+            <children>
+              <HBox fx:id="msg_carrier" alignment="CENTER" maxHeight="28.0" minWidth="200.0" prefHeight="28.0" prefWidth="-1.0" style="-fx-background-color: linear-gradient(limegreen, #55ff55);&#10;-fx-border-color: green;&#10;-fx-border-width: 1 1 0 1;&#10;-fx-border-radius:10 10 0 0;&#10;-fx-background-radius:10 10 0 0;" translateY="30.0">
+                <children>
+                  <Label fx:id="alert_msg" alignment="CENTER" text="Layout saved to ~/layout.smdb" />
+                </children>
+                <padding>
+                  <Insets left="10.0" right="10.0" />
+                </padding>
+              </HBox>
+            </children>
+          </HBox>
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="-Infinity" mnemonicParsing="false" onAction="#edit_settings" prefHeight="32.0" prefWidth="-1.0" style="" text="Settings" HBox.hgrow="NEVER">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@img/package_settings.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <tooltip>
+              <Tooltip text="SmartDashboard Settings" />
+            </tooltip>
+          </Button>
+          <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#run" prefHeight="32.0" prefWidth="32.0" style="" text="Run" HBox.hgrow="NEVER">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@img/media-playback-start.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <tooltip>
+              <Tooltip text="Run" />
+            </tooltip>
+          </Button>
+        </children>
+      </HBox>
+    </bottom>
+    <center>
+      <ScrollPane fx:id="spain" onDragDropped="#drag_drop" onDragOver="#drag_over" onMouseReleased="#canvas_click">
+        <content>
+          <AnchorPane fx:id="overlay_pod" prefHeight="200.0" prefWidth="200.0">
+            <children>
+              <Pane fx:id="north_wing" layoutX="0.0" layoutY="0.0" onMouseClicked="#surrender_nest" prefHeight="20.0" prefWidth="${overlay_pod.width}" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" />
+              <Pane fx:id="south_wing" layoutX="0.0" onMouseClicked="#surrender_nest" prefHeight="20.0" prefWidth="${overlay_pod.width}" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" AnchorPane.bottomAnchor="0.0" />
+              <Pane fx:id="west_wing" layoutY="45.0" onMouseClicked="#surrender_nest" prefHeight="154.0" prefWidth="20.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" AnchorPane.leftAnchor="0.0" />
+              <Pane fx:id="east_wing" layoutY="45.0" onMouseClicked="#surrender_nest" prefHeight="154.0" prefWidth="20.0" style="-fx-background-color: rgba(0, 0, 0, 0.05);" visible="false" AnchorPane.rightAnchor="0.0" />
+            </children>
+          </AnchorPane>
+        </content>
+      </ScrollPane>
+    </center>
+  </BorderPane>
+  <AnchorPane mouseTransparent="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+    <children>
+      <Button fx:id="stop_button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#design" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Stop" translateX="-32.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <graphic>
+          <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+            <image>
+              <Image url="@img/media-playback-stop.png" />
+            </image>
+          </ImageView>
+        </graphic>
+      </Button>
+      <Button id="stop_button" fx:id="playback_button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" mnemonicParsing="false" onAction="#do_playback_mode" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Playback" translateX="-32.0" visible="false" AnchorPane.bottomAnchor="32.0" AnchorPane.rightAnchor="0.0">
+        <graphic>
+          <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" visible="true">
+            <image>
+              <Image url="@img/playback.png" />
+            </image>
+          </ImageView>
+        </graphic>
+      </Button>
+    </children>
+  </AnchorPane>
+  <Pane fx:id="gutter_shadow" minWidth="0.0" prefHeight="-1.0" prefWidth="30.0" styleClass="gutter-shadow" translateX="0.0" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" GridPane.valignment="TOP">
+    <GridPane.margin>
+      <Insets bottom="32.0" />
+    </GridPane.margin>
+  </Pane>
+  <VBox fx:id="left_gutter" alignment="TOP_RIGHT" fillWidth="true" maxHeight="1.7976931348623157E308" maxWidth="266.0" minWidth="266.0" prefHeight="-1.0" prefWidth="266.0" style="" translateX="-266.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+    <children>
+      <Accordion fx:id="accord" prefWidth="234.0" VBox.vgrow="ALWAYS">
+        <expandedPane>
+          <TitledPane fx:id="x2" animated="true" text="Incoming">
+            <content>
+              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                <center>
+                  <TreeView fx:id="AATreeview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" showRoot="false" styleClass="aa-names" />
+                </center>
+                <top>
+                  <VBox fx:id="aa_ctrl_panel" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                    <children>
+                      <HBox alignment="CENTER" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0">
+                        <children>
+                          <Label text="Add: " />
+                          <Button mnemonicParsing="false" onAction="#aa_add_all" text="All" />
+<!--                          <ToggleButton disable="true" mnemonicParsing="false" onAction="#aa_add_new" text="Dont" />
+                          <Button disable="true" mnemonicParsing="false" text="Click" />-->
+                          <Button fx:id="aa_expand_panel" mnemonicParsing="false" onAction="#aa_toggle_panel" text="Search" />
+                        </children>
+                      </HBox>
+                      <HBox fx:id="aa_ctrl_regex" alignment="CENTER" disable="false" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" visible="true">
+                        <children>
+                          <Label text="Regex: " />
+                          <TextField fx:id="aa_regexer" prefWidth="-1.0" style="">
+                            <tooltip>
+                              <Tooltip text="No regex" fx:id="aa_regex_message" />
+                            </tooltip>
+                          </TextField>
+                        </children>
+                      </HBox>
+                    </children>
+                    <BorderPane.margin>
+                      <Insets bottom="5.0" top="1.0" />
+                    </BorderPane.margin>
+                  </VBox>
+                </top>
+              </BorderPane>
+            </content>
+          </TitledPane>
+        </expandedPane>
+        <panes>
+          <fx:reference source="x2" />
+        </panes>
+      </Accordion>
+      <HBox prefHeight="32.0" prefWidth="-1.0">
+        <children>
+          <Button alignment="CENTER_RIGHT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" maxHeight="32.0" maxWidth="32.0" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#show_data_sources" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Data Settings">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@img/document-properties.png" />
+                </image>
+              </ImageView>
+            </graphic>
+            <tooltip>
+              <Tooltip text="Data Settings" />
+            </tooltip>
+          </Button>
+          <HBox prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS" />
+          <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#hide_toolbox" style="-fx-background-color: transparent;&#10;-fx-margin: 0;&#10;-fx-padding: 0" text="Hide">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" style="">
+                <image>
+                  <Image url="@img/stock_left.png" />
+                </image>
+              </ImageView>
+            </graphic>
+          </Button>
+        </children>
+      </HBox>
+    </children>
+  </VBox>
+  <stylesheets>
+    <URL value="@css/SFX.css" />
+    <URL value="@css/general.css" />
+  </stylesheets>
+  <columnConstraints>
+    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="0.0" minWidth="0.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+    <fx:define>
+    <Image url="@img/stock_left.png" fx:id="add_tab_close" />
+  </fx:define>
+</GridPane>

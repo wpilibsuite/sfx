@@ -1,0 +1,53 @@
+.button, .toggle-button {
+  -fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to bottom, #fefefe, #d8d8d8), linear-gradient(to bottom, #f8f8f8, #e0e0e0);
+  -fx-border-radius: 2px;
+  -fx-background-radius: 2px;
+}
+.button:pressed, .button:selected, .toggle-button:pressed, .toggle-button:selected {
+  -fx-background-color: transparent, linear-gradient(to top, #8b8b8b, #cdcdcd), linear-gradient(to top, #fefefe, #d8d8d8), linear-gradient(to top, #f8f8f8, #e0e0e0);
+}
+
+.text-field:focused {
+  -fx-background-color: transparent, -fx-text-box-border, -fx-control-inner-background;
+}
+
+.number-spinner .button {
+  -fx-border-radius: 0;
+  -fx-background-color: -fx-control-inner-background;
+  -fx-background-radius: 0;
+  -fx-border-width: 1px 0 1px 1px;
+  -fx-border-color: -fx-text-box-border;
+  -fx-text-fill: red;
+  -fx-background-insets: 0, 0, 1, 2;
+  -fx-padding: 2 5 3 5;
+}
+.number-spinner .button.plus {
+  -fx-text-fill: green;
+  -fx-border-radius: 0 2px 2px 0;
+  -fx-background-color: -fx-control-inner-background;
+  -fx-background-radius: 0 2px 2px 0;
+  -fx-border-width: 1px;
+}
+.number-spinner .button.plus:armed {
+  -fx-background-color: green;
+  -fx-text-fill: white;
+}
+.number-spinner .button:focused {
+  -fx-background-color: -fx-control-inner-background;
+  -fx-background-insets: 0, 0, 1;
+}
+.number-spinner .button:armed {
+  -fx-background-color: red;
+  -fx-text-fill: white;
+}
+.number-spinner .text-field {
+  -fx-border-width: 1px 0 1px 1px;
+  -fx-border-color: -fx-text-box-border transparent -fx-text-box-border -fx-text-box-border;
+  -fx-background-color: -fx-control-inner-background;
+  -fx-border-radius: 2px 0 0 2px;
+  -fx-background-radius: 2px 0 0 2px;
+}
+.number-spinner .text-field:focused {
+  -fx-background-insets: 0, 1, 2;
+  -fx-background-color: -fx-control-inner-background;
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane dividerPositions="0.2852193995381062, 0.6685912240184757" focusTraversable="true" maxWidth="1.7976931348623157E308" prefHeight="408.0" prefWidth="868.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="fxnativedesigner.MainController" fx:id="par" onDragDone="#odd" >
+  <items>
+    <ListView fx:id="list" onDragDetected="#grabItem2" prefHeight="406.0" prefWidth="82.0" />
+    <TreeView fx:id="tree" minWidth="-Infinity" prefHeight="406.0" prefWidth="140.0" />
+  </items>
+</SplitPane>
