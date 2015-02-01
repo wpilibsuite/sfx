@@ -16,9 +16,13 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.ListChangeListener;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -126,6 +130,8 @@ public class DesignerUI
 	private boolean toolbox_status_visible = false;
 
 	private Timeline toolbox_hider;
+	
+	private Map<String, FlowPane> toolbox_group = new HashMap<>();
 
 	@FXML
 	void initialize()
@@ -140,6 +146,7 @@ public class DesignerUI
 		t.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(gutter_shadow.minWidthProperty(), 0.0)));
 		t.getKeyFrames().add(new KeyFrame(Duration.millis(400), new KeyValue(gutter_shadow.minWidthProperty(), 30.0)));
 
+		// toolbox clickoff support
 		GridPane.addEventFilter(MouseEvent.MOUSE_PRESSED, (e) ->
 						{
 							if (clickoff_tbx == null)
@@ -167,6 +174,30 @@ public class DesignerUI
 							}
 
 		});
+		
+		DepManager.getInstance().getToolboxControls().addListener(new ListChangeListener()
+		{
+
+			@Override
+			public void onChanged(ListChangeListener.Change change)
+			{
+				//TODO: this assumes we only add items to the lists...
+				while (change.next())
+				{
+					change.getAddedSubList().stream().forEach(x -> {
+						String name = DepManager.scriptCall(x, "category", String.class);
+						if (!toolbox_group.containsKey(name))
+						{
+							UiFragmentFactory.Pair<TitledPane, FlowPane> pp = UiFragmentFactory.toolboxAccordionPane(name);
+							toolbox_group.put(name, pp.second);
+							accord.getPanes().add(pp.first);
+						}
+					});
+				}
+			}
+		});
+		
+		DepManager.getInstance().complete("build_ui", this);
 	}
 
 	@FXML

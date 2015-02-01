@@ -16,6 +16,7 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import java.util.concurrent.ForkJoinPool;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.jruby.embed.ScriptingContainer;
 
 /**
  *
@@ -30,6 +32,22 @@ import javafx.stage.Stage;
  */
 public class Main extends Application
 {
+	
+	static Main instance;
+
+	@Override
+	public void init() throws Exception
+	{
+		super.init();
+		instance = this;
+		DepManager.getInstance().launch("base_jruby_loaded");
+	}
+
+	public static Main getInstance()
+	{
+		return instance;
+	}
+	
 
 	@Override
 	public void start(Stage stage) throws Exception
