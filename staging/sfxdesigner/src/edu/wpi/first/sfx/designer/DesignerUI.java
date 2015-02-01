@@ -16,12 +16,16 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import edu.wpi.first.sfx.designer.util.MappedList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.event.*;
 import javafx.fxml.FXML;
@@ -130,7 +134,7 @@ public class DesignerUI
 	private boolean toolbox_status_visible = false;
 
 	private Timeline toolbox_hider;
-	
+
 	private Map<String, FlowPane> toolbox_group = new HashMap<>();
 
 	@FXML
@@ -174,7 +178,7 @@ public class DesignerUI
 							}
 
 		});
-		
+
 		DepManager.getInstance().getToolboxControls().addListener(new ListChangeListener()
 		{
 
@@ -184,20 +188,36 @@ public class DesignerUI
 				//TODO: this assumes we only add items to the lists...
 				while (change.next())
 				{
-					change.getAddedSubList().stream().forEach(x -> {
-						String name = DepManager.scriptCall(x, "category", String.class);
-						if (!toolbox_group.containsKey(name))
-						{
-							UiFragmentFactory.Pair<TitledPane, FlowPane> pp = UiFragmentFactory.toolboxAccordionPane(name);
-							toolbox_group.put(name, pp.second);
-							accord.getPanes().add(pp.first);
-						}
-					});
+					processToolboxList(change.getAddedSubList());
+
 				}
 			}
 		});
-		
+		processToolboxList(DepManager.getInstance().getToolboxControls());
+
 		DepManager.getInstance().complete("build_ui", this);
+	}
+
+	private void processToolboxList(List z)
+	{
+		if (!Platform.isFxApplicationThread())
+			Platform.runLater(() -> processToolboxList(z));
+		z.stream().forEach(x ->
+		{
+			final String name = DepManager.scriptCall(x, "category", String.class);
+			if (!toolbox_group.containsKey(name))
+			{
+				UiFragmentFactory.Pair<TitledPane, FlowPane> pp = UiFragmentFactory.toolboxAccordionPane(name);
+				toolbox_group.put(name, pp.second);
+				accord.getPanes().add(pp.first);
+				Bindings.bindContentBidirectional(pp.second.getChildren(),
+												  new MappedList<>(
+														  DepManager.getInstance().getToolboxControls().
+														  filtered(y -> DepManager.scriptCall(x, "category", String.class).equals(name)),
+														  y -> (Node) DepManager.scriptEval(y, "javafx.scene.control.Button.new(x.name)")
+												  ));
+			}
+		});
 	}
 
 	@FXML
@@ -335,7 +355,9 @@ public class DesignerUI
 	void hide_toolbox(ActionEvent event)
 	{
 		if (toolbox_status_visible == false)
+		{
 			return;
+		}
 		toolbox_status_visible = false;
 		clickoff_tbx = null;
 		toolbox_hider.setRate(-1);

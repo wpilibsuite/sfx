@@ -64,7 +64,7 @@ public final class DepManager
 		return jRuby;
 	}
 	
-	/**
+	/*
 	 * This is somewhat of a kludge to avoid defining interfaces. We should really consider
 	 * using a interface or cleaning up its usage when finished with the port
 	 */
@@ -72,7 +72,18 @@ public final class DepManager
 	{
 		return instance.jRuby.callMethod(receiver, methodName, returnType);
 	}
-
+	
+	/*
+	 * This is somewhat of a kludge to avoid defining interfaces. We should really consider
+	 * using a interface or cleaning up its usage when finished with the port
+	 */
+	public static Object scriptEval(Object arg, String eval)
+	{
+		instance.jRuby.put("x", arg);
+		Object r = instance.jRuby.runScriptlet(eval);
+		instance.jRuby.remove("x");
+		return r;
+	}
 	public static DepManager getInstance()
 	{
 		return instance;

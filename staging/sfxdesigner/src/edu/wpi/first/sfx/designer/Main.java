@@ -40,7 +40,7 @@ public class Main extends Application
 	{
 		super.init();
 		instance = this;
-		DepManager.getInstance().launch("base_jruby_loaded");
+		ForkJoinPool.commonPool().execute(() -> DepManager.getInstance().launch("base_jruby_loaded"));
 	}
 
 	public static Main getInstance()

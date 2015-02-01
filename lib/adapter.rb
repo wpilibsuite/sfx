@@ -34,7 +34,10 @@ class Adapter
       SD::Plugins.load "built-in", lambda {|url|Java::dashfx.lib.registers.ControlRegister.java_class.resource url}
       puts "done plugins"
       p SD::Plugins.controls
-      ctr.complete(nil)
+      javafx.application.Platform.run_later do
+        mi.toolbox_controls.add_all *SD::Plugins.controls
+        ctr.complete(nil)
+      end
       rescue Exception
         p $!
         puts $!.backtrace
