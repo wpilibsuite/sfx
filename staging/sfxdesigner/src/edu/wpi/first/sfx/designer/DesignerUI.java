@@ -214,7 +214,7 @@ public class DesignerUI
 												  new MappedList<>(
 														  DepManager.getInstance().getToolboxControls().
 														  filtered(y -> DepManager.scriptCall(x, "category", String.class).equals(name)),
-														  y -> (Node) DepManager.scriptEval(y, "javafx.scene.control.Button.new(x.name)")
+														  y -> (Node)new ToolboxItem(y)
 												  ));
 			}
 		});

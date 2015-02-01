@@ -21,10 +21,13 @@
 require 'java'
 java_package 'edu.wpi.first.sfx.designer'
 class Adapter
-  java_signature 'edu.wpi.first.sfx.designer.Adapter main(edu.wpi.first.sfx.designer.DepManager)'
+  java_signature 'edu.wpi.first.sfx.designer.Adapter init(edu.wpi.first.sfx.designer.DepManager)'
   def self.init(mi)
     return Adapter.new(mi)
   end
+  
+  private
+  java_signature 'edu.wpi.first.sfx.designer.Adapter(edu.wpi.first.sfx.designer.DepManager)'
   def initialize(mi)
     @mi = mi
     @mi.on "load_jruby_plugins" do |ctr|
