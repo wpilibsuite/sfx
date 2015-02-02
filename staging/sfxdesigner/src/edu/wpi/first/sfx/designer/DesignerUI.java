@@ -32,6 +32,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -74,8 +75,6 @@ public class DesignerUI
 	@FXML
 	private TreeView<?> AATreeview;
 
-	@FXML
-	private AnchorPane overlay_pod;
 
 	@FXML
 	private HBox bottom_gutter;
@@ -105,22 +104,11 @@ public class DesignerUI
 	private HBox add_slider;
 
 	@FXML
-	private Pane west_wing;
-
-	@FXML
-	private Pane south_wing;
-
-	@FXML
 	private Pane gutter_shadow;
-
-	@FXML
-	private Pane east_wing;
 
 	@FXML
 	private Pane hack_corner;
 
-	@FXML
-	private Pane north_wing;
 
 	@FXML
 	private VBox aa_ctrl_panel;
@@ -170,7 +158,6 @@ public class DesignerUI
 								{
 									q = ((Node) q).getParent();
 								}
-
 							}
 							if (q == null) // no parents found
 							{
@@ -298,13 +285,13 @@ public class DesignerUI
 	}
 
 	@FXML
-	void drag_drop(ActionEvent event)
+	void drag_drop(DragEvent event)
 	{
 
 	}
 
 	@FXML
-	void drag_over(ActionEvent event)
+	void drag_over(DragEvent event)
 	{
 
 	}
@@ -315,11 +302,6 @@ public class DesignerUI
 
 	}
 
-	@FXML
-	void surrender_nest(ActionEvent event)
-	{
-
-	}
 
 	@FXML
 	void design(ActionEvent event)

@@ -16,6 +16,7 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import dashfx.lib.util.CTView;
 import java.io.IOException;
 import java.io.InputStream;
 import javafx.event.*;
@@ -24,7 +25,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 
 /**
@@ -44,7 +49,11 @@ public class ToolboxItem extends VBox
 	@FXML
 	void begin_drag(MouseEvent event)
 	{
-		//TODO: fill
+		Dragboard db = this.startDragAndDrop(TransferMode.COPY);
+		ClipboardContent content = new ClipboardContent();
+		content.put(CTView.JAVA_CLASS_DATA_FORMAT, DepManager.scriptCall(obj, "name", String.class));
+		db.setContent(content);
+		event.consume();
 	}
 
 	public ToolboxItem(Object o)
