@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+
+<fx:root type="javafx.scene.layout.GridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onDragOver="#on_drag_over" onDragDropped="#on_drag_dropped"  onMouseClicked="#checkDblClick" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <fx:define>
+    <ContextMenu fx:id="context_menu">
+      <items>
+        <Menu mnemonicParsing="false" text="Z Order">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#z_send_bottom" text="Send to Bottom" />
+            <MenuItem mnemonicParsing="false" onAction="#z_send_backward" text="Send Backward" />
+            <MenuItem mnemonicParsing="false" onAction="#z_send_forward" text="Send Forward" />
+            <MenuItem mnemonicParsing="false" onAction="#z_send_top" text="Send to Top" />
+          </items>
+        </Menu>
+        <!--
+        <MenuItem mnemonicParsing="false" onAction="#morph_into" text="Morph Into..." />
+		-->
+        <MenuItem mnemonicParsing="false" onAction="#delete" text="Delete" />
+      </items>
+    </ContextMenu>
+  </fx:define>
+  <children>
+    <Group GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+		<BorderPane fx:id="childContainer" prefHeight="-1.0" prefWidth="-1.0" minWidth="10" minHeight="10" >
+      <GridPane.margin>
+        <Insets />
+      </GridPane.margin>
+    </BorderPane>
+	</Group>
+    <GridPane fx:id="selected_ui" onContextMenuRequested="#request_ctx_menu" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+      <children>
+        <Pane fx:id="overlay" mouseTransparent="true" style="-fx-background-color:#00000012;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.rowSpan="3" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+          <GridPane.margin>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+          </GridPane.margin>
+        </Pane>
+        <Rectangle fx:id="nHandle" arcHeight="0.0" arcWidth="5.0" fill="WHITE" height="8.0" stroke="BLACK" strokeType="INSIDE" width="8.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
+        <Rectangle fx:id="sHandle" arcHeight="0.0" arcWidth="5.0" fill="WHITE" height="8.0" stroke="BLACK" strokeType="INSIDE" width="8.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+        <Rectangle fx:id="wHandle" arcHeight="0.0" arcWidth="5.0" fill="WHITE" height="8.0" stroke="BLACK" strokeType="INSIDE" width="8.0" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Rectangle fx:id="eHandle" arcHeight="0.0" arcWidth="5.0" fill="WHITE" height="8.0" stroke="BLACK" strokeType="INSIDE" width="8.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+        <Region fx:id="moveRegion"  onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:move;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Region fx:id="nwResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:nw_resize;&#10;-fx-background-color:#FFF;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Region fx:id="nResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:n_resize;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Region fx:id="neResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:ne_resize;&#10;-fx-background-color:#FFF;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+        <Region fx:id="eResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:e_resize;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        <Region fx:id="seResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:se_resize;&#10;-fx-background-color:#FFF;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+        <Region fx:id="sResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:s_resize;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <Region fx:id="swResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:sw_resize;&#10;-fx-background-color:#FFF;&#10;-fx-border-color:#000;&#10;-fx-border-width:1px;" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Region fx:id="wResizeRegion" onMouseDragged="#dragUpdate" onMouseReleased="#dragDone" style="-fx-cursor:w_resize;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+      </children>
+      <columnConstraints>
+        <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+        <ColumnConstraints hgrow="ALWAYS" />
+        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="8.0" />
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" valignment="TOP" vgrow="NEVER" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="8.0" valignment="BOTTOM" vgrow="NEVER" />
+      </rowConstraints>
+      <GridPane.margin>
+        <Insets />
+      </GridPane.margin>
+    </GridPane>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="6.0" prefWidth="6.0" />
+    <ColumnConstraints hgrow="ALWAYS" />
+    <ColumnConstraints halignment="RIGHT" hgrow="NEVER" maxWidth="-Infinity" minWidth="6.0" prefWidth="6.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="-Infinity" minHeight="6.0" prefHeight="6.0" valignment="TOP" vgrow="NEVER" />
+    <RowConstraints vgrow="ALWAYS" />
+    <RowConstraints maxHeight="-Infinity" minHeight="6.0" prefHeight="6.0" valignment="BOTTOM" vgrow="NEVER" />
+  </rowConstraints>
+</fx:root>

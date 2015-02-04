@@ -12,12 +12,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+require 'digest'
 
 module SD
   module Plugins
     class ControlInfo
       attr_reader :name, :description, :category, :group_types, :types, :save_children, :sealed
       def initialize(url_resolver, info)
+        # this is called for FXML only controls
         info = Hash[info.map{|k,v| [k.to_s, v]}]
         if info['From Package'] || info['From Class'] || info['From Jar']
           # TODO: ?
@@ -51,6 +53,29 @@ module SD
             end
           }
         }.(info["Source"],info["Placeholders"],info["Placeholder Override"] ||{},info["Defaults"], info["Custom Properties"])
+      end
+      
+      def uniq_name
+        "_#{name.gsub(/[^0-9A-Za-z_]/,"")}_#{Digest::SHA1.hexdigest("#{name} :1: #{category} :2: #{description}")[0..8]}"
+      end
+      
+      def build_solid
+        this = self
+        c = Class.new do
+          [:name, :description, :category, :group_types, :types, :save_children, :sealed].each do |nn|
+            localc = this.send nn
+            define_method(nn) { localc }
+            define_method("get#{nn.to_s.split('_').collect(&:capitalize).join}") { localc }
+          end
+        end
+        ControlInfo.const_set(uniq_name, c)
+        c.become_java!
+        c
+      end
+      
+      def solid_class
+        build_solid unless @solid_class
+        @solid_class
       end
 
       def generic_init(url_resolver, info)
@@ -111,6 +136,7 @@ module SD
 
     class JavaControlInfo < ControlInfo
       def initialize(loader, jclass, moar_info={})
+        puts "java Control Info #{jclass}"
         annote = jclass.annotation(Java::dashfx.lib.controls.Designable.java_class)
         cat_annote = jclass.annotation(Java::dashfx.lib.controls.Category.java_class)
         types_annote = jclass.annotation(Java::dashfx.lib.data.SupportedTypes.java_class)
@@ -142,6 +168,7 @@ module SD
 
     class RubyControlInfo < ControlInfo
       def initialize(loader, info)
+        puts "Ruby Control Info #{info.inspect}"
         info = Hash[info.map{|k,v| [k.to_s, v]}]
         generic_init(loader, info)
         self.sealed = true

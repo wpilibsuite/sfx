@@ -16,7 +16,13 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import dashfx.controls.DataAnchorPane;
+import dashfx.lib.registers.ControlRegister;
+import dashfx.lib.util.DemoImpl;
+import dashfx.lib.util.DesignerMetadata;
 import edu.wpi.first.sfx.designer.util.MappedList;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +32,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.*;
 import javafx.fxml.FXML;
@@ -124,6 +131,8 @@ public class DesignerUI
 	private Timeline toolbox_hider;
 
 	private Map<String, FlowPane> toolbox_group = new HashMap<>();
+	private DemoImpl infl;
+	private DesignerMetadata meta;
 
 	@FXML
 	void initialize()
@@ -166,9 +175,9 @@ public class DesignerUI
 
 		});
 
+		// toolbox item list change handler
 		DepManager.getInstance().getToolboxControls().addListener(new ListChangeListener()
 		{
-
 			@Override
 			public void onChanged(ListChangeListener.Change change)
 			{
@@ -180,7 +189,14 @@ public class DesignerUI
 				}
 			}
 		});
+		// add the intial toolbox items
 		processToolboxList(DepManager.getInstance().getToolboxControls());
+		
+		infl = new DemoImpl();
+		meta = new DesignerMetadata(DataAnchorPane.class, infl, DesignerUI.class.getResource("res/DesignerOverlayControl.fxml")); // the root
+		Node n = meta.getAssociatedView(meta.getRoot());
+		spain.setContent(n);
+		infl.runService();
 
 		DepManager.getInstance().complete("build_ui", this);
 	}
