@@ -217,7 +217,7 @@ public class DesignerUI
 				Bindings.bindContentBidirectional(pp.second.getChildren(),
 												  new MappedList<>(
 														  DepManager.getInstance().getToolboxControls().
-														  filtered(y -> DepManager.scriptCall(x, "category", String.class).equals(name)),
+														  filtered(y -> DepManager.scriptCall(y, "category", String.class).equals(name)),
 														  y -> (Node)new ToolboxItem(y)
 												  ));
 			}
