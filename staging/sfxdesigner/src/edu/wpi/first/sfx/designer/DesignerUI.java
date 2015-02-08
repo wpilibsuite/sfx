@@ -17,6 +17,7 @@
 package edu.wpi.first.sfx.designer;
 
 import dashfx.controls.DataAnchorPane;
+import dashfx.lib._private.rt._Canvas_blork;
 import dashfx.lib.registers.ControlRegister;
 import dashfx.lib.util.DemoImpl;
 import dashfx.lib.util.DesignerMetadata;
@@ -193,7 +194,7 @@ public class DesignerUI
 		processToolboxList(DepManager.getInstance().getToolboxControls());
 		
 		infl = new DemoImpl();
-		meta = new DesignerMetadata(DataAnchorPane.class, infl, DesignerUI.class.getResource("res/DesignerOverlayControl.fxml")); // the root
+		meta = new DesignerMetadata(new _Canvas_blork(), infl, DesignerUI.class.getResource("res/DesignerOverlayControl.fxml")); // the root
 		Node n = meta.getAssociatedView(meta.getRoot());
 		spain.setContent(n);
 		infl.runService();
