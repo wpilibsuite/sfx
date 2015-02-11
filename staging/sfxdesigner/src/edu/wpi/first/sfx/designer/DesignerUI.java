@@ -17,8 +17,9 @@
 package edu.wpi.first.sfx.designer;
 
 import dashfx.controls.DataAnchorPane;
-import dashfx.lib._private.rt._Canvas_blork;
+import dashfx.lib._private.rt._Canvas_cmi;
 import dashfx.lib.registers.ControlRegister;
+import dashfx.lib.rt.ControlMetaInfo;
 import dashfx.lib.util.DemoImpl;
 import dashfx.lib.util.DesignerMetadata;
 import edu.wpi.first.sfx.designer.util.MappedList;
@@ -194,7 +195,7 @@ public class DesignerUI
 		processToolboxList(DepManager.getInstance().getToolboxControls());
 		
 		infl = new DemoImpl();
-		meta = new DesignerMetadata(new _Canvas_blork(), infl, DesignerUI.class.getResource("res/DesignerOverlayControl.fxml")); // the root
+		meta = new DesignerMetadata(new _Canvas_cmi(), infl, DesignerUI.class.getResource("res/DesignerOverlayControl.fxml")); // the root
 		Node n = meta.getAssociatedView(meta.getRoot());
 		spain.setContent(n);
 		infl.runService();
@@ -202,13 +203,13 @@ public class DesignerUI
 		DepManager.getInstance().complete("build_ui", this);
 	}
 
-	private void processToolboxList(List z)
+	private void processToolboxList(List<ControlMetaInfo> z)
 	{
 		if (!Platform.isFxApplicationThread())
 			Platform.runLater(() -> processToolboxList(z));
 		z.stream().forEach(x ->
 		{
-			final String name = DepManager.scriptCall(x, "category", String.class);
+			final String name = x.getCategory();
 			if (!toolbox_group.containsKey(name))
 			{
 				UiFragmentFactory.Pair<TitledPane, FlowPane> pp = UiFragmentFactory.toolboxAccordionPane(name);
@@ -217,7 +218,7 @@ public class DesignerUI
 				Bindings.bindContentBidirectional(pp.second.getChildren(),
 												  new MappedList<>(
 														  DepManager.getInstance().getToolboxControls().
-														  filtered(y -> DepManager.scriptCall(y, "category", String.class).equals(name)),
+														  filtered(y -> y.getCategory().equals(name)),
 														  y -> (Node)new ToolboxItem(y)
 												  ));
 			}

@@ -6,7 +6,7 @@
 package edu.wpi.first.sfx.designer;
 
 import dashfx.controls.DataAnchorPane;
-import dashfx.lib._private.rt._Canvas_blork;
+//import dashfx.lib._private.rt._Canvas_blork;
 import dashfx.lib.registers.ControlRegister;
 import dashfx.lib.util.CTView;
 import dashfx.lib.util.ControlTree;
@@ -78,7 +78,7 @@ public class MainController implements Initializable
 		infl = new DemoImpl();
 		try
 		{
-			meta = new DesignerMetadata(new _Canvas_blork(), infl, new URL("file:/home/patrick/NetBeansProjects/sfx/lib/res/DesignerOverlayControl.fxml")); // the root
+			meta = new DesignerMetadata(null /*new _Canvas_cmi()*/, infl, new URL("file:/home/patrick/NetBeansProjects/sfx/lib/res/DesignerOverlayControl.fxml")); // the root
 		}
 		catch (MalformedURLException ex)
 		{

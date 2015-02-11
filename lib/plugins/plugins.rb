@@ -45,10 +45,10 @@ module SD
           if cdesc['Class'][0].downcase == cdesc['Class'][0] # lowercase = package name => java
             JavaControlInfo.new(loader, JavaUtilities.get_proxy_class(cdesc['Class']).java_class, cdesc)
           else
-            RubyControlInfo.new(loader, cdesc)
+            []#RubyControlInfo.new(loader, cdesc)
           end
         else
-          ControlInfo.new(loader, cdesc)
+          []#ControlInfo.new(loader, cdesc)
         end
       end.flatten
 

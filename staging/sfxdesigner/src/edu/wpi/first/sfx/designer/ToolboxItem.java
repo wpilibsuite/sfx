@@ -16,6 +16,7 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import dashfx.lib.rt.ControlMetaInfo;
 import dashfx.lib.util.CTView;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,19 +45,19 @@ public class ToolboxItem extends VBox
 
 	@FXML
 	private Label label;
-	private final Object obj;
+	private final ControlMetaInfo obj;
 
 	@FXML
 	void begin_drag(MouseEvent event)
 	{
 		Dragboard db = this.startDragAndDrop(TransferMode.COPY);
 		ClipboardContent content = new ClipboardContent();
-		content.put(CTView.JAVA_CLASS_DATA_FORMAT, DepManager.scriptCall(obj, "name", String.class));
+		content.put(CTView.JAVA_CLASS_DATA_FORMAT, obj);
 		db.setContent(content);
 		event.consume();
 	}
 
-	public ToolboxItem(Object o)
+	public ToolboxItem(ControlMetaInfo o)
 	{
 		this.obj = o;
 		String mode = "";
@@ -81,10 +82,10 @@ public class ToolboxItem extends VBox
 			label.setText(o.toString());
 		
 		Tooltip tt= new Tooltip();
-		tt.setGraphic(new VBox(new Label(DepManager.scriptCall(obj, "name", String.class)), 
-				new Label(DepManager.scriptCall(obj, "description", String.class))));
+		tt.setGraphic(new VBox(new Label(obj.getName()), 
+				new Label(obj.getDescription())));
 		Tooltip.install(this, tt);
-		InputStream is = DepManager.scriptCall(obj, "image_stream", InputStream.class);
+		InputStream is = obj.getImageStream();
 		if (is != null && img != null)
 			img.setImage(new Image(is));
 	}

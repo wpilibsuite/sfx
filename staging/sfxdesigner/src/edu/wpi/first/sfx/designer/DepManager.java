@@ -16,6 +16,7 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import dashfx.lib.rt.ControlMetaInfo;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,7 @@ public final class DepManager
 	private final Map<String, Consumer<CompletableFuture>> runnables = new HashMap<>();
 	private ScriptingContainer jRuby;
 	private DesignerUI ui;
-	private final ObservableList toolbox_controls = FXCollections.observableArrayList();
+	private final ObservableList<ControlMetaInfo> toolbox_controls = FXCollections.observableArrayList();
 
 	private DepManager()
 	{
@@ -54,7 +55,7 @@ public final class DepManager
 		futures.get("base_jruby_loaded").thenAccept(x -> launch("load_jruby_plugins"));
 	}
 
-	public ObservableList getToolboxControls()
+	public ObservableList<ControlMetaInfo> getToolboxControls()
 	{
 		return toolbox_controls;
 	}

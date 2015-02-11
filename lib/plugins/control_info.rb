@@ -155,14 +155,21 @@ module SD
         end
         self.category = cat_annote.value if cat_annote
         self.types = if types_annote
-          types_annote.value.map{|x|x.mask}
+          types_annote.value
         else
-          nil
+          []
         end
         self.group_types = group_annote.value if group_annote
         self.new = lambda { jclass.ruby_class.new }
 
         generic_init(loader, moar_info)
+        # TODO: clean up what we don't use
+        prop_list = [] # TODO
+        oi = oi || moar_info['Image']
+        Java::edu.wpi.first.sfx.designer.rt.JavaControlMI.new(name, description, category, group_types, types, save_children, sealed, prop_list, jclass, oi)
+      end
+      def self.new(*a)
+        allocate.send :initialize, *a
       end
     end
 
