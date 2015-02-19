@@ -16,6 +16,7 @@
  */
 package edu.wpi.first.sfx.designer;
 
+import edu.wpi.first.sfx.designer.ui.DesignerUI;
 import dashfx.lib.rt.ControlMetaInfo;
 import java.util.HashMap;
 import java.util.Map;

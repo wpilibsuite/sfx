@@ -14,14 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.wpi.first.sfx.designer;
+package edu.wpi.first.sfx.designer.ui;
 
+import edu.wpi.first.sfx.designer.util.DemoImpl;
+import edu.wpi.first.sfx.designer.ui.DesignerMetadata;
 import dashfx.controls.DataAnchorPane;
 import dashfx.lib._private.rt._Canvas_cmi;
 import dashfx.lib.registers.ControlRegister;
 import dashfx.lib.rt.ControlMetaInfo;
-import dashfx.lib.util.DemoImpl;
-import dashfx.lib.util.DesignerMetadata;
+import edu.wpi.first.sfx.designer.DepManager;
 import edu.wpi.first.sfx.designer.util.MappedList;
 import java.net.MalformedURLException;
 import java.net.URL;

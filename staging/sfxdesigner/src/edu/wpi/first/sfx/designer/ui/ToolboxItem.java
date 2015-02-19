@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.wpi.first.sfx.designer;
+package edu.wpi.first.sfx.designer.ui;
 
+import edu.wpi.first.sfx.designer.ui.CTView;
 import dashfx.lib.rt.ControlMetaInfo;
-import dashfx.lib.util.CTView;
 import java.io.IOException;
 import java.io.InputStream;
 import javafx.event.*;
