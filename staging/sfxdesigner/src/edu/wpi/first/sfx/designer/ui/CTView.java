@@ -110,6 +110,7 @@ public class CTView extends GridPane
 	@FXML
 	void checkDblClick(MouseEvent e)
 	{
+		System.out.println("ClickCT" + ((Object)this).hashCode());
 		if (e.getClickCount() > 1 && can_nested_edit())
 		{
 			// enable nested mode!
@@ -117,18 +118,18 @@ public class CTView extends GridPane
 			{
 				System.out.println("Tryint");
 				meta.setEditing(tree);
-//					if (false)//(true == (self.editing_nested = @parent_designer.nested_edit(self))
-//				  {
-//            //# TODO: disable!
 				e.consume();
-//            //@parent_designer.select()
-//					}
 			}
 		}
 		else
 		{
-			//# this is somewhat of a hack...
-			//@parent_designer.canvas_click(e)
+			if (meta.getEditing() == tree)
+				meta.setSelected(null);
+			else if (meta.getSelected() != tree)
+			{
+				meta.setSelected(tree);
+			}
+			e.consume();
 		}
 	}
 
@@ -264,7 +265,7 @@ public class CTView extends GridPane
 		// TODO: this is very inefficient. A proper tree traveral algo will improve on this n^2 algo and make it more like n
 			editing_nested.set(nv == tree);
 			CTView ctv = getNestedAbove(nv);
-			if (ctv != null)
+			if (ctv != null) // if we are not the root, show the other UI
 			{
 				if (area == null)
 					initOverlay(ctv);
@@ -367,6 +368,9 @@ public class CTView extends GridPane
 		}
 	}
 
+	/**
+	 * Called by metadata builder
+	 */
 	void init()
 	{
 		// TODO: test
@@ -384,7 +388,7 @@ public class CTView extends GridPane
 		 inflator.resetProperty(change.getKey(), childContainer.getCenter());
 		 }
 		 });*/
-		selected_ui.visibleProperty().bind(editing_nested.not());
+		selected_ui.visibleProperty().bind(editing_nested.not().and(meta.selectedProperty().isEqualTo(tree)));
 		meta.editingProperty().addListener((ov, old, nv) -> editingChanged(nv));
 		editingChanged(meta.getEditing());
 	}
@@ -532,6 +536,9 @@ public class CTView extends GridPane
 	boolean ssnVisible = false;
 	Shape ssn = null;
 
+	/**
+	 * Class used to compute the difference between two rectangles (the outer minus the inner) as used for nested editing
+	 */
 	public class ShapeInversionBinding extends ObjectBinding<Shape>
 	{
 

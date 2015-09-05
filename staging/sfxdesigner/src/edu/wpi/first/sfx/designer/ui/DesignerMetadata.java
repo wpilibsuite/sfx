@@ -35,6 +35,7 @@ public final class DesignerMetadata
 	private final DesignerLUT<CTView> viewlut = new DesignerLUT<>();
 	private final ControlTree root;
 	private final SimpleObjectProperty<ControlTree> editing = new SimpleObjectProperty<>();
+	private final SimpleObjectProperty<ControlTree> selected = new SimpleObjectProperty<>();
 	private final ControlInflator inflator;
 	private final URL defaulturl;
 
@@ -76,11 +77,27 @@ public final class DesignerMetadata
 	public final void setEditing(ControlTree ct)
 	{
 		editing.set(ct);
+		selected.set(null);
 	}
 
 	public SimpleObjectProperty<ControlTree> editingProperty()
 	{
 		return editing;
+	}
+
+	public final ControlTree getSelected()
+	{
+		return selected.get();
+	}
+
+	public final void setSelected(ControlTree ct)
+	{
+		selected.set(ct);
+	}
+
+	public SimpleObjectProperty<ControlTree> selectedProperty()
+	{
+		return selected;
 	}
 
 	public ControlInflator getInflator()

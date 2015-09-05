@@ -141,6 +141,7 @@ public class DesignerUI
 	@FXML
 	void initialize()
 	{
+		// the toolbox hiding animation
 		Timeline t = toolbox_hider = new Timeline();
 		t.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(left_gutter.translateXProperty(), -266.0)));
 		t.getKeyFrames().add(new KeyFrame(Duration.millis(500), new KeyValue(left_gutter.translateXProperty(), 0.0)));
@@ -319,7 +320,7 @@ public class DesignerUI
 	@FXML
 	void canvas_click(MouseEvent event)
 	{
-
+		System.out.println("Canvas Click");
 	}
 
 
