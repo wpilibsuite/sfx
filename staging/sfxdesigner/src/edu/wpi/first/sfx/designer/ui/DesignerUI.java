@@ -23,6 +23,7 @@ import dashfx.lib._private.rt._Canvas_cmi;
 import dashfx.lib.registers.ControlRegister;
 import dashfx.lib.rt.ControlMetaInfo;
 import edu.wpi.first.sfx.designer.DepManager;
+import edu.wpi.first.sfx.designer.Main;
 import edu.wpi.first.sfx.designer.util.MappedList;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -196,7 +197,7 @@ public class DesignerUI
 		processToolboxList(DepManager.getInstance().getToolboxControls());
 		
 		infl = new DemoImpl();
-		meta = new DesignerMetadata(new _Canvas_cmi(), infl, DesignerUI.class.getResource("res/DesignerOverlayControl.fxml")); // the root
+		meta = new DesignerMetadata(new _Canvas_cmi(), infl, Main.class.getResource("res/DesignerOverlayControl.fxml")); // the root
 		Node n = meta.getAssociatedView(meta.getRoot());
 		spain.setContent(n);
 		infl.runService();

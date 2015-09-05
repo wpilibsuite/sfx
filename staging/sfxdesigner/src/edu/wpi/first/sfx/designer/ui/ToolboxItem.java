@@ -18,6 +18,7 @@ package edu.wpi.first.sfx.designer.ui;
 
 import edu.wpi.first.sfx.designer.ui.CTView;
 import dashfx.lib.rt.ControlMetaInfo;
+import edu.wpi.first.sfx.designer.Main;
 import java.io.IOException;
 import java.io.InputStream;
 import javafx.event.*;
@@ -65,7 +66,7 @@ public class ToolboxItem extends VBox
 		{
 			//mode = "OnlyText";
 		}
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("res/DesignerToolboxItem" + mode + ".fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("res/DesignerToolboxItem" + mode + ".fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 

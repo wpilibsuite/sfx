@@ -14,7 +14,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
 
-<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.first.sfx.designer.DesignerUI">
+<GridPane fx:id="GridPane" onKeyReleased="#canvas_keyup" pickOnBounds="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wpi.first.sfx.designer.ui.DesignerUI">
    <children>
      <BorderPane fx:id="BorderPane" pickOnBounds="false" prefHeight="600.0" prefWidth="1024.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
        <bottom>
