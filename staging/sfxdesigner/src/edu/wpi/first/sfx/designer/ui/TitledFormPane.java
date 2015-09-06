@@ -78,7 +78,10 @@ public class TitledFormPane extends Pane
 
 	static public boolean getExpand(Node child)
 	{
-		return true == (Boolean) getConstraint(child, EXPAND_TAG);
+		Boolean bol = (Boolean) getConstraint(child, EXPAND_TAG);
+		if (bol == null)
+			return false;
+		return true == bol;
 	}
 	private double lastWidth;
 

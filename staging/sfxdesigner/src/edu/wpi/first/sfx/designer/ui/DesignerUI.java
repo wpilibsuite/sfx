@@ -40,6 +40,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.*;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
@@ -47,6 +48,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.util.Duration;
 
 /**
@@ -137,6 +139,8 @@ public class DesignerUI
 	private Map<String, FlowPane> toolbox_group = new HashMap<>();
 	private DemoImpl infl;
 	private DesignerMetadata meta;
+	
+	private PropertiesPopup propPop;
 
 	@FXML
 	void initialize()
@@ -202,9 +206,57 @@ public class DesignerUI
 		Node n = meta.getAssociatedView(meta.getRoot());
 		spain.setContent(n);
 		infl.runService();
+		
+		propPop = new PropertiesPopup();
+		meta.selectedProperty().addListener((ov,ol,ne) -> {
+			if (ne == null && propPop.isShowing())
+			{	//try {
+				propPop.hide();
+//			}catch(NullPointerException xt)
+//			{
+//			System.out.println("Got a nullar...")	;
+//			}
+			
+			}
+			else if (ne != ol)
+			{
+				CTView ct = meta.getAssociatedView(ne);
+				propPop.setProperties(ct.findAllProperties());
+				propPop.setTitle(ne.getControlType().getName()); // TODO: not actual name, check old SFX.rb
+				showPropertiesAround(ct);
+			}
+		});
 
 		DepManager.getInstance().complete("build_ui", this);
 	}
+
+	private void showPropertiesAround(Node elt)
+	{
+Bounds bnds = elt.localToScene(elt.getBoundsInLocal());
+    double scr_x = spain.getScene().getX() + spain.getScene().getWindow().getX();
+    double scr_y = spain.getScene().getY() + spain.getScene().getWindow().getY();
+    List<Screen> scrs = Screen.getScreensForRectangle(scr_x + bnds.getMinX(), scr_y + bnds.getMinY(), 1, 1);
+	Screen scr;
+	if (scrs.isEmpty()){
+      //lamb = lambda{|x,y|Screen.getScreensForRectangle(scr_x + x, scr_y + y, 1, 1)[0]}
+      //scr = lamb.call(bnds.max_x, bnds.max_y) || lamb.call(bnds.max_x, bnds.min_y) || lamb.call(bnds.min_x, bnds.max_y) || Screen.primary
+		// TODO: javafy this logic
+		scr = Screen.getPrimary();
+			  }else{
+		scr = scrs.get(0);
+	}
+    double loc_x = bnds.getMaxX() + scr_x + 5;
+    double loc_y = bnds.getMinY() + scr_y;
+    if (scr.getBounds().getMaxX() <= loc_x + propPop.getWidth())
+      loc_x = bnds.getMinX() + scr_x - 5 - propPop.getWidth();
+    
+    if (scr.getBounds().getMaxY() <= loc_y + propPop.getHeight())
+      loc_y = bnds.getMaxY() + scr_y - propPop.getHeight();
+    
+	propPop.setY(loc_y);
+	propPop.setX(loc_x);
+    propPop.show(spain.getScene().getWindow());
+			}
 
 	private void processToolboxList(List<ControlMetaInfo> z)
 	{

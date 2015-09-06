@@ -4,14 +4,22 @@
  */
 package edu.wpi.first.sfx.designer.ui;
 
+import dashfx.lib.controls.Category;
 import dashfx.lib.controls.Control;
+import dashfx.lib.controls.Designable;
 import dashfx.lib.controls.DesignablePane;
+import dashfx.lib.controls.DesignableProperty;
 import dashfx.lib.controls.ResizeDirections;
 import dashfx.lib.rt.ControlMetaInfo;
 import dashfx.lib.util.ControlTree;
+import edu.wpi.first.sfx.designer.util.Property;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import javafx.beans.binding.ObjectBinding;
@@ -105,6 +113,43 @@ public class CTView extends GridPane
 	private boolean can_nested_edit()
 	{
 		return child instanceof DesignablePane;
+	}
+	
+	public List<Property> findAllProperties()
+	{
+		ArrayList<Property> pl = new ArrayList<>(); 
+		// TODO: full overlay_control algo needs to go here
+		DesignableProperty a = child.getClass().getAnnotation(DesignableProperty.class);
+		if (a != null)
+		{
+			for (int i = 0; i < a.value().length; i++)
+			{
+				pl.add(new Property(a.value()[i], a.descriptions()[i]));
+			}
+		}
+		for (Method m : child.getClass().getMethods())
+		{
+			Designable annote = m.getAnnotation(Designable.class);
+			if (annote != null)
+			{
+				String name = annote.value();
+				if (name == null)
+				{name= m.getName();
+				if (name.startsWith("get") || name.startsWith("set"))
+				{
+					name = name.substring(3, 4).toLowerCase() + name.substring(4);
+				}
+				else if (name.endsWith("Property"))
+				{
+					name = name.substring(0, name.length() - 8);
+				}
+				}
+				Category cate = m.getAnnotation(Category.class);
+				String category = cate == null? "General" : cate.value();
+				pl.add(new Property(name, annote.description(), category));
+			}
+		}
+		return pl;
 	}
 
 	@FXML
@@ -519,6 +564,7 @@ public class CTView extends GridPane
 
 	private void addClass(ControlMetaInfo cname, double x, double y)
 	{
+		
 		ControlTree lTree = meta.newNode(tree, cname);
 		// TODO: should probbably use observable list of children somehow, but then we loose the xy
 		CTView ctv = meta.getAssociatedView(lTree);
