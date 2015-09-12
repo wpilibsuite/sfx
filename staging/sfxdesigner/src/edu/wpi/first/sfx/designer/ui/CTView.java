@@ -15,6 +15,7 @@ import dashfx.lib.util.ControlTree;
 import edu.wpi.first.sfx.designer.util.Property;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -114,10 +117,10 @@ public class CTView extends GridPane
 	{
 		return child instanceof DesignablePane;
 	}
-	
+
 	public List<Property> findAllProperties()
 	{
-		ArrayList<Property> pl = new ArrayList<>(); 
+		ArrayList<Property> pl = new ArrayList<>();
 		// TODO: full overlay_control algo needs to go here
 		DesignableProperty a = child.getClass().getAnnotation(DesignableProperty.class);
 		if (a != null)
@@ -132,21 +135,38 @@ public class CTView extends GridPane
 			Designable annote = m.getAnnotation(Designable.class);
 			if (annote != null)
 			{
-				String name = annote.value();
-				if (name == null)
-				{name= m.getName();
+				String name = m.getName();
 				if (name.startsWith("get") || name.startsWith("set"))
 				{
+					System.out.println("FAIL!");
 					name = name.substring(3, 4).toLowerCase() + name.substring(4);
 				}
-				else if (name.endsWith("Property"))
+				else
 				{
-					name = name.substring(0, name.length() - 8);
+					if (name.endsWith("Property"))
+					{
+						name = name.substring(0, name.length() - 8);
+					}
 				}
-				}
+
 				Category cate = m.getAnnotation(Category.class);
-				String category = cate == null? "General" : cate.value();
-				pl.add(new Property(name, annote.description(), category));
+				String category = cate == null ? "General" : cate.value();
+				String getName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+				try
+				{
+					Class getType = child.getClass().getMethod(getName).getReturnType();
+					if (annote.value() != null)
+					{
+						name = annote.value();
+					}
+
+					pl.add(new Property(name, annote.description(), getType, (javafx.beans.property.Property) m.invoke(child), category));
+				}
+				catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex)
+				{
+					System.err.println("Failed to open the property");
+					ex.printStackTrace();
+				}
 			}
 		}
 		return pl;
@@ -155,7 +175,7 @@ public class CTView extends GridPane
 	@FXML
 	void checkDblClick(MouseEvent e)
 	{
-		System.out.println("ClickCT" + ((Object)this).hashCode());
+		System.out.println("ClickCT" + ((Object) this).hashCode());
 		if (e.getClickCount() > 1 && can_nested_edit())
 		{
 			// enable nested mode!
@@ -169,10 +189,15 @@ public class CTView extends GridPane
 		else
 		{
 			if (meta.getEditing() == tree)
-				meta.setSelected(null);
-			else if (meta.getSelected() != tree)
 			{
-				meta.setSelected(tree);
+				meta.setSelected(null);
+			}
+			else
+			{
+				if (meta.getSelected() != tree)
+				{
+					meta.setSelected(tree);
+				}
 			}
 			e.consume();
 		}
@@ -204,7 +229,9 @@ public class CTView extends GridPane
 	void dragUpdate(MouseEvent e)
 	{
 		if (editing_nested.get()) // # TODO: something is wrong here...
+		{
 			throw new RuntimeException("Something very wrong happened");
+		}
 		if (drag_action != null)
 		{
 			//TODO: Don't assume designable pane
@@ -212,26 +239,29 @@ public class CTView extends GridPane
 //        @parent_designer.force_layout
 //        @parent_designer.try_reparent(self, e.scene_x, e.scene_y) if e.target == @moveRegion
 		}
-		else if (true) //( @supported_ops.include? e.target.id.to_sym)
+		else
 		{
-			/*		  nodes = [self]
-			 if original && (e.control_down? || @parent_designer.multiple_selected?)
-			 nodes += @parent_designer.multi_drag(self)
-			 end*/
-			drag_action = new double[]
+			if (true) //( @supported_ops.include? e.target.id.to_sym)
 			{
-				e.getSceneX(), e.getSceneY()
-			};
-			// @parent_designer.properties_draghide()
-			DesignablePane dp = (DesignablePane) getCTParent().child;
-			FourTouple ft = DIRECTIONS.get(((Node) e.getTarget()).getId());
-			dp.BeginDragging(new Node[]
-			{
-				this
-			}, new Region[]
-			{
-				childContainer
-			}, e.getSceneX(), e.getSceneY(), ft.data[0], ft.data[1], ft.data[2], ft.data[3]);
+				/*		  nodes = [self]
+				 if original && (e.control_down? || @parent_designer.multiple_selected?)
+				 nodes += @parent_designer.multi_drag(self)
+				 end*/
+				drag_action = new double[]
+				{
+					e.getSceneX(), e.getSceneY()
+				};
+				// @parent_designer.properties_draghide()
+				DesignablePane dp = (DesignablePane) getCTParent().child;
+				FourTouple ft = DIRECTIONS.get(((Node) e.getTarget()).getId());
+				dp.BeginDragging(new Node[]
+				{
+					this
+				}, new Region[]
+						 {
+							 childContainer
+				}, e.getSceneX(), e.getSceneY(), ft.data[0], ft.data[1], ft.data[2], ft.data[3]);
+			}
 		}
 		e.consume();
 	}
@@ -308,28 +338,39 @@ public class CTView extends GridPane
 	{
 		// TODO: care about selections
 		// TODO: this is very inefficient. A proper tree traveral algo will improve on this n^2 algo and make it more like n
-			editing_nested.set(nv == tree);
-			CTView ctv = getNestedAbove(nv);
-			if (ctv != null) // if we are not the root, show the other UI
+		editing_nested.set(nv == tree);
+		CTView ctv = getNestedAbove(nv);
+		if (ctv != null) // if we are not the root, show the other UI
+		{
+			if (area == null)
 			{
-				if (area == null)
-					initOverlay(ctv);
-				else
-				{
-					area.setChild(ctv.boundsInParentProperty(), ctv);
-
-				}
-				ssnVisible = true;
-				if (ssn != null)
-					ssn.setVisible(true);
+				initOverlay(ctv);
 			}
 			else
 			{
-				if (ssn != null)
-					ssn.setVisible(false);
-				else if (nv != tree.getParent())
-					editing_nested.set(true); // UI hack.... TODO: cleanup
+				area.setChild(ctv.boundsInParentProperty(), ctv);
+
 			}
+			ssnVisible = true;
+			if (ssn != null)
+			{
+				ssn.setVisible(true);
+			}
+		}
+		else
+		{
+			if (ssn != null)
+			{
+				ssn.setVisible(false);
+			}
+			else
+			{
+				if (nv != tree.getParent())
+				{
+					editing_nested.set(true); // UI hack.... TODO: cleanup
+				}
+			}
+		}
 	}
 
 	public static class FourTouple
@@ -365,24 +406,24 @@ public class CTView extends GridPane
 
 		RESIZABILITY_MAPPER = new HashMap<>();
 		RESIZABILITY_MAPPER.put(ResizeDirections.Move, new String[]
-		{
-			"moveRegion"
+						{
+							"moveRegion"
 		});
 		RESIZABILITY_MAPPER.put(ResizeDirections.UpDown, new String[]
-		{
-			"nResizeRegion", "sResizeRegion", "nHandle", "sHandle"
+						{
+							"nResizeRegion", "sResizeRegion", "nHandle", "sHandle"
 		});
 		RESIZABILITY_MAPPER.put(ResizeDirections.LeftRight, new String[]
-		{
-			"eResizeRegion", "wResizeRegion", "eHandle", "wHandle"
+						{
+							"eResizeRegion", "wResizeRegion", "eHandle", "wHandle"
 		});
 		RESIZABILITY_MAPPER.put(ResizeDirections.SouthEastNorthWest, new String[]
-		{
-			"nwResizeRegion", "seResizeRegion"
+						{
+							"nwResizeRegion", "seResizeRegion"
 		});
 		RESIZABILITY_MAPPER.put(ResizeDirections.NorthEastSouthWest, new String[]
-		{
-			"neResizeRegion", "swResizeRegion"
+						{
+							"neResizeRegion", "swResizeRegion"
 		});
 		JAVA_CLASS_DATA_FORMAT = new DataFormat("application/x-java-class");
 	}
@@ -446,7 +487,9 @@ public class CTView extends GridPane
 		area.addListener((a, b, node) ->
 		{
 			if (allow == false)
+			{
 				return;
+			}
 			allow = false;
 			GridPane.setColumnSpan(node, REMAINING);
 			GridPane.setRowSpan(node, REMAINING);
@@ -463,7 +506,9 @@ public class CTView extends GridPane
 				node.setVisible(ssn.isVisible());
 			}
 			else
+			{
 				node.setVisible(ssnVisible);
+			}
 			ssn = node;
 			this.getChildren().add(node);
 			allow = true;
@@ -533,9 +578,11 @@ public class CTView extends GridPane
 	@FXML
 	void on_drag_dropped(DragEvent event)
 	{
-			if (event.isDropCompleted())
-				return;
-			Dragboard db = event.getDragboard();
+		if (event.isDropCompleted())
+		{
+			return;
+		}
+		Dragboard db = event.getDragboard();
 		try
 		{
 			ControlMetaInfo x = (ControlMetaInfo) db.getContent(JAVA_CLASS_DATA_FORMAT);
@@ -547,8 +594,8 @@ public class CTView extends GridPane
 			ex.printStackTrace();
 			System.err.println("Could not create class instance from dropped control");
 		}
-			event.setDropCompleted(true);
-			event.consume();
+		event.setDropCompleted(true);
+		event.consume();
 	}
 
 	@FXML
@@ -558,13 +605,15 @@ public class CTView extends GridPane
 		{
 			// TODO: figure out childing rules and clean this up
 			if (child != null && (child instanceof DesignablePane || child.getUiChildren() != null))
+			{
 				event.acceptTransferModes(TransferMode.COPY);
+			}
 		}
 	}
 
 	private void addClass(ControlMetaInfo cname, double x, double y)
 	{
-		
+
 		ControlTree lTree = meta.newNode(tree, cname);
 		// TODO: should probbably use observable list of children somehow, but then we loose the xy
 		CTView ctv = meta.getAssociatedView(lTree);
@@ -573,9 +622,12 @@ public class CTView extends GridPane
 			DesignablePane pane = (DesignablePane) child;
 			pane.addChildAt(ctv, x, y);
 		}
-		else if (child.getUiChildren() != null)
+		else
 		{
-			child.getUiChildren().add(ctv);
+			if (child.getUiChildren() != null)
+			{
+				child.getUiChildren().add(ctv);
+			}
 		}
 	}
 	boolean allow = true;
@@ -583,7 +635,8 @@ public class CTView extends GridPane
 	Shape ssn = null;
 
 	/**
-	 * Class used to compute the difference between two rectangles (the outer minus the inner) as used for nested editing
+	 * Class used to compute the difference between two rectangles (the outer
+	 * minus the inner) as used for nested editing
 	 */
 	public class ShapeInversionBinding extends ObjectBinding<Shape>
 	{

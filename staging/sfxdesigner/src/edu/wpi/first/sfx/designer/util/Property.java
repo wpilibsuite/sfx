@@ -30,6 +30,9 @@ public class Property
 	private String category;
 	private Object object;
 	private Method method;
+	
+	private Class type;
+	private javafx.beans.property.Property property;
 
 	public Property(String value, String description)
 	{
@@ -38,11 +41,13 @@ public class Property
 		category = "General";
 	}
 
-	public Property(String value, String description, String category)
+	public Property(String value, String description, Class type, javafx.beans.property.Property property, String category)
 	{
 		name = value;
 		this.description = description;
 		this.category = category;
+		this.property = property;
+		this.type = type;
 	}
 
 	/**
@@ -139,5 +144,37 @@ public class Property
 	public void setMethod(Method method)
 	{
 		this.method = method;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Class getType()
+	{
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(Class type)
+	{
+		this.type = type;
+	}
+
+	/**
+	 * @return the property
+	 */
+	public javafx.beans.property.Property getProperty()
+	{
+		return property;
+	}
+
+	/**
+	 * @param property the property to set
+	 */
+	public void setProperty(javafx.beans.property.Property property)
+	{
+		this.property = property;
 	}
 }

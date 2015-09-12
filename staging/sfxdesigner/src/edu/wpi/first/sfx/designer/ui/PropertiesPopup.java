@@ -19,6 +19,8 @@ package edu.wpi.first.sfx.designer.ui;
 import dashfx.lib.controls.Designable;
 import dashfx.lib.util.ControlTree;
 import edu.wpi.first.sfx.designer.Main;
+import edu.wpi.first.sfx.designer.util.Designers;
+import edu.wpi.first.sfx.designer.util.Designers.Designer;
 import edu.wpi.first.sfx.designer.util.Property;
 import java.io.IOException;
 import java.util.List;
@@ -207,7 +209,9 @@ public class PropertiesPopup extends javafx.stage.Popup
 			this.prop_list.getChildren().add(lbl);
 			Designable d = null;
 			//SD::Designers.get_for(prop.type).tap{|x|x.design(prop)}.ui
-			this.prop_list.getChildren().add(new Label("Designer Here"));
+			Designer dz = Designers.getFor(prop.getType());
+			dz.design(prop);
+			this.prop_list.getChildren().add(dz.getUi());
 		}
 		/*
 
