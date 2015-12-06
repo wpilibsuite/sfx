@@ -259,4 +259,10 @@
       </build>
     </profile>
   </profiles>
+  <distributionManagement>
+    <repository>
+      <id>FRC Local</id>
+      <url>file://${user.home}/releases/maven/${repo}</url>
+    </repository>
+  </distributionManagement>
 </project>
