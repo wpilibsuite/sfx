@@ -39,17 +39,6 @@
       <id>rubygems-releases</id>
       <url>http://rubygems-proxy.torquebox.org/releases</url>
     </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>frc</id>
-      <name>frc</name>
-      <url>http://first.wpi.edu/FRC/roborio/maven/</url>
-    </repository>
   </repositories>
   <build>
     <plugins>
@@ -132,6 +121,45 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>default-repo</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>!repo</name>
+        </property>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>Local Repo</id>
+          <url>file://${user.home}/releases/maven/development</url>
+        </repository>
+        <repository>
+          <id>FRC Binaries</id>
+          <url>http://first.wpi.edu/FRC/c/maven/development</url>
+        </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>custom-repo</id>
+      <activation>
+        <property>
+          <name>repo</name>
+        </property>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>Local Repo</id>
+          <url>file://${user.home}/releases/maven/${repo}</url>
+        </repository>
+        <repository>
+          <id>FRC Binaries</id>
+          <url>http://first.wpi.edu/FRC/c/maven/${repo}</url>
+        </repository>
+      </repositories>
+    </profile>
     <profile>
       <id>gemfile</id>
       <activation>
@@ -231,4 +259,10 @@
       </build>
     </profile>
   </profiles>
+  <distributionManagement>
+    <repository>
+      <id>FRC Local</id>
+      <url>file://${user.home}/releases/maven/${repo}</url>
+    </repository>
+  </distributionManagement>
 </project>
