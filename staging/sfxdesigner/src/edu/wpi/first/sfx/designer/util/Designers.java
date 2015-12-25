@@ -16,7 +16,7 @@
  */
 package edu.wpi.first.sfx.designer.util;
 
-import edu.wpi.first.sfx.designer.ui.designers.StringDesigner;
+import edu.wpi.first.sfx.designer.ui.designers.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -36,6 +36,8 @@ public class Designers
 	static
 	{
 		designerFor(StringDesigner.class, String.class);
+		designerFor(DoubleDesigner.class, Double.class);
+		designerFor(DoubleDesigner.class, double.class);
 	}
 
 	public static void designerFor(Class<? extends Designer> dzn, Class... types)

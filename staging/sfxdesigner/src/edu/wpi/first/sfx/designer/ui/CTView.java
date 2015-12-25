@@ -129,7 +129,19 @@ public class CTView extends GridPane
 		{
 			for (int i = 0; i < a.value().length; i++)
 			{
-				pl.add(new Property(a.value()[i], a.descriptions()[i]));
+				String name = a.value()[i];
+				String getName = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
+				try
+				{
+					Class getType = child.getClass().getMethod(getName).getReturnType();
+
+					pl.add(new Property(name, a.descriptions()[i], getType, (javafx.beans.property.Property) child.getClass().getMethod(name + "Property").invoke(child), "General"));// TODO: category
+				}
+				catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex)
+				{
+					System.err.println("Failed to open the property");
+					ex.printStackTrace();
+				}
 			}
 		}
 		for (Method m : child.getClass().getMethods())
