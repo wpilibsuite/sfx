@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -474,7 +476,10 @@ public class CTView extends GridPane
 		 inflator.resetProperty(change.getKey(), childContainer.getCenter());
 		 }
 		 });*/
-		selected_ui.visibleProperty().bind(editing_nested.not().and(meta.selectedProperty().isEqualTo(tree)));
+		selected_ui.visibleProperty().bind(editing_nested.not());
+		BooleanBinding selectedProp = meta.selectedProperty().isEqualTo(tree);
+		selected_ui.opacityProperty().bind(
+				Bindings.createDoubleBinding(() -> (selectedProp.get()?1.0:0.0), selectedProp));
 		meta.editingProperty().addListener((ov, old, nv) -> editingChanged(nv));
 		editingChanged(meta.getEditing());
 	}
