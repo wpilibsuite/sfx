@@ -72,7 +72,7 @@ public class Designers
 
 		private UnknownDesigner(Class type)
 		{
-			ui = new Label("Unknown [" + type.getCanonicalName() + "]");
+			ui = new Label("Unknown [" + (type == null ? "NULL" : type.getCanonicalName()) + "]");
 		}
 
 		@Override
