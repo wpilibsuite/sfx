@@ -10,8 +10,11 @@ import dashfx.lib.controls.Designable;
 import dashfx.lib.controls.DesignablePane;
 import dashfx.lib.controls.DesignableProperty;
 import dashfx.lib.controls.ResizeDirections;
+import dashfx.lib.data.DataCoreProvider;
+import dashfx.lib.data.Registerable;
 import dashfx.lib.rt.ControlMetaInfo;
 import dashfx.lib.util.ControlTree;
+import edu.wpi.first.sfx.designer.DepManager;
 import edu.wpi.first.sfx.designer.util.Property;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -387,6 +390,31 @@ public class CTView extends GridPane
 		}
 	}
 
+	/**
+	 * Find and returns the nearest data Core provider
+	 * @param lTree
+	 * @return 
+	 */
+	private DataCoreProvider findDCP(ControlTree lTree)
+	{
+		if (lTree.getParent() == null)
+			return DepManager.getInstance().getUi().getDataCore();
+		lTree = lTree.getParent();
+		
+		CTView ctv = meta.getAssociatedView(lTree);
+		if (ctv.child instanceof DataCoreProvider)
+			return ((DataCoreProvider)ctv.child);
+		return findDCP(lTree);
+	}
+
+	void resetCore(DataCoreProvider core)
+	{
+		if (isRoot && child instanceof Registerable)
+		{
+			((Registerable)child).registered(core);
+		}
+	}
+
 	public static class FourTouple
 	{
 
@@ -587,6 +615,11 @@ public class CTView extends GridPane
 				// TODO: hack
 				child.getUi().setStyle("");
 				becomeRoot();
+			}
+					// TODO: this should be dynamic, when you move a node in the backing tree between parents this should recompute
+			if (child instanceof Registerable)
+			{
+				((Registerable)child).registered(findDCP(tree));
 			}
 			// TODO: Children
 		});

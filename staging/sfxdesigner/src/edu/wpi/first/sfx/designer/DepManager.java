@@ -54,6 +54,11 @@ public final class DepManager
 			jRuby.runScriptlet("mi = Java::edu.wpi.first.sfx.designer.DepManager.instance; $LOAD_PATH << mi.lp; require 'adapter.rb'; Adapter.new(mi)");
 		});
 		futures.get("base_jruby_loaded").thenAccept(x -> launch("load_jruby_plugins"));
+		futures.put("load_jruby_plugins", new CompletableFuture());
+		futures.get("load_jruby_plugins").thenAccept(x -> {
+			// enable data core
+			ui.loadDataCore(); // todo: fun data loading races, this may need more dependencies
+		});
 	}
 
 	public ObservableList<ControlMetaInfo> getToolboxControls()
@@ -118,11 +123,12 @@ public final class DepManager
 
 	public void on(String depStages, Consumer<CompletableFuture> r)
 	{
-		if (futures.containsKey(depStages))
+		if (runnables.containsKey(depStages))
 		{
 			throw new RuntimeException("Can not overwrite keys in the dep manager, a future already existed for " + depStages);
 		}
-		futures.put(depStages, new CompletableFuture());
+		if (!futures.containsKey(depStages))
+			futures.put(depStages, new CompletableFuture());
 		runnables.put(depStages, r);
 	}
 

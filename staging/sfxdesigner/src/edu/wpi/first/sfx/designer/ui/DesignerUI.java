@@ -20,6 +20,11 @@ import edu.wpi.first.sfx.designer.util.DemoImpl;
 import edu.wpi.first.sfx.designer.ui.DesignerMetadata;
 import dashfx.controls.DataAnchorPane;
 import dashfx.lib._private.rt._Canvas_cmi;
+import dashfx.lib.data.DataCore;
+import dashfx.lib.data.DataCoreProvider;
+import dashfx.lib.data.DataInitDescriptor;
+import dashfx.lib.data.InitInfo;
+import dashfx.lib.data.endpoints.TestDataSource;
 import dashfx.lib.registers.ControlRegister;
 import dashfx.lib.rt.ControlMetaInfo;
 import edu.wpi.first.sfx.designer.DepManager;
@@ -141,6 +146,7 @@ public class DesignerUI
 	private DesignerMetadata meta;
 	
 	private PropertiesPopup propPop;
+	private DataCoreProvider core;
 
 	@FXML
 	void initialize()
@@ -417,5 +423,20 @@ Bounds bnds = elt.localToScene(elt.getBoundsInLocal());
 		clickoff_tbx = null;
 		toolbox_hider.setRate(-1);
 		toolbox_hider.playFrom(toolbox_hider.getTotalDuration());
+	}
+
+	public void loadDataCore()
+	{
+		core = new DataCore();
+		//(DataInitDescriptor.new(Java::dashfx.lib.data.endpoints.NetworkTables.new, "Default", InitInfo.new, "/"))
+		core.mountDataEndpoint(new DataInitDescriptor<>(new TestDataSource(), "Test", new InitInfo(), "/"));
+		
+		CTView tmp = meta.getAssociatedView(meta.getRoot());
+		tmp.resetCore(core);
+	}
+
+	DataCoreProvider getDataCore()
+	{
+		return core;
 	}
 }
