@@ -53,7 +53,7 @@ end
 desc "Compiles a bunch of other files"
 task :compile do
   Dir.chdir("../sfxmeta/") {f? ant "jar"}
-  Dir.chdir("../sfxlib/") {f? ant ["clean", "jar"]} # must clean or the annotation processors will fail
+  Dir.chdir("../sfxlib/") {f? ant ["clean", "jar", "-Dvar.sunspot.home=#{Dir.home}/sunspotfrcsdk"]} # must clean or the annotation processors will fail
   extralib = "../livewindowplugin/dist/livewindowplugin.jar"
   extralib = if File.exist? extralib
     [extralib]
@@ -68,7 +68,7 @@ task :compile do
 fxml_root File.join(File.dirname(__FILE__),  "lib", "res")
   JRubyFX::Tasks.compile(Dir['../{livewindowplugin,sfx/lib,sfx/plugins,sfxlib}/**/*.fxml'] + %W{-- ../sfxlib/dist/sfxlib.jar} + extralib)
 
-  Dir.chdir("../sfxlib/") {f? ant ["clean", "jar"]} # must clean or the annotation processors will fail
+  Dir.chdir("../sfxlib/") {f? ant ["clean", "jar", "-Dvar.sunspot.home=#{Dir.home}/sunspotfrcsdk"]} # must clean or the annotation processors will fail
   Dir.chdir("../livewindowplugin/"){f? ant "jar"}
 end
 
