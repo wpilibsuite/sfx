@@ -1,4 +1,4 @@
-Version = "2014.11.01"
+Version = "2015.11.01"
 
 group_id "edu.wpi.first.wpilib"
 artifact_id "sfx"
@@ -11,6 +11,26 @@ gemfile # require all gems and jars
 jarfile
 
 properties('tesla.dump.pom' => 'pom.xml', 'tesla.dump.readOnly' => true, "DO_NOT_MODIFY_POM_XML_ITS_FROM_Mavenfile._USE_POLYGLOT_to_Generate_it" => "then just run mvn package to make the new pom")
+
+profile "default-repo" do
+	activation do
+		activeByDefault true
+		property :name => "!repo"
+	end
+	repository :id => "Local Repo", :url => "file://${user.home}/releases/maven/development"
+	repository :id => "FRC Binaries", :url => "http://first.wpi.edu/FRC/c/maven/development"
+
+end
+profile "custom-repo" do
+	activation do
+		activeByDefault true
+		property :name => "repo"
+	end
+	repository :id => "Local Repo", :url => "file://${user.home}/releases/maven/${repo}"
+	repository :id => "FRC Binaries", :url => "http://first.wpi.edu/FRC/c/maven/${repo}"
+
+end
+
 
 # rake tasks
 plugin('de.saumya.mojo:rake-maven-plugin') do
@@ -29,3 +49,6 @@ plugin "org.apache.maven.plugins:maven-assembly-plugin" do
 	execute_goals("single", id: "create-distro", phase: :package, descriptors: {descriptor: "zip.xml"})
 end
 
+distribution_management do
+	repository :id => "FRC Local", :url => 'file://${user.home}/releases/maven/${repo}'
+end
