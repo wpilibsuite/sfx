@@ -21,7 +21,7 @@ GEM
     jruby-rack (1.1.19)
     jrubyfx (1.1.1-java)
       jrubyfx-fxmlloader (>= 0.4)
-    jrubyfx-fxmlloader (0.4-java)
+    jrubyfx-fxmlloader (0.4.1-java)
     maven-tools (1.0.13)
       virtus (~> 1.0)
     rake (10.4.2)
