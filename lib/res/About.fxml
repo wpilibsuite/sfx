@@ -10,7 +10,7 @@
 
 <BorderPane id="BorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="229.0" prefWidth="413.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <center>
-    <Label alignment="CENTER" text="SmartDashboard&#10;Version: $$VERSION$$" textAlignment="CENTER" BorderPane.alignment="CENTER">
+    <Label alignment="CENTER" text="SmartDashboard&#10;Version: --" textAlignment="CENTER" BorderPane.alignment="CENTER">
       <BorderPane.margin>
         <Insets top="6.0" />
       </BorderPane.margin>

@@ -6,7 +6,7 @@
   <artifactId>sfx</artifactId>
   <version>2015.11.01</version>
   <packaging>pom</packaging>
-  <name>SFX</name>
+  <name>sfx</name>
   <distributionManagement>
     <repository>
       <id>FRC Local</id>
@@ -199,7 +199,7 @@
                     <ruby-maven>3.3.8</ruby-maven>
                     <ruby-maven-libs>3.3.3</ruby-maven-libs>
                     <jrubyfx>1.1.1</jrubyfx>
-                    <jrubyfx-fxmlloader>0.4</jrubyfx-fxmlloader>
+                    <jrubyfx-fxmlloader>0.4.1</jrubyfx-fxmlloader>
                   </gems>
                 </configuration>
               </execution>
