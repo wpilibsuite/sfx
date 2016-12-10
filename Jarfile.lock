@@ -1,3 +1,4 @@
 ---
 :runtime:
-- edu.wpi.first.wpilib.networktables.java:NetworkTables:jar:0.1.0-SNAPSHOT
+- org.yaml:snakeyaml:jar:1.14
+- edu.wpi.first.wpilib.networktables.java:NetworkTables:jar:desktop:3.1.2-20161204144907-5-g378a145

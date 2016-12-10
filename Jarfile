@@ -1,5 +1,5 @@
-#repository "frc", "http://first.wpi.edu/FRC/roborio/maven/"
-#snapshot_repository "frc", "http://first.wpi.edu/FRC/roborio/maven/"
+repository "frc", "http://first.wpi.edu/FRC/roborio/maven/development"
+#snapshot_repository "frcs", "http://first.wpi.edu/FRC/roborio/maven/"
 
-jar 'edu.wpi.first.wpilib.networktables.java:NetworkTables', '~>0.1.0'
+jar 'edu.wpi.first.wpilib.networktables.java:NetworkTables:desktop', '~>3.1.2'
 

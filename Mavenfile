@@ -18,7 +18,7 @@ profile "default-repo" do
 		property :name => "!repo"
 	end
 	repository :id => "Local Repo", :url => "file://${user.home}/releases/maven/development"
-	repository :id => "FRC Binaries", :url => "http://first.wpi.edu/FRC/c/maven/development"
+	repository :id => "FRC Binaries", :url => "http://first.wpi.edu/FRC/roborio/maven/development"
 
 end
 profile "custom-repo" do
@@ -27,13 +27,13 @@ profile "custom-repo" do
 		property :name => "repo"
 	end
 	repository :id => "Local Repo", :url => "file://${user.home}/releases/maven/${repo}"
-	repository :id => "FRC Binaries", :url => "http://first.wpi.edu/FRC/c/maven/${repo}"
+	repository :id => "FRC Binaries", :url => "http://first.wpi.edu/FRC/roborio/maven/${repo}"
 
 end
 
 
 # rake tasks
-plugin('de.saumya.mojo:rake-maven-plugin') do
+plugin('de.saumya.mojo:rake-maven-plugin', "0.21.1") do
 	self.execute_goals(:rake, phase: :compile, id: 'rakemvnfile')
 end
 
